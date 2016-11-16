@@ -18,6 +18,7 @@
 class Triangle : public SceneObject {
    public:
       Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3);
+      Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3, bool smoothCheck);
       Triangle();
       ~Triangle();
    
@@ -30,6 +31,18 @@ class Triangle : public SceneObject {
       float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
       Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
       void constructBB();
+      void printObj();
+      
+      // Wave or 3d object settings
+      bool smooth;
+      Eigen::Vector3f aNor;
+      Eigen::Vector3f bNor;
+      Eigen::Vector3f cNor;
+      // Barycentric Precomputations
+      float dotAB;
+      float dotAC;
+      float dotABC;
+      float multiplier;
       
    private:
    

@@ -35,6 +35,7 @@ class SceneObject {
       float indexRefraction;
       float photonReflectance;
       float photonRefractance;
+      float dropoff;
       
       int type;
       
@@ -48,6 +49,8 @@ class SceneObject {
       virtual SceneObject* getObj();
       
       void applyTransforms();
+      
+      virtual void printObj();
       
    private:
       void rotate();

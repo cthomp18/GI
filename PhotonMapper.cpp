@@ -112,7 +112,7 @@ void PhotonMapper::buildGlobalMap() {
                } else if (randTracker < obj->photonRefractance) { //Refract
                   float randFloat;
                   normal = obj->getNormal(intersectPt, 2.0f);
-                  ray = raytrace->findRefract(ray, normal, obj, n1, &n2, &randFloat);
+                  ray = raytrace->findRefract(ray, normal, obj, n1, &n2, &randFloat, &randFloat);
                   col = raytrace->trace(intersectPt, ray, -1);
                   //intersectPt = intersectPt + (col->time * ray);
                   /*obj = objects[col->objectIndex];
@@ -135,12 +135,12 @@ void PhotonMapper::buildGlobalMap() {
                      n1 = n2;
                      //index = col->objectIndex;
                      
-                     if (depth <= 1) {
+                     /*if (depth <= 1) {
                         i--;
                         continue;
-                     } else {
+                     } else {*/
                         globalPhotons.push_back(p);
-                     }
+                     //}
                   } else {
                      break;
                   }
@@ -170,7 +170,7 @@ void PhotonMapper::buildCausticMap() {
    SceneObject* obj, *tempobj;
    Collision* col;
    RayTracer* raytrace = new RayTracer(lights, objects);
-   
+   cout << "Caustics: " << causticPhotons.size() << endl;
    for (int l = 0; l < lights.size(); l++) {
       light = lights[l];
       //for (int m = 0; m < objects.size(); m++) {
@@ -187,7 +187,7 @@ void PhotonMapper::buildCausticMap() {
                //minZ = (pos[2] - rad) - lpos[2]; maxZ = (pos[2] + rad) - lpos[2];
                minX = -3.5f - lpos[0]; maxX = 3.5f - lpos[0];
                minY = -1.0f - lpos[1]; maxY = -1.0f - lpos[1];
-               minZ = -13.0f - lpos[2]; maxZ = -1.5f - lpos[2];
+               minZ = -13.0f - lpos[2]; maxZ = 1.5f - lpos[2];
            // }
             //cout << "Min: " << minX << " " << minY << " " << minZ << endl;
             //cout << "Max: " << maxX << " " << maxY << " " << maxZ << endl;
@@ -216,7 +216,7 @@ void PhotonMapper::buildCausticMap() {
                   while ((randTracker = (float)(rand()) / (float)(RAND_MAX)) < tempobj->photonRefractance) {
                      float randFloat;
                      normal = tempobj->getNormal(intersectPt, 2.0f);
-                     ray = raytrace->findRefract(ray, normal, tempobj, n1, &n2, &randFloat);
+                     ray = raytrace->findRefract(ray, normal, tempobj, n1, &n2, &randFloat, &randFloat);
                      col = raytrace->trace(intersectPt, ray, -1);
                      //if (col->objectIndex != m) cout << "fucking wut " << n1 << " " << n2 << endl;
                      /*intersectPt = intersectPt + (col->time * ray);
@@ -252,6 +252,7 @@ void PhotonMapper::buildCausticMap() {
                }
             }
             std::cout << "i: " << i << " z: " << z << std::endl;
+            cout << "Caustics: " << causticPhotons.size() << endl;
             std::cout << "Miss Count: " << missCount << std::endl;
          //}
       //}

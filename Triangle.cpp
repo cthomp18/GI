@@ -14,6 +14,26 @@ Triangle::Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3
    
    normal = (b - a).cross(c - a);
    normal.normalize();
+   smooth = false;
+}
+
+Triangle::Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3, bool smoothCheck) : SceneObject() {
+   a = pt1;
+   b = pt2;
+   c = pt3;
+   
+   normal = (b - a).cross(c - a);
+   normal.normalize();
+   smooth = false;
+   
+   if (smoothCheck) {
+      smooth = true;
+      Eigen::Vector3f v1 = b - a, v2 = c - a;
+      dotAB = v1.dot(v1);
+      dotAC = v2.dot(v2);
+      dotABC = v1.dot(v2);
+      multiplier = 1.0f / ((dotAB * dotAC) - (dotABC * dotABC));
+   }
 }
 
 Triangle::Triangle() : SceneObject() {}
@@ -57,7 +77,22 @@ float Triangle::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float
 }
 
 Eigen::Vector3f Triangle::getNormal(Eigen::Vector3f iPt, float time) {
-   return normal;
+   float alpha, beta, gamma;
+   Eigen::Vector3f normalConstructor = normal;
+   
+   if (smooth) {
+      float dotABP = (b - a).dot(iPt - a), dotACP = (c - a).dot(iPt - a);
+      alpha = ((dotAC * dotABP) - (dotABC * dotACP)) * multiplier;
+      beta = ((dotAB * dotACP) - (dotABC * dotABP)) * multiplier;
+      gamma = (1.0f - alpha) - beta;
+      
+      normalConstructor = bNor * alpha;
+      normalConstructor += cNor * beta;
+      normalConstructor += aNor * gamma;
+      normalConstructor.normalize();
+   }
+   
+   return normalConstructor;
 }
 
 void Triangle::constructBB() {
@@ -70,4 +105,10 @@ void Triangle::constructBB() {
    }
    
    boundingBox = new Box(minPt, maxPt);
+}
+
+void Triangle::printObj() {
+   std::cout << a.x() << " " << a.y() << " " << a.z() << std::endl;
+   std::cout << b.x() << " " << b.y() << " " << b.z() << std::endl;
+   std::cout << c.x() << " " << c.y() << " " << c.z() << std::endl;
 }

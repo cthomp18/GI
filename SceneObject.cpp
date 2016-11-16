@@ -25,6 +25,7 @@ SceneObject::SceneObject() {
    indexRefraction = 1.0f;
    photonReflectance = 0.5;
    photonRefractance = 0.0;
+   dropoff = 1.0f;
    
    type = -1;
    hitObj = NULL;
@@ -166,4 +167,9 @@ void SceneObject::translate() {
 
 void SceneObject::constructBB() {
    //std::cout << "Parent Call To CBB" << std::endl;
+}
+
+void SceneObject::printObj() {
+   std::cout << "huh" << std::endl;
+
 }

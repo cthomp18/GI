@@ -1,0 +1,754 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 62.53    574.30   574.30 148458110     0.00     0.00  Image::pixel(int, int, color_struct)
+ 33.55    882.48   308.18    29345    10.50    31.13  KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int)
+  3.39    913.59    31.10 96878991     0.00     0.01  void Eigen::internal::parallelize_gemm<true, Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> >, long>(Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> > const&, long, long, bool)
+  0.22    915.58     1.99                             KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int)
+  0.19    917.35     1.77    11581     0.15    79.04  RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int)
+  0.07    918.00     0.65   469334     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long)
+  0.02    918.18     0.18  1207693     0.00     0.00  std::vector<Photon, std::allocator<Photon> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&)
+  0.01    918.28     0.10   757720     0.00     0.00  QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**)
+  0.01    918.34     0.06 27943522     0.00     0.00  Box::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.01    918.40     0.06   627471     0.00     0.00  __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&)
+  0.01    918.45     0.05  1386840     0.00     0.00  std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&)
+  0.00    918.47     0.02 88032081     0.00     0.00  operator<(Photon, Photon)
+  0.00    918.48     0.01  8400016     0.00     0.00  Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int)
+  0.00    918.49     0.01  2520406     0.00     0.00  Triangle::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.50     0.01   682313     0.00     0.00  Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool)
+  0.00    918.51     0.01   300000     0.00     3.05  Light::getColor()
+  0.00    918.52     0.01    65535     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118]
+  0.00    918.53     0.01        1    10.00    20.00  QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int)
+  0.00    918.53     0.00 218088184     0.00     0.00  Photon::~Photon()
+  0.00    918.53     0.00 12351076     0.00     0.00  sorterQuad(SceneObject*, SceneObject*)
+  0.00    918.53     0.00  7564482     0.00     0.00  SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**)
+  0.00    918.53     0.00  7109020     0.00     0.00  void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  0.00    918.53     0.00  4325488     0.00     0.00  Plane::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00   754183     0.00     0.00  GerstnerWave::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00   683367     0.00     0.00  Collision::Collision()
+  0.00    918.53     0.00   682666     0.00     0.00  RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool)
+  0.00    918.53     0.00   627471     0.00     0.00  void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  0.00    918.53     0.00   469334     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  0.00    918.53     0.00   364933     0.00     0.00  SceneObject::SceneObject()
+  0.00    918.53     0.00   269637     0.00     0.00  Triangle::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00   269637     0.00     0.00  RayTracer::findRefract(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, float, float*, float*, float*)
+  0.00    918.53     0.00   200001     0.00     0.00  Light::getPosition()
+  0.00    918.53     0.00   182463     0.00     0.00  Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>)
+  0.00    918.53     0.00   141585     0.00     0.00  std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&)
+  0.00    918.53     0.00   116391     0.00     0.00  Plane::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00    99697     0.00     0.00  RayTracer::findReflect(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*)
+  0.00    918.53     0.00    95082     0.00     0.00  Triangle::constructBB()
+  0.00    918.53     0.00    95082     0.00     0.00  Triangle::Triangle(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool)
+  0.00    918.53     0.00    87381     0.00     0.00  QuadTreeNode::combineBB(Box*, Box*, Box*, Box*)
+  0.00    918.53     0.00    65535     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.123]
+  0.00    918.53     0.00    48000     0.00     0.00  GerstnerWave::getPoint(float, float, float)
+  0.00    918.53     0.00    48000     0.00     0.00  GerstnerWave::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00      186     0.00     0.00  void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon)
+  0.00    918.53     0.00      186     0.00     0.00  void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon)
+  0.00    918.53     0.00      102     0.00     0.00  __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&)
+  0.00    918.53     0.00       24     0.00     0.00  PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00       15     0.00     0.00  std::vector<float, std::allocator<float> >::_M_insert_aux(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&)
+  0.00    918.53     0.00        7     0.00     0.00  PovParser::parseFinish(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*)
+  0.00    918.53     0.00        7     0.00     0.00  PovParser::parsePigment(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        7     0.00     0.00  PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*)
+  0.00    918.53     0.00        6     0.00     0.00  SceneObject::constructBB()
+  0.00    918.53     0.00        6     0.00     0.00  SceneObject::applyTransforms()
+  0.00    918.53     0.00        6     0.00     0.00  SceneObject::scale()
+  0.00    918.53     0.00        6     0.00     0.00  SceneObject::rotate()
+  0.00    918.53     0.00        6     0.00     0.00  SceneObject::translate()
+  0.00    918.53     0.00        6     0.00     0.00  Plane::Plane(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00        6     0.00     0.00  PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        6     0.00     0.00  std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&)
+  0.00    918.53     0.00        2     0.00     0.00  GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>)
+  0.00    918.53     0.00        2     0.00     0.00  RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >)
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN10KDTreeNodeC2EPS_S0_P6Photoni
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN11SceneObjectC2Ev
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN12GerstnerWaveC2EfffN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_f
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN12PhotonMapperC2Ev
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN3BoxC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN4ConeC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEfS2_f
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN5PlaneC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN6PhotonC2Ev
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN6SphereC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN8TriangleC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN9CollisionC2EfP11SceneObject
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN9PovParserC2Ev
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I__ZN9RayTracerC2ESt6vectorIP5LightSaIS2_EES0_IP11SceneObjectSaIS6_EE
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I_objects
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I_sortAxisBi
+  0.00    918.53     0.00        1     0.00     0.00  _GLOBAL__sub_I_sortAxisQuad
+  0.00    918.53     0.00        1     0.00     0.00  GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float)
+  0.00    918.53     0.00        1     0.00     0.00  GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float)
+  0.00    918.53     0.00        1     0.00     0.00  Light::Light(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>)
+  0.00    918.53     0.00        1     0.00     0.00  Camera::getPosition()
+  0.00    918.53     0.00        1     0.00     0.00  Camera::getUp()
+  0.00    918.53     0.00        1     0.00     0.00  Camera::getRight()
+  0.00    918.53     0.00        1     0.00     0.00  Camera::getLookAt()
+  0.00    918.53     0.00        1     0.00     0.00  Camera::Camera(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>)
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::getObjects()
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::getCamera()
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::getLights()
+  0.00    918.53     0.00        1     0.00     0.00  PovParser::PovParser()
+  0.00    918.53     0.00        1     0.00     0.00  std::vector<SceneObject*, std::allocator<SceneObject*> >::operator=(std::vector<SceneObject*, std::allocator<SceneObject*> > const&)
+  0.00    918.53     0.00        1     0.00     0.00  std::vector<Light*, std::allocator<Light*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Light**, std::vector<Light*, std::allocator<Light*> > >, Light* const&)
+  0.00    918.53     0.00        1     0.00     0.00  std::vector<Light*, std::allocator<Light*> >::operator=(std::vector<Light*, std::allocator<Light*> > const&)
+  0.00    918.53     0.00        1     0.00     0.00  std::vector<Photon*, std::allocator<Photon*> >::operator=(std::vector<Photon*, std::allocator<Photon*> > const&)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.00% of 918.53 seconds
+
+index % time    self  children    called     name
+                0.00  305.12  100000/300000      PhotonMapper::buildGlobalMap() [7]
+                0.01  610.24  200000/300000      PhotonMapper::buildCausticMap() [4]
+[1]     99.7    0.01  915.37  300000         Light::getColor() [1]
+                1.77  913.59   11581/11581       RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int) [2]
+                0.00    0.00   13315/682666      RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+-----------------------------------------------
+                1.77  913.59   11581/11581       Light::getColor() [1]
+[2]     99.7    1.77  913.59   11581         RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int) [2]
+              308.18  605.41   29345/29345       KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+                0.00    0.00   16694/116391      Plane::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [47]
+-----------------------------------------------
+                             159301902             KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+              308.18  605.41   29345/29345       RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int) [2]
+[3]     99.5  308.18  605.41   29345+159301902 KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+               31.10  574.30 96878991/96878991     void Eigen::internal::parallelize_gemm<true, Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> >, long>(Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> > const&, long, long, bool) [5]
+                0.01    0.00  179147/1386840     std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&) [16]
+                             159301902             KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+-----------------------------------------------
+                                                 <spontaneous>
+[4]     66.4    0.00  610.36                 PhotonMapper::buildCausticMap() [4]
+                0.01  610.24  200000/300000      Light::getColor() [1]
+                0.00    0.11  400288/682666      RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+                0.00    0.00  200271/8400016     Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int) [20]
+                0.00    0.00      19/1386840     std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&) [16]
+                0.00    0.00  200271/269637      Triangle::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [42]
+                0.00    0.00  200271/269637      RayTracer::findRefract(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, float, float*, float*, float*) [43]
+                0.00    0.00       1/2           RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >) [70]
+                0.00    0.00       1/200001      Light::getPosition() [44]
+-----------------------------------------------
+               31.10  574.30 96878991/96878991     KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+[5]     65.9   31.10  574.30 96878991         void Eigen::internal::parallelize_gemm<true, Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> >, long>(Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> > const&, long, long, bool) [5]
+              574.30    0.00 148458110/148458110     Image::pixel(int, int, color_struct) [6]
+-----------------------------------------------
+                             425248189             Image::pixel(int, int, color_struct) [6]
+              574.30    0.00 148458110/148458110     void Eigen::internal::parallelize_gemm<true, Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> >, long>(Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> > const&, long, long, bool) [5]
+[6]     62.5  574.30    0.00 148458110+425248189 Image::pixel(int, int, color_struct) [6]
+                             425248189             Image::pixel(int, int, color_struct) [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]     33.2    0.00  305.20                 PhotonMapper::buildGlobalMap() [7]
+                0.00  305.12  100000/300000      Light::getColor() [1]
+                0.00    0.07  269063/682666      RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+                0.00    0.00  269063/8400016     Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int) [20]
+                0.00    0.00      20/1386840     std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&) [16]
+                0.00    0.00  200000/200001      Light::getPosition() [44]
+                0.00    0.00   99697/116391      Plane::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [47]
+                0.00    0.00   99697/99697       RayTracer::findReflect(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*) [48]
+                0.00    0.00   69366/269637      Triangle::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [42]
+                0.00    0.00   69366/269637      RayTracer::findRefract(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, float, float*, float*, float*) [43]
+                0.00    0.00       1/2           RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >) [70]
+-----------------------------------------------
+                              469332             KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[8]      0.3    1.99    0.96       0+469332  KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+                0.65    0.07  469334/469334      void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+                0.18    0.00 1207693/1207693     std::vector<Photon, std::allocator<Photon> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [12]
+                0.04    0.00 1207654/1386840     std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&) [16]
+                0.01    0.00 7930682/8400016     Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int) [20]
+                0.00    0.00 6013682/7109020     void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [24]
+                0.00    0.00  469334/469334      void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [25]
+                0.00    0.00 7930682/218088184     Photon::~Photon() [36]
+                              469332             KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+-----------------------------------------------
+                              627471             void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+                0.65    0.07  469334/469334      KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[9]      0.1    0.65    0.07  469334+627471  void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+                0.06    0.01  627471/627471      __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [14]
+                0.00    0.00  627471/627471      void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [26]
+                0.00    0.00     186/186         void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [27]
+                0.00    0.00     372/218088184     Photon::~Photon() [36]
+                              627471             void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+-----------------------------------------------
+                0.00    0.00   13315/682666      Light::getColor() [1]
+                0.00    0.07  269063/682666      PhotonMapper::buildGlobalMap() [7]
+                0.00    0.11  400288/682666      PhotonMapper::buildCausticMap() [4]
+[10]     0.0    0.00    0.18  682666         RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+                0.01    0.17  682313/682313      Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool) [11]
+                0.00    0.00  683367/683367      Collision::Collision() [40]
+-----------------------------------------------
+                0.01    0.17  682313/682313      RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+[11]     0.0    0.01    0.17  682313         Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool) [11]
+                0.10    0.06  757720/757720      QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+                0.00    0.01 5044076/7564482     SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+-----------------------------------------------
+                0.18    0.00 1207693/1207693     KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[12]     0.0    0.18    0.00 1207693         std::vector<Photon, std::allocator<Photon> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [12]
+                0.00    0.00 11860394/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                             23808834             QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+                0.10    0.06  757720/757720      Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool) [11]
+[13]     0.0    0.10    0.06  757720+23808834 QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+                0.06    0.00 27943522/27943522     Box::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [15]
+                0.00    0.00 2520406/7564482     SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+                             23808834             QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+-----------------------------------------------
+                0.06    0.01  627471/627471      void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+[14]     0.0    0.06    0.01  627471         __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [14]
+                0.01    0.00 61709703/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00 137562975/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.06    0.00 27943522/27943522     QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+[15]     0.0    0.06    0.00 27943522         Box::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [15]
+-----------------------------------------------
+                0.00    0.00      19/1386840     PhotonMapper::buildCausticMap() [4]
+                0.00    0.00      20/1386840     PhotonMapper::buildGlobalMap() [7]
+                0.01    0.00  179147/1386840     KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [3]
+                0.04    0.00 1207654/1386840     KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[16]     0.0    0.05    0.00 1386840         std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&) [16]
+-----------------------------------------------
+                               87380             QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+                0.01    0.01       1/1           setup(int, char**, Pixel**) [18]
+[17]     0.0    0.01    0.01       1+87380   QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+                0.01    0.00   65535/65535       void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] [23]
+                0.00    0.00  918846/12351076     sorterQuad(SceneObject*, SceneObject*) [37]
+                0.00    0.00  141563/141585      std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&) [46]
+                0.00    0.00   87381/364933      SceneObject::SceneObject() [41]
+                0.00    0.00   87381/87381       QuadTreeNode::combineBB(Box*, Box*, Box*, Box*) [51]
+                0.00    0.00   65535/65535       void std::__insertion_sort<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.123] [52]
+                               87380             QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+-----------------------------------------------
+                                                 <spontaneous>
+[18]     0.0    0.00    0.02                 setup(int, char**, Pixel**) [18]
+                0.01    0.01       1/1           QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+                0.00    0.00       4/141585      std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&) [46]
+                0.00    0.00       1/1           PovParser::PovParser() [102]
+                0.00    0.00       1/1           PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+                0.00    0.00       1/1           PovParser::getCamera() [100]
+                0.00    0.00       1/1           PovParser::getLights() [101]
+                0.00    0.00       1/1           std::vector<Light*, std::allocator<Light*> >::operator=(std::vector<Light*, std::allocator<Light*> > const&) [105]
+                0.00    0.00       1/1           PovParser::getObjects() [95]
+                0.00    0.00       1/1           std::vector<SceneObject*, std::allocator<SceneObject*> >::operator=(std::vector<SceneObject*, std::allocator<SceneObject*> > const&) [103]
+                0.00    0.00       1/1           GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+                0.00    0.00       1/1           Camera::getPosition() [90]
+                0.00    0.00       1/1           Camera::getRight() [92]
+                0.00    0.00       1/1           Camera::getUp() [91]
+                0.00    0.00       1/1           Camera::getLookAt() [93]
+-----------------------------------------------
+                0.00    0.00     227/88032081     void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [28]
+                0.00    0.00     424/88032081     void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [27]
+                0.00    0.00 1447666/88032081     void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [25]
+                0.00    0.00 1639884/88032081     void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [26]
+                0.01    0.00 23234177/88032081     void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [24]
+                0.01    0.00 61709703/88032081     __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [14]
+[19]     0.0    0.02    0.00 88032081         operator<(Photon, Photon) [19]
+-----------------------------------------------
+                0.00    0.00  200271/8400016     PhotonMapper::buildCausticMap() [4]
+                0.00    0.00  269063/8400016     PhotonMapper::buildGlobalMap() [7]
+                0.01    0.00 7930682/8400016     KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[20]     0.0    0.01    0.00 8400016         Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int) [20]
+-----------------------------------------------
+                0.00    0.00 2520406/7564482     QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [13]
+                0.00    0.01 5044076/7564482     Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool) [11]
+[21]     0.0    0.00    0.01 7564482         SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+                0.01    0.00 2520406/2520406     Triangle::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [22]
+                0.00    0.00 4325488/4325488     Plane::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [38]
+                0.00    0.00  754183/754183      GerstnerWave::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [39]
+-----------------------------------------------
+                0.01    0.00 2520406/2520406     SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+[22]     0.0    0.01    0.00 2520406         Triangle::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [22]
+-----------------------------------------------
+                              118762             void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] [23]
+                0.01    0.00   65535/65535       QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+[23]     0.0    0.01    0.00   65535+118762  void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] [23]
+                0.00    0.00 11081463/12351076     sorterQuad(SceneObject*, SceneObject*) [37]
+                              118762             void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] [23]
+-----------------------------------------------
+                0.00    0.00 1095338/7109020     void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [25]
+                0.00    0.00 6013682/7109020     KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[24]     0.0    0.00    0.01 7109020         void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [24]
+                0.01    0.00 23234177/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00 53577374/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00  469334/469334      KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+[25]     0.0    0.00    0.00  469334         void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [25]
+                0.00    0.00 1095338/7109020     void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [24]
+                0.00    0.00 1447666/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00 3247660/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00  627471/627471      void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+[26]     0.0    0.00    0.00  627471         void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [26]
+                0.00    0.00 1639884/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00 3907239/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00     186/186         void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+[27]     0.0    0.00    0.00     186         void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [27]
+                0.00    0.00     424/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00     186/186         void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [28]
+                0.00    0.00    1034/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00     186/186         void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [27]
+[28]     0.0    0.00    0.00     186         void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [28]
+                0.00    0.00     227/88032081     operator<(Photon, Photon) [19]
+                0.00    0.00     454/218088184     Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00     372/218088184     void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long) [9]
+                0.00    0.00     454/218088184     void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [28]
+                0.00    0.00    1034/218088184     void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon) [27]
+                0.00    0.00 3247660/218088184     void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [25]
+                0.00    0.00 3907239/218088184     void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [26]
+                0.00    0.00 7930682/218088184     KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [8]
+                0.00    0.00 11860394/218088184     std::vector<Photon, std::allocator<Photon> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [12]
+                0.00    0.00 53577374/218088184     void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >) [24]
+                0.00    0.00 137562975/218088184     __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&) [14]
+[36]     0.0    0.00    0.00 218088184         Photon::~Photon() [36]
+-----------------------------------------------
+                0.00    0.00  350767/12351076     void std::__insertion_sort<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.123] [52]
+                0.00    0.00  918846/12351076     QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+                0.00    0.00 11081463/12351076     void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] [23]
+[37]     0.0    0.00    0.00 12351076         sorterQuad(SceneObject*, SceneObject*) [37]
+-----------------------------------------------
+                0.00    0.00 4325488/4325488     SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+[38]     0.0    0.00    0.00 4325488         Plane::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [38]
+-----------------------------------------------
+                0.00    0.00  754183/754183      SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [21]
+[39]     0.0    0.00    0.00  754183         GerstnerWave::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [39]
+-----------------------------------------------
+                0.00    0.00  683367/683367      RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [10]
+[40]     0.0    0.00    0.00  683367         Collision::Collision() [40]
+-----------------------------------------------
+                0.00    0.00       1/364933      GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [88]
+                0.00    0.00       6/364933      Plane::Plane(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [66]
+                0.00    0.00   87381/364933      QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+                0.00    0.00   95082/364933      Triangle::Triangle(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [50]
+                0.00    0.00  182463/364933      Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [45]
+[41]     0.0    0.00    0.00  364933         SceneObject::SceneObject() [41]
+-----------------------------------------------
+                0.00    0.00   69366/269637      PhotonMapper::buildGlobalMap() [7]
+                0.00    0.00  200271/269637      PhotonMapper::buildCausticMap() [4]
+[42]     0.0    0.00    0.00  269637         Triangle::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [42]
+-----------------------------------------------
+                0.00    0.00   69366/269637      PhotonMapper::buildGlobalMap() [7]
+                0.00    0.00  200271/269637      PhotonMapper::buildCausticMap() [4]
+[43]     0.0    0.00    0.00  269637         RayTracer::findRefract(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, float, float*, float*, float*) [43]
+-----------------------------------------------
+                0.00    0.00       1/200001      PhotonMapper::buildCausticMap() [4]
+                0.00    0.00  200000/200001      PhotonMapper::buildGlobalMap() [7]
+[44]     0.0    0.00    0.00  200001         Light::getPosition() [44]
+-----------------------------------------------
+                0.00    0.00   87381/182463      QuadTreeNode::combineBB(Box*, Box*, Box*, Box*) [51]
+                0.00    0.00   95082/182463      Triangle::constructBB() [49]
+[45]     0.0    0.00    0.00  182463         Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [45]
+                0.00    0.00  182463/364933      SceneObject::SceneObject() [41]
+-----------------------------------------------
+                0.00    0.00       4/141585      setup(int, char**, Pixel**) [18]
+                0.00    0.00       4/141585      PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+                0.00    0.00      14/141585      GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+                0.00    0.00  141563/141585      QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+[46]     0.0    0.00    0.00  141585         std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&) [46]
+-----------------------------------------------
+                0.00    0.00   16694/116391      RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int) [2]
+                0.00    0.00   99697/116391      PhotonMapper::buildGlobalMap() [7]
+[47]     0.0    0.00    0.00  116391         Plane::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [47]
+-----------------------------------------------
+                0.00    0.00   99697/99697       PhotonMapper::buildGlobalMap() [7]
+[48]     0.0    0.00    0.00   99697         RayTracer::findReflect(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*) [48]
+-----------------------------------------------
+                0.00    0.00   95082/95082       GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+[49]     0.0    0.00    0.00   95082         Triangle::constructBB() [49]
+                0.00    0.00   95082/182463      Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [45]
+-----------------------------------------------
+                0.00    0.00   95082/95082       GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+[50]     0.0    0.00    0.00   95082         Triangle::Triangle(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [50]
+                0.00    0.00   95082/364933      SceneObject::SceneObject() [41]
+-----------------------------------------------
+                0.00    0.00   87381/87381       QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+[51]     0.0    0.00    0.00   87381         QuadTreeNode::combineBB(Box*, Box*, Box*, Box*) [51]
+                0.00    0.00   87381/182463      Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [45]
+-----------------------------------------------
+                0.00    0.00   65535/65535       QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [17]
+[52]     0.0    0.00    0.00   65535         void std::__insertion_sort<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.123] [52]
+                0.00    0.00  350767/12351076     sorterQuad(SceneObject*, SceneObject*) [37]
+-----------------------------------------------
+                0.00    0.00   48000/48000       GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+[53]     0.0    0.00    0.00   48000         GerstnerWave::getPoint(float, float, float) [53]
+-----------------------------------------------
+                0.00    0.00   48000/48000       GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+[54]     0.0    0.00    0.00   48000         GerstnerWave::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [54]
+-----------------------------------------------
+                0.00    0.00       8/102         PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [97]
+                0.00    0.00      20/102         PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+                0.00    0.00      28/102         PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+                0.00    0.00      46/102         PovParser::parseFinish(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [58]
+[55]     0.0    0.00    0.00     102         __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&) [55]
+-----------------------------------------------
+                0.00    0.00       2/24          PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [96]
+                0.00    0.00       4/24          PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [97]
+                0.00    0.00       5/24          PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+                0.00    0.00       6/24          PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+                0.00    0.00       7/24          PovParser::parsePigment(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [59]
+[56]     0.0    0.00    0.00      24         PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+-----------------------------------------------
+                0.00    0.00       5/15          GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [88]
+                0.00    0.00      10/15          GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [69]
+[57]     0.0    0.00    0.00      15         std::vector<float, std::allocator<float> >::_M_insert_aux(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&) [57]
+-----------------------------------------------
+                0.00    0.00       7/7           PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+[58]     0.0    0.00    0.00       7         PovParser::parseFinish(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [58]
+                0.00    0.00      46/102         __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&) [55]
+-----------------------------------------------
+                0.00    0.00       7/7           PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+[59]     0.0    0.00    0.00       7         PovParser::parsePigment(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [59]
+                0.00    0.00       7/24          PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+-----------------------------------------------
+                0.00    0.00       1/7           PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+                0.00    0.00       6/7           PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+[60]     0.0    0.00    0.00       7         PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+                0.00    0.00      28/102         __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&) [55]
+                0.00    0.00       7/7           PovParser::parsePigment(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [59]
+                0.00    0.00       7/7           PovParser::parseFinish(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [58]
+-----------------------------------------------
+                0.00    0.00       6/6           PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+[61]     0.0    0.00    0.00       6         SceneObject::constructBB() [61]
+-----------------------------------------------
+                0.00    0.00       6/6           PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+[62]     0.0    0.00    0.00       6         SceneObject::applyTransforms() [62]
+                0.00    0.00       6/6           SceneObject::rotate() [64]
+                0.00    0.00       6/6           SceneObject::scale() [63]
+                0.00    0.00       6/6           SceneObject::translate() [65]
+-----------------------------------------------
+                0.00    0.00       6/6           SceneObject::applyTransforms() [62]
+[63]     0.0    0.00    0.00       6         SceneObject::scale() [63]
+-----------------------------------------------
+                0.00    0.00       6/6           SceneObject::applyTransforms() [62]
+[64]     0.0    0.00    0.00       6         SceneObject::rotate() [64]
+-----------------------------------------------
+                0.00    0.00       6/6           SceneObject::applyTransforms() [62]
+[65]     0.0    0.00    0.00       6         SceneObject::translate() [65]
+-----------------------------------------------
+                0.00    0.00       6/6           PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+[66]     0.0    0.00    0.00       6         Plane::Plane(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [66]
+                0.00    0.00       6/364933      SceneObject::SceneObject() [41]
+-----------------------------------------------
+                0.00    0.00       6/6           PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+[67]     0.0    0.00    0.00       6         PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+                0.00    0.00       6/24          PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+                0.00    0.00       6/6           Plane::Plane(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [66]
+                0.00    0.00       6/7           PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+                0.00    0.00       6/6           SceneObject::applyTransforms() [62]
+                0.00    0.00       6/6           SceneObject::constructBB() [61]
+                0.00    0.00       4/141585      std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&) [46]
+-----------------------------------------------
+                0.00    0.00       1/6           GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [88]
+                0.00    0.00       2/6           GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [69]
+                0.00    0.00       3/6           PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+[68]     0.0    0.00    0.00       6         std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&) [68]
+-----------------------------------------------
+                0.00    0.00       2/2           PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+[69]     0.0    0.00    0.00       2         GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [69]
+                0.00    0.00      10/15          std::vector<float, std::allocator<float> >::_M_insert_aux(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&) [57]
+                0.00    0.00       2/6           std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&) [68]
+-----------------------------------------------
+                0.00    0.00       1/2           PhotonMapper::buildCausticMap() [4]
+                0.00    0.00       1/2           PhotonMapper::buildGlobalMap() [7]
+[70]     0.0    0.00    0.00       2         RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >) [70]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[71]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN10KDTreeNodeC2EPS_S0_P6Photoni [71]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[72]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN11SceneObjectC2Ev [72]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[73]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN12GerstnerWaveC2EfffN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_f [73]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[74]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN12PhotonMapperC2Ev [74]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[75]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN3BoxC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_ [75]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[76]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN4ConeC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEfS2_f [76]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[77]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN5PlaneC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf [77]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[78]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN6PhotonC2Ev [78]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[79]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN6SphereC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf [79]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[80]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN8TriangleC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_ [80]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[81]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN9CollisionC2EfP11SceneObject [81]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[82]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN9PovParserC2Ev [82]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[83]     0.0    0.00    0.00       1         _GLOBAL__sub_I__ZN9RayTracerC2ESt6vectorIP5LightSaIS2_EES0_IP11SceneObjectSaIS6_EE [83]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[84]     0.0    0.00    0.00       1         _GLOBAL__sub_I_objects [84]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[85]     0.0    0.00    0.00       1         _GLOBAL__sub_I_sortAxisBi [85]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [214]
+[86]     0.0    0.00    0.00       1         _GLOBAL__sub_I_sortAxisQuad [86]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[87]     0.0    0.00    0.00       1         GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [87]
+                0.00    0.00   95082/95082       Triangle::Triangle(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [50]
+                0.00    0.00   95082/95082       Triangle::constructBB() [49]
+                0.00    0.00   48000/48000       GerstnerWave::getPoint(float, float, float) [53]
+                0.00    0.00   48000/48000       GerstnerWave::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [54]
+                0.00    0.00      14/141585      std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&) [46]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+[88]     0.0    0.00    0.00       1         GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [88]
+                0.00    0.00       5/15          std::vector<float, std::allocator<float> >::_M_insert_aux(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&) [57]
+                0.00    0.00       1/364933      SceneObject::SceneObject() [41]
+                0.00    0.00       1/6           std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&) [68]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [96]
+[89]     0.0    0.00    0.00       1         Light::Light(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [89]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[90]     0.0    0.00    0.00       1         Camera::getPosition() [90]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[91]     0.0    0.00    0.00       1         Camera::getUp() [91]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[92]     0.0    0.00    0.00       1         Camera::getRight() [92]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[93]     0.0    0.00    0.00       1         Camera::getLookAt() [93]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [97]
+[94]     0.0    0.00    0.00       1         Camera::Camera(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [94]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[95]     0.0    0.00    0.00       1         PovParser::getObjects() [95]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+[96]     0.0    0.00    0.00       1         PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [96]
+                0.00    0.00       2/24          PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+                0.00    0.00       1/1           Light::Light(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [89]
+                0.00    0.00       1/1           std::vector<Light*, std::allocator<Light*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Light**, std::vector<Light*, std::allocator<Light*> > >, Light* const&) [104]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+[97]     0.0    0.00    0.00       1         PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [97]
+                0.00    0.00       8/102         __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&) [55]
+                0.00    0.00       4/24          PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+                0.00    0.00       1/1           Camera::Camera(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [94]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[98]     0.0    0.00    0.00       1         PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+                0.00    0.00       6/6           PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [67]
+                0.00    0.00       1/1           PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [97]
+                0.00    0.00       1/1           PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [96]
+                0.00    0.00       1/1           PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [98]
+[99]     0.0    0.00    0.00       1         PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [99]
+                0.00    0.00      20/102         __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&) [55]
+                0.00    0.00       5/24          PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [56]
+                0.00    0.00       3/6           std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&) [68]
+                0.00    0.00       2/2           GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [69]
+                0.00    0.00       1/1           GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [88]
+                0.00    0.00       1/7           PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [60]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[100]    0.0    0.00    0.00       1         PovParser::getCamera() [100]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[101]    0.0    0.00    0.00       1         PovParser::getLights() [101]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[102]    0.0    0.00    0.00       1         PovParser::PovParser() [102]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[103]    0.0    0.00    0.00       1         std::vector<SceneObject*, std::allocator<SceneObject*> >::operator=(std::vector<SceneObject*, std::allocator<SceneObject*> > const&) [103]
+-----------------------------------------------
+                0.00    0.00       1/1           PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [96]
+[104]    0.0    0.00    0.00       1         std::vector<Light*, std::allocator<Light*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Light**, std::vector<Light*, std::allocator<Light*> > >, Light* const&) [104]
+-----------------------------------------------
+                0.00    0.00       1/1           setup(int, char**, Pixel**) [18]
+[105]    0.0    0.00    0.00       1         std::vector<Light*, std::allocator<Light*> >::operator=(std::vector<Light*, std::allocator<Light*> > const&) [105]
+-----------------------------------------------
+                0.00    0.00       1/1           RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >, std::vector<Photon*, std::allocator<Photon*> >, std::vector<Photon*, std::allocator<Photon*> >, KDTreeNode*, KDTreeNode*) [196]
+[106]    0.0    0.00    0.00       1         std::vector<Photon*, std::allocator<Photon*> >::operator=(std::vector<Photon*, std::allocator<Photon*> > const&) [106]
+-----------------------------------------------
+                               36126             KDTreeNode::Treesize(KDTreeNode*) [118]
+[118]    0.0    0.00    0.00       0+36126   KDTreeNode::Treesize(KDTreeNode*) [118]
+                               36126             KDTreeNode::Treesize(KDTreeNode*) [118]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [71] _GLOBAL__sub_I__ZN10KDTreeNodeC2EPS_S0_P6Photoni (KDTreeNode.cpp) [13] QuadTreeNode::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [59] PovParser::parsePigment(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  [72] _GLOBAL__sub_I__ZN11SceneObjectC2Ev (SceneObject.cpp) [51] QuadTreeNode::combineBB(Box*, Box*, Box*, Box*) [60] PovParser::parseObjProps(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*)
+  [73] _GLOBAL__sub_I__ZN12GerstnerWaveC2EfffN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_f (GerstnerWave.cpp) [17] QuadTreeNode::QuadTreeNode(std::vector<SceneObject*, std::allocator<SceneObject*> >, int, int) [98] PovParser::parse(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  [74] _GLOBAL__sub_I__ZN12PhotonMapperC2Ev (PhotonMapper.cpp) [15] Box::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [99] PovParser::parseGW(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&)
+  [75] _GLOBAL__sub_I__ZN3BoxC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_ (Box.cpp) [45] Box::Box(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [100] PovParser::getCamera()
+  [76] _GLOBAL__sub_I__ZN4ConeC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEfS2_f (Cone.cpp) [5] void Eigen::internal::parallelize_gemm<true, Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> >, long>(Eigen::internal::gemm_functor<float, long, Eigen::internal::general_matrix_matrix_product<long, float, 0, false, float, 0, false, 0>, Eigen::Matrix<float, -1, -1, 0, -1, -1>, Eigen::Matrix<float, 3, 3, 0, 3, 3>, Eigen::Matrix<float, -1, 3, 0, -1, 3>, Eigen::internal::gemm_blocking_space<0, float, float, -1, 3, 3, 1, false> > const&, long, long, bool) [101] PovParser::getLights()
+  [77] _GLOBAL__sub_I__ZN5PlaneC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf (Plane.cpp) [6] Image::pixel(int, int, color_struct) [102] PovParser::PovParser()
+  [78] _GLOBAL__sub_I__ZN6PhotonC2Ev (Photon.cpp) [44] Light::getPosition() [48] RayTracer::findReflect(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*)
+  [79] _GLOBAL__sub_I__ZN6SphereC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEEf (Sphere.cpp) [1] Light::getColor() [43] RayTracer::findRefract(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, float, float*, float*, float*)
+  [80] _GLOBAL__sub_I__ZN8TriangleC2EN5Eigen6MatrixIfLi3ELi1ELi0ELi3ELi1EEES2_S2_ (Triangle.cpp) [89] Light::Light(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [2] RayTracer::calcRadiance(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, SceneObject*, bool, float, float, float, int)
+  [81] _GLOBAL__sub_I__ZN9CollisionC2EfP11SceneObject (Collision.cpp) [38] Plane::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [10] RayTracer::trace(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool)
+  [82] _GLOBAL__sub_I__ZN9PovParserC2Ev (PovParser.cpp) [47] Plane::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [70] RayTracer::RayTracer(std::vector<Light*, std::allocator<Light*> >, std::vector<SceneObject*, std::allocator<SceneObject*> >)
+  [83] _GLOBAL__sub_I__ZN9RayTracerC2ESt6vectorIP5LightSaIS2_EES0_IP11SceneObjectSaIS6_EE (RayTracer.cpp) [66] Plane::Plane(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [12] std::vector<Photon, std::allocator<Photon> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&)
+  [84] _GLOBAL__sub_I_objects (main.cpp) [90] Camera::getPosition() [68] std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > >::_M_insert_aux(__gnu_cxx::__normal_iterator<Eigen::Matrix<float, 3, 1, 0, 3, 1>*, std::vector<Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::allocator<Eigen::Matrix<float, 3, 1, 0, 3, 1> > > >, Eigen::Matrix<float, 3, 1, 0, 3, 1> const&)
+  [85] _GLOBAL__sub_I_sortAxisBi (BiTreeNode.cpp) [91] Camera::getUp() [46] std::vector<SceneObject*, std::allocator<SceneObject*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, SceneObject* const&)
+  [86] _GLOBAL__sub_I_sortAxisQuad (QuadTreeNode.cpp) [92] Camera::getRight() [103] std::vector<SceneObject*, std::allocator<SceneObject*> >::operator=(std::vector<SceneObject*, std::allocator<SceneObject*> > const&)
+  [37] sorterQuad(SceneObject*, SceneObject*) [93] Camera::getLookAt() [104] std::vector<Light*, std::allocator<Light*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Light**, std::vector<Light*, std::allocator<Light*> > >, Light* const&)
+   [8] KDTreeNode::buildKDTree(std::vector<Photon*, std::allocator<Photon*> >, int) [94] Camera::Camera(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [105] std::vector<Light*, std::allocator<Light*> >::operator=(std::vector<Light*, std::allocator<Light*> > const&)
+   [3] KDTreeNode::locatePhotons(int, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<Photon*, std::allocator<Photon*> >*, float, float*, Eigen::Matrix<float, 3, 3, 0, 3, 3>, int) [20] Photon::Photon(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, int) [16] std::vector<Photon*, std::allocator<Photon*> >::_M_insert_aux(__gnu_cxx::__normal_iterator<Photon**, std::vector<Photon*, std::allocator<Photon*> > >, Photon* const&)
+  [61] SceneObject::constructBB() [36] Photon::~Photon() [106] std::vector<Photon*, std::allocator<Photon*> >::operator=(std::vector<Photon*, std::allocator<Photon*> > const&)
+  [21] SceneObject::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float, SceneObject**) [49] Triangle::constructBB() [57] std::vector<float, std::allocator<float> >::_M_insert_aux(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&)
+  [62] SceneObject::applyTransforms() [22] Triangle::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [28] void std::__push_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon)
+  [63] SceneObject::scale()   [42] Triangle::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [27] void std::__adjust_heap<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long, long, Photon)
+  [64] SceneObject::rotate()  [50] Triangle::Triangle(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, bool) [25] void std::__insertion_sort<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  [65] SceneObject::translate() [11] Collision::detectRayCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, std::vector<SceneObject*, std::allocator<SceneObject*> >, int, bool) [52] void std::__insertion_sort<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.123] (stl_algo.h)
+  [41] SceneObject::SceneObject() [40] Collision::Collision() [9] void std::__introsort_loop<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, long)
+  [87] GerstnerWave::addTriangles(std::vector<SceneObject*, std::allocator<SceneObject*> >*, float, float) [95] PovParser::getObjects() [23] void std::__introsort_loop<__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)>(__gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, __gnu_cxx::__normal_iterator<SceneObject**, std::vector<SceneObject*, std::allocator<SceneObject*> > >, long, bool (*)(SceneObject*, SceneObject*)) [clone .constprop.118] (stl_algo.h)
+  [39] GerstnerWave::checkCollision(Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [96] PovParser::parseLight(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [14] __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > std::__unguarded_partition<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon>(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, Photon const&)
+  [69] GerstnerWave::addWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>) [67] PovParser::parsePlane(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [26] void std::__move_median_to_first<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >, __gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  [53] GerstnerWave::getPoint(float, float, float) [97] PovParser::parseCamera(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [24] void std::__unguarded_linear_insert<__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > > >(__gnu_cxx::__normal_iterator<Photon*, std::vector<Photon, std::allocator<Photon> > >)
+  [54] GerstnerWave::getNormal(Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [56] PovParser::parseEVect3(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&) [55] __gnu_cxx::__normal_iterator<char*, std::string> std::remove<__gnu_cxx::__normal_iterator<char*, std::string>, char>(__gnu_cxx::__normal_iterator<char*, std::string>, __gnu_cxx::__normal_iterator<char*, std::string>, char const&)
+  [88] GerstnerWave::GerstnerWave(float, float, float, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, Eigen::Matrix<float, 3, 1, 0, 3, 1>, float) [58] PovParser::parseFinish(std::basic_stringstream<char, std::char_traits<char>, std::allocator<char> >&, SceneObject*) [19] operator<(Photon, Photon)

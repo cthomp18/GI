@@ -78,6 +78,8 @@ void PovParser::parse(stringstream& buffer) {
          parseCone(buffer);
       } else if (name == "box") {
          parseBox(buffer);
+      } else if (name == "gerstner_wave") {
+         parseGW(buffer);
       } else if (name == "\0") {
          cout << "good" << endl;
       } else {
@@ -232,6 +234,75 @@ void PovParser::parseBox(stringstream& buffer) {
    objects.push_back(box);
 }
 
+void PovParser::parseGW(stringstream& buffer) {
+   string name;
+   char curChar;
+   Eigen::Vector3f ll, ur, dir, dirsubwave, subwavestats;
+   float amp = 0.0f, wavel = 0.0f, speed = 0.0f, ypos = 0.0f, val;
+   std::vector<Eigen::Vector3f> waves;
+   waves.clear();
+   
+   GerstnerWave *gerstnerWave;
+   locateOpenBrace(buffer, "GW");
+   while ((curChar = buffer.get()) != '}') { 
+      if (!buffer || curChar == '{') {
+         perror("Error - PovRay - Camera - Bad Format (No Closed Brace)");
+         exit(1);
+      }
+      
+      if (curChar != ' ' && curChar != '\n' && curChar != '\r') {
+         buffer.unget();
+         buffer >> name;
+         name.erase(remove(name.begin(), name.end(), '\n'), name.end());
+         name.erase(remove(name.begin(), name.end(), '\r'), name.end());
+         
+         if (name == "lowerleft") {
+            ll = parseEVect3(buffer);
+         } else if (name == "upperright") {
+            ur = parseEVect3(buffer);
+         } else if (name == "direction") {
+            dir = parseEVect3(buffer);
+         } else if (name == "amplitude") {
+            buffer >> amp;
+         } else if (name == "wavelength") {
+            buffer >> wavel;
+         } else if (name == "speed") {
+            buffer >> speed;
+         } else if (name == "yposition") {
+            buffer >> ypos;
+         } else if (name == "wave") {
+            locateOpenBrace(buffer, "GW_sub_wave");
+            buffer >> subwavestats.x();
+            buffer >> subwavestats.y();
+            buffer >> subwavestats.z();
+            waves.push_back(subwavestats);
+            waves.push_back(parseEVect3(buffer));
+            locateCloseBrace(buffer, "GW_sub_wave");
+         } else if (name == "pigment" || name == "finish") {
+            for (int i = 0; i < 7; i++) buffer.unget();
+            break;
+         } else {
+            perror("Error - PovRay - GW - Bad Name");
+            cout << "Name Given: " << name << endl;
+            exit(1);
+         }
+      }
+   }
+   
+   gerstnerWave = new GerstnerWave(amp, wavel, speed, dir, ll, ur, ypos);
+   for (int i = 0; i < waves.size(); i+=2) {
+      waves[i+1].normalize();
+      gerstnerWave->addWave(waves[i].x(), waves[i].y(), waves[i].z(), waves[i+1]);
+   }
+   gerstnerWave->type = 5;
+   
+   parseObjProps(buffer, gerstnerWave);
+   //gerstnerWave->constructBB();
+   //gerstnerWave->applyTransforms();
+   
+   objects.push_back(gerstnerWave);
+}
+
 void PovParser::parseCone(stringstream& buffer) {
    Eigen::Vector3f endpt1, endpt2;
    float rad1, rad2;
@@ -346,6 +417,7 @@ void PovParser::parseFinish(stringstream& buffer, SceneObject* object) {
          else if (name == "ior") object->indexRefraction = val;
          else if (name == "preflect") object->photonReflectance = val;
          else if (name == "prefract") object->photonRefractance = val;
+         else if (name == "dropoff") object->dropoff = val;
          else {
             perror("Error - PovRay - Finish - Bad Name");
             cout << "Name Given: " << name << endl;

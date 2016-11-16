@@ -27,7 +27,7 @@ class RayTracer {
       
       Collision* trace(Eigen::Vector3f start, Eigen::Vector3f ray, bool unit);
       Eigen::Vector3f findReflect(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj);
-      Eigen::Vector3f findRefract(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj, float n1, float* n2, float* reflectScale);
+      Eigen::Vector3f findRefract(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
       
       std::vector<Light*> lights;
       std::vector<SceneObject*> objects;
@@ -37,7 +37,7 @@ class RayTracer {
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      color_t calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, int depth);
+      color_t calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
    private:
       
 };

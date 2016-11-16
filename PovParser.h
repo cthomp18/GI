@@ -21,6 +21,7 @@
 #include "Cone.h"
 #include "Triangle.h"
 #include "Box.h"
+#include "GerstnerWave.h"
 
 using namespace std;
 
@@ -56,6 +57,7 @@ class PovParser {
       void parseTriangle(stringstream& buffer);
       void parseCone(stringstream& buffer);
       void parseBox(stringstream& buffer);
+      void parseGW(stringstream& buffer);
       
       //Sub-Parser Stuff
       void parseObjProps(stringstream& buffer, SceneObject* object);

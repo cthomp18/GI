@@ -5,7 +5,7 @@
 
 #include "GerstnerWave.h"
 using namespace std;
-GerstnerWave::GerstnerWave(float a, float w, float s, Eigen::Vector2f d, Eigen::Vector2f lowerleft, Eigen::Vector2f upperright, float yPosition) : SceneObject() {
+GerstnerWave::GerstnerWave(float a, float w, float s, Eigen::Vector3f d, Eigen::Vector3f lowerleft, Eigen::Vector3f upperright, float yPosition) : SceneObject() {
    amplitude.clear();
    wavelength.clear();
    frequency.clear();
@@ -17,6 +17,7 @@ GerstnerWave::GerstnerWave(float a, float w, float s, Eigen::Vector2f d, Eigen::
    wavelength.push_back(w);
    frequency.push_back(sqrt(9.81f * ((2.0f * M_PI) / w)));
    speedPC.push_back(s * sqrt(9.81f * ((2.0f * M_PI) / w)));
+   d.normalize();
    direction.push_back(d);
    steepness.push_back(1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * 2.0f));
    lb = lowerleft;
@@ -34,7 +35,7 @@ GerstnerWave::GerstnerWave() : SceneObject() {
    direction.clear();
    steepness.clear();
 
-   lb = ub = Eigen::Vector2f(0.0f,0.0f);
+   lb = ub = Eigen::Vector3f(0.0f,0.0f,0.0f);
    steepness.clear();
    yPos = 0.0f;
    
@@ -43,8 +44,10 @@ GerstnerWave::GerstnerWave() : SceneObject() {
 
 GerstnerWave::~GerstnerWave() {}
 
+// Not using this function anymore btw
+
 float GerstnerWave::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time) {
-   float t = -1.0f, tAccrue = 0.0f;
+   /*float t = -1.0f, tAccrue = 0.0f;
    
    //Ray Marching Boys
    
@@ -77,7 +80,8 @@ float GerstnerWave::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
    }
    
    if (pt1.y() - ptW.y() <= TOLERANCE) { t = tAccrue; }
-   return t;
+   return t;*/
+   return -1.0f;
 }
 
 Eigen::Vector3f GerstnerWave::getNormal(Eigen::Vector3f iPt, float time) {
@@ -86,9 +90,9 @@ Eigen::Vector3f GerstnerWave::getNormal(Eigen::Vector3f iPt, float time) {
    
    for (int i = 0; i < waves; i++) {
       wa = frequency[i] * amplitude[i];
-      wdpt = (frequency[i] * Eigen::Vector3f(direction[i].x(), 0.0f, direction[i].y())).dot(iPt) + (time * speedPC[i]);
+      wdpt = (frequency[i] * Eigen::Vector3f(direction[i].x(), 0.0f, direction[i].z())).dot(iPt) + (time * speedPC[i]);
       coswa = wa * cos(wdpt);
-      normal -= Eigen::Vector3f(direction[i].x() * coswa, (steepness[i] * wa * sin(wdpt)), direction[i].y() * coswa);
+      normal -= Eigen::Vector3f(direction[i].x() * coswa, (steepness[i] * wa * sin(wdpt)), direction[i].z() * coswa);
    }
    normal.normalize();
    
@@ -100,19 +104,20 @@ Eigen::Vector3f GerstnerWave::getPoint(float x, float z, float time) {
    float wdpt, qacos;
    
    for (int i = 0; i < waves; i++) {
-      wdpt = (frequency[i] * direction[i]).dot(Eigen::Vector2f(x, z)) + (time * speedPC[i]);
+      wdpt = (frequency[i] * direction[i]).dot(Eigen::Vector3f(x, 0.0f, z)) + (time * speedPC[i]);
       qacos = steepness[i] * amplitude[i] * cos(wdpt);
-      iPt += Eigen::Vector3f(qacos * direction[i].x(), (amplitude[i] * sin(wdpt)) + yPos, qacos * direction[i].y());
+      iPt += Eigen::Vector3f(qacos * direction[i].x(), (amplitude[i] * sin(wdpt)) + yPos, qacos * direction[i].z());
    }
    
    return iPt;
 }
 
-void GerstnerWave::addWave(float a, float w, float s, Eigen::Vector2f d) {
+void GerstnerWave::addWave(float a, float w, float s, Eigen::Vector3f d) {
    amplitude.push_back(a);
    wavelength.push_back(w);
    frequency.push_back(sqrt(9.81f * ((2.0f * M_PI) / w)));
    speedPC.push_back(s * sqrt(9.81f * ((2.0f * M_PI) / w)));
+   d.normalize();
    direction.push_back(d);
    steepness.push_back(1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * float(waves + 1)));
    
@@ -124,14 +129,83 @@ void GerstnerWave::addWave(float a, float w, float s, Eigen::Vector2f d) {
    waves++;
 }
 
+void GerstnerWave::addTriangles(std::vector<SceneObject*> *objects, float step, float time) {
+   float depth = ub[2] - lb[2], width = ub[0] - lb[0];
+   int matDepth = depth / step, matWidth = width / step;
+   
+   Eigen::Vector3f wavePts[matDepth][matWidth];
+   Eigen::Vector3f waveNorms[matDepth][matWidth];
+  
+   //FILL MATS
+   for (int i = 0; i < matDepth; i++) {
+      for (int j = 0; j < matWidth; j++) {
+         wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
+         waveNorms[i][j] = getNormal(wavePts[i][j], time);
+      }
+   }
+   
+   //WRITE
+   //EACH ITERATION = 2 TRIANGLES
+   //SQUARES
+   Eigen::Vector3f a, b, c;
+   Triangle *triangle;
+   cout << matDepth << endl;
+   cout << matWidth << endl;
+   for (int i = 0; i < matDepth - 1; i++) {
+      for (int j = 0; j < matWidth - 1; j++) {
+         a = wavePts[i][j];
+         b = wavePts[i+1][j];
+         c = wavePts[i][j+1];
+         
+         triangle = new Triangle(a, b, c, true);
+         triangle->aNor = waveNorms[i][j];
+         triangle->bNor = waveNorms[i+1][j];
+         triangle->cNor = waveNorms[i][j+1];
+         
+         triangle->pigment = pigment;
+         triangle->refraction = refraction;
+         triangle->indexRefraction = indexRefraction;
+         triangle->photonReflectance = photonReflectance;
+         triangle->photonRefractance = photonRefractance;
+         triangle->dropoff = dropoff;
+         triangle->type = 2;
+         triangle->constructBB();
+         
+         objects->push_back(triangle);
+         
+         a = wavePts[i+1][j];
+         b = wavePts[i+1][j+1];
+         c = wavePts[i][j+1];
+         
+         triangle = new Triangle(a, b, c, true);
+         triangle->aNor = waveNorms[i+1][j];
+         triangle->bNor = waveNorms[i+1][j+1];
+         triangle->cNor = waveNorms[i][j+1];
+         
+         triangle->pigment = pigment;
+         triangle->refraction = refraction;
+         triangle->indexRefraction = indexRefraction;
+         triangle->photonReflectance = photonReflectance;
+         triangle->photonRefractance = photonRefractance;
+         triangle->dropoff = dropoff;
+         triangle->type = 2;
+         triangle->constructBB();
+         
+         objects->push_back(triangle);
+      }
+   }
+   cout << objects->size() << endl;
+}
+
 void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
    //GOING TO BUILD 2D MATRIX OF WAVE POINTS
    //WRITE INTO FILE TRIANGLES IN POV FORMAT
    
-   float depth = ub[1] - lb[1], width = ub[0] - lb[0];
+   float depth = ub[2] - lb[2], width = ub[0] - lb[0];
    int matDepth = depth / step, matWidth = width / step;
    
    Eigen::Vector3f wavePts[matDepth][matWidth];
+   Eigen::Vector3f waveNorms[matDepth][matWidth];
    
    ofstream meshFile;
    meshFile.open(fileName);
@@ -140,7 +214,8 @@ void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
    //FILL MAT
    for (int i = 0; i < matDepth; i++) {
       for (int j = 0; j < matWidth; j++) {
-         wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[1], time);
+         wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
+         waveNorms[i][j] = getNormal(wavePts[i][j], time);
       }
    }
    
@@ -159,7 +234,7 @@ void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
          meshFile << "<" << b.x() << ", " << b.y() << ", " << b.z() << ">,\n";
          meshFile << "<" << c.x() << ", " << c.y() << ", " << c.z() << ">\n";
          meshFile << "pigment { color rgb <" << pigment.x() << ", " << pigment.y() << ", " << pigment.z() << ">}\n";
-         meshFile << "finish {refraction " << refraction << " ior " << indexRefraction << "}\n";
+         meshFile << "finish {refraction " << refraction << " ior " << indexRefraction << " preflect " << photonReflectance << " prefract " << photonRefractance << "}\n";
          meshFile << "}\n";
          
          a = wavePts[i+1][j];
@@ -171,7 +246,7 @@ void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
          meshFile << "<" << b.x() << ", " << b.y() << ", " << b.z() << ">,\n";
          meshFile << "<" << c.x() << ", " << c.y() << ", " << c.z() << ">\n";
          meshFile << "pigment { color rgb <" << pigment.x() << ", " << pigment.y() << ", " << pigment.z() << ">}\n";
-         meshFile << "finish {refraction " << refraction << " ior " << indexRefraction << "}\n";
+         meshFile << "finish {refraction " << refraction << " ior " << indexRefraction << " preflect " << photonReflectance << " prefract " << photonRefractance << "}\n";
          meshFile << "}\n";
       }
    }

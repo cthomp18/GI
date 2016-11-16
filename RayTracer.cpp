@@ -31,7 +31,7 @@ Collision* RayTracer::trace(Eigen::Vector3f start, Eigen::Vector3f ray, bool uni
    return c;
 }
 
-color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, int depth) {
+color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth) {
    int numGPhotons = globalMap.size();
    int numCPhotons = causticMap.size();
    float e = 2.71828;
@@ -46,7 +46,7 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
    Eigen::Matrix3f mat, matInv;
    
    color_t clr, absorbClr, reflectClr, refractClr;
-   float dots1 = 0.0, dots2 = 0.0, temp, temp2, time, mainDist, mainT, dist, reflectance = 1.0f / obj->roughness, D, F, G, m, n2, sroot, R = 0.0f, R0 = 0.0f, innersqr = 1.0f, reflectScale;
+   float dots1 = 0.0, dots2 = 0.0, temp, temp2, time, mainDist, mainT, dist, reflectance = 1.0f / obj->roughness, D, F, G, m, n2, sroot, R = 0.0f, R0 = 0.0f, innersqr = 1.0f, reflectScale, tempDO;
    Eigen::Vector3f colorD, colorS, colorA, color, normal, reflectRay, newStart, newIPt, crossP;
    Eigen::Vector4f tempNormal, tempStart, tempIPt;
    Eigen::Vector3f pigment(obj->pigment.x(), obj->pigment.y(), obj->pigment.z());
@@ -152,11 +152,11 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
    } else {
       if (depth > 0) {         
          //Do Refraction
-         reflectRay = findRefract(dir, normal, obj, n1, &n2, &reflectScale);
+         reflectRay = findRefract(dir, normal, obj, n1, &n2, &reflectScale, &tempDO);
          if (fabs(reflectScale - 1.0f) >= TOLERANCE) { //Total internal reflection carry-over check
             col = trace(iPt, reflectRay, unit);
             if (col->time >TOLERANCE) {
-               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, depth - 1);
+               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, depth - 1);
             }
             delete(col);
          }
@@ -168,14 +168,16 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
       reflectRay = findReflect(dir, normal, obj);
       col = trace(iPt, reflectRay, unit);
       if (col->time >= TOLERANCE) {
-         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, depth - 1);
+         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, depth - 1);
       }
       delete(col);
    }
 
-   clr.r += absorbClr.r + reflectClr.r + refractClr.r;
-   clr.g += absorbClr.g + reflectClr.g + refractClr.g;
-   clr.b += absorbClr.b + reflectClr.b + refractClr.b;
+   time = (iPt - start).norm();
+   float dropoffCalc = pow(dropoff, time);
+   clr.r += (absorbClr.r + reflectClr.r + refractClr.r) * dropoffCalc;
+   clr.g += (absorbClr.g + reflectClr.g + refractClr.g) * dropoffCalc;
+   clr.b += (absorbClr.b + reflectClr.b + refractClr.b) * dropoffCalc;
    
 	return clr;
 }
@@ -189,7 +191,7 @@ Eigen::Vector3f RayTracer::findReflect(Eigen::Vector3f ray, Eigen::Vector3f norm
    return reflectRay;
 }
 
-Eigen::Vector3f RayTracer::findRefract(Eigen::Vector3f ray, Eigen::Vector3f normalI, SceneObject* obj, float n1, float* n2, float* R) {
+Eigen::Vector3f RayTracer::findRefract(Eigen::Vector3f ray, Eigen::Vector3f normalI, SceneObject* obj, float n1, float* n2, float* R, float* dropoff) {
    Eigen::Vector3f refractRay, normal = normalI;
    float dots1, R0, sroot, innersqr;
    
@@ -197,10 +199,12 @@ Eigen::Vector3f RayTracer::findRefract(Eigen::Vector3f ray, Eigen::Vector3f norm
    dots1 = (-ray).dot(normal);
    if (dots1 < 0.0f) { //Exitting
       *n2 = 1.0f; //Assume no refract object collision
+      *dropoff = 1.0f;
       normal *= -1.0f;
       dots1 = (-ray).dot(normal);
    } else { //Entering
       *n2 = obj->indexRefraction;
+      *dropoff = obj->dropoff;
    }
    
    sroot = 1.0f - ((n1 / *n2) * (n1 / *n2) * (1.0f - (dots1 * dots1)));

@@ -1,0 +1,5 @@
+INC=-I$(EIGEN3_INCLUDE_DIR)
+CC=icc
+
+all:	
+	$(CC) -O3 $(INC) -g -openmp -mkl -o trace IntersectComp.cpp RayTracer.cpp Image.cpp main.cpp
