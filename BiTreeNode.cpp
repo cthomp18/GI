@@ -8,7 +8,7 @@
 #include "BiTreeNode.h"
 
 #define TOLERANCE 0.001
-
+using namespace std;
 int sortAxisBi = 0;
 
 bool sorterBi(SceneObject* s1, SceneObject* s2) { 
@@ -77,12 +77,14 @@ BiTreeNode::BiTreeNode(std::vector<SceneObject*> objects, int axis, int n) : Sce
       middle = n / 2;
       tempVect1.clear();
       tempVect2.clear();
+
       for (int i = 0; i < middle; i++) {
          tempVect1.push_back(objects[i]);
       }
       for (int i = middle; i < n; i++) {
          tempVect2.push_back(objects[i]);
       }
+
       //std::cout << n << " " << middle << std::endl;
       left = new BiTreeNode(tempVect1, (axis + 1) % 3, tempVect1.size());
       right = new BiTreeNode(tempVect2, (axis + 1) % 3, tempVect2.size());

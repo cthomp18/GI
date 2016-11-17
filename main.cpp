@@ -30,7 +30,7 @@
 #include "Light.h"
 #include "PovParser.h"
 #include "GerstnerWave.h"
-#include "QuadTreeNode.h"
+#include "BiTreeNode.h"
 
 std::vector<SceneObject*> objects;
 
@@ -118,7 +118,7 @@ void setup(int argc, char* argv[], Pixel** pixels) {
          cout << "waves: " << GW->waves << endl;*/
          //GW->toPovFileMesh("tempTriComp.pov", 0.05f, 2.0f);
          //std::terminate();
-         GW->addTriangles(&tempObjects, 0.05f, 2.0f);
+         GW->addTriangles(&tempObjects, 0.1f, 2.0f);
          //GOING AWAY SOON
          /*char *fileName = "tempTri.pov";
          ofstream meshFile;
@@ -148,7 +148,6 @@ void setup(int argc, char* argv[], Pixel** pixels) {
          cout << tempObjects.size() << endl;
       }
    }
-   
    for (int i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 1 || tempObjects[i]->type == 5) {
          objects.push_back(tempObjects[i]);
@@ -165,9 +164,9 @@ void setup(int argc, char* argv[], Pixel** pixels) {
       objects.push_back(tempObjects[i]->boundingBox);
       objects[objects.size() - 1]->pigment = Eigen::Vector4f(0.7, 0.7, 0.7, 1.0f);
    }*/
-   QuadTreeNode* root;
+   BiTreeNode* root;
    if (tempObjects.size() > 0) {
-      root = new QuadTreeNode(tempObjects, tempObjects.size(), 0);
+      root = new BiTreeNode(tempObjects, 0, tempObjects.size());
       cout << "Quad Tree made" << endl;
       //root->printObj();
       objects.push_back(root);
@@ -242,7 +241,7 @@ int main(int argc, char* argv[]) {
    setup(argc, argv, pixels);
 
    KDTreeNode* kd = new KDTreeNode();
-   Image img(imgwidth, imgheight);
+   //Image* img = new Image(imgwidth, imgheight);
    PhotonMapper* pm = new PhotonMapper(lights, objects);
    cout << "Building Global Photon Map... " << endl;
    pm->buildGlobalMap();
@@ -310,18 +309,18 @@ int main(int argc, char* argv[]) {
    //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
    //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
   // set a square to be the color above
-  for (int i=0; i < imgwidth; i++) {
+  /*for (int i=0; i < imgwidth; i++) {
     for (int j=0; j < imgheight; j++) {
       //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
       pixels[i][j].clr.r = std::min(pixels[i][j].clr.r, 1.0);
       pixels[i][j].clr.g = std::min(pixels[i][j].clr.g, 1.0);
       pixels[i][j].clr.b = std::min(pixels[i][j].clr.b, 1.0);
-      img.pixel(i, j, pixels[i][j].clr);
+      img->pixel(i, j, pixels[i][j].clr);
     }
-  }
+  }*/
 
   // write the targa file to disk
-  img.WriteTga((char *)"awesome.tga", true); 
+  //img->WriteTga((char *)"awesome.tga", true); 
   // true to scale to max color, false to clamp to 1.0
 
 }
