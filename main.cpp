@@ -30,7 +30,7 @@
 #include "Light.h"
 #include "PovParser.h"
 #include "GerstnerWave.h"
-#include "BiTreeNode.h"
+#include "QuadTreeNode.h"
 
 std::vector<SceneObject*> objects;
 
@@ -118,7 +118,7 @@ void setup(int argc, char* argv[], Pixel** pixels) {
          cout << "waves: " << GW->waves << endl;*/
          //GW->toPovFileMesh("tempTriComp.pov", 0.05f, 2.0f);
          //std::terminate();
-         GW->addTriangles(&tempObjects, 0.1f, 2.0f);
+         GW->addTriangles(&tempObjects, 0.05f, 2.0f);
          //GOING AWAY SOON
          /*char *fileName = "tempTri.pov";
          ofstream meshFile;
@@ -164,9 +164,9 @@ void setup(int argc, char* argv[], Pixel** pixels) {
       objects.push_back(tempObjects[i]->boundingBox);
       objects[objects.size() - 1]->pigment = Eigen::Vector4f(0.7, 0.7, 0.7, 1.0f);
    }*/
-   BiTreeNode* root;
+   QuadTreeNode* root;
    if (tempObjects.size() > 0) {
-      root = new BiTreeNode(tempObjects, 0, tempObjects.size());
+      root = new QuadTreeNode(tempObjects, tempObjects.size(), 0);
       cout << "Quad Tree made" << endl;
       //root->printObj();
       objects.push_back(root);
