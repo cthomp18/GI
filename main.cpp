@@ -31,6 +31,7 @@
 #include "PovParser.h"
 #include "GerstnerWave.h"
 #include "QuadTreeNode.h"
+#include "BiTreeNode.h"
 
 std::vector<SceneObject*> objects;
 
@@ -241,7 +242,7 @@ int main(int argc, char* argv[]) {
    setup(argc, argv, pixels);
 
    KDTreeNode* kd = new KDTreeNode();
-   //Image* img = new Image(imgwidth, imgheight);
+   Image* img = new Image(imgwidth, imgheight);
    PhotonMapper* pm = new PhotonMapper(lights, objects);
    cout << "Building Global Photon Map... " << endl;
    pm->buildGlobalMap();
@@ -274,7 +275,6 @@ int main(int argc, char* argv[]) {
    time_t startTime, endTime;
    time(&startTime);
    
-   omp_set_num_threads(16);
    #pragma omp parallel for
    for (int i = 0; i < imgwidth; i++) {
       //cout << "i: " << i << endl;
@@ -309,7 +309,7 @@ int main(int argc, char* argv[]) {
    //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
    //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
   // set a square to be the color above
-  /*for (int i=0; i < imgwidth; i++) {
+  for (int i=0; i < imgwidth; i++) {
     for (int j=0; j < imgheight; j++) {
       //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
       pixels[i][j].clr.r = std::min(pixels[i][j].clr.r, 1.0);
@@ -317,10 +317,10 @@ int main(int argc, char* argv[]) {
       pixels[i][j].clr.b = std::min(pixels[i][j].clr.b, 1.0);
       img->pixel(i, j, pixels[i][j].clr);
     }
-  }*/
+  }
 
   // write the targa file to disk
-  //img->WriteTga((char *)"awesome.tga", true); 
+  img->WriteTga((char *)"awesome.tga", true); 
   // true to scale to max color, false to clamp to 1.0
 
 }

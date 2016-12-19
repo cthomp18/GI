@@ -177,7 +177,7 @@ void Image::GenTestPattern()
     }
 }
 
-color_t Image::pixel(int x, int y, int z)
+color_t Image::pixel(int x, int y)
 {
     if (x < 0 || x > _width - 1 ||
         y < 0 || y > _height - 1)
@@ -190,9 +190,9 @@ color_t Image::pixel(int x, int y, int z)
     return _pixmap[x][y];
 }
 
-void Image::pixel(int x, int y, int z, color_t pxl)
+void Image::pixel(int x, int y, color_t pxl)
 {
-   std::cout << "This function should literally never be called, I've commented out every single call in the code and changed the function parameters. This is being called from something else that existed back when Image::pixel(int,int,color_t) was a thing. what the fuck is going on" << std::endl;
+   //std::cout << "This function should literally never be called, I've commented out every single call in the code and changed the function parameters. This is being called from something else that existed back when Image::pixel(int,int,color_t) was a thing. what the fuck is going on" << std::endl;
     if (x < 0 || x > _width - 1 ||
         y < 0 || y > _height - 1)
     {

@@ -26,8 +26,8 @@ public:
     void GenTestPattern();
 
     // property accessors
-    color_t pixel(int x, int y, int z);
-    void pixel(int x, int y, int z, color_t pxl);
+    color_t pixel(int x, int y);
+    void pixel(int x, int y, color_t pxl);
     int width() const { return _width; }
     int height() const { return _height; }
     double max() const { return _max; }
