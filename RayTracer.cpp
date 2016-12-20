@@ -25,13 +25,13 @@ RayTracer::RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, std::ve
 RayTracer::RayTracer() { }
 RayTracer::~RayTracer() { }
 
-Collision* RayTracer::trace(Eigen::Vector3f start, Eigen::Vector3f ray, bool unit) {
+Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
    Collision* c = new Collision();   
    c->detectRayCollision(start, ray, objects, -1, unit);
    return c;
 }
 
-color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth) {
+color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth) {
    int numGPhotons = globalMap.size();
    int numCPhotons = causticMap.size();
    float e = 2.71828;
@@ -42,26 +42,26 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
    float x, y, z, t, c, s, w, d;
    float sampleDistSqrd, newRadSqrd, scaleN;
    std::vector<Photon*> locateHeap;
-   Eigen::Vector3f eRay = Eigen::Vector3f(0.0, 0.0, 1.0);
-   Eigen::Matrix3f mat, matInv;
+   glm::vec3 eRay = glm::vec3(0.0, 0.0, 1.0);
+   glm::mat3 mat, matInv;
    
    color_t clr, absorbClr, reflectClr, refractClr;
    float dots1 = 0.0, dots2 = 0.0, temp, temp2, time, mainDist, mainT, dist, reflectance = 1.0f / obj->roughness, D, F, G, m, n2, sroot, R = 0.0f, R0 = 0.0f, innersqr = 1.0f, reflectScale, tempDO;
-   Eigen::Vector3f colorD, colorS, colorA, color, normal, reflectRay, newStart, newIPt, crossP;
-   Eigen::Vector4f tempNormal, tempStart, tempIPt;
-   Eigen::Vector3f pigment(obj->pigment.x(), obj->pigment.y(), obj->pigment.z());
-   Eigen::Vector3f l, v, h, lcol, dir;
+   glm::vec3 colorD, colorS, colorA, color, normal, reflectRay, newStart, newIPt, crossP;
+   glm::vec4 tempNormal, tempStart, tempIPt;
+   glm::vec3 pigment(obj->pigment.x, obj->pigment.y, obj->pigment.z);
+   glm::vec3 l, v, h, lcol, dir;
    
-   color = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+   color = glm::vec3(0.0f, 0.0f, 0.0f);
    clr.r = clr.g = clr.b = 0.0;
    locateHeap.clear();
    sampleDistSqrd = newRadSqrd = INITIAL_SAMPLE_DIST_SQRD;
    
    normal = obj->getNormal(iPt, 2.0f);
-   normal.normalize();
+   normal = glm::normalize(normal);
    
    v = start - iPt;
-   v.normalize();
+   v = glm::normalize(v);
    dir = -v;
 
    Collision* col;
@@ -117,16 +117,16 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
           (abs(abs(normal[0]) - eRay[0]) > TOLERANCE ||
            abs(abs(normal[1]) - eRay[1]) > TOLERANCE ||
            abs(abs(normal[2]) - eRay[2]) > TOLERANCE)) {
-         crossP = eRay.cross(normal);
-         crossP.normalize();
-         x = crossP.x(); y = crossP.y(); z = crossP.z();
-         c = eRay.dot(normal); s = sin(acos(eRay.dot(normal))); t = 1.0 - c;
-         mat << t*x*x + c, t*x*y - z*s, t*x*z + y*s,
-                t*x*y + z*s, t*y*y + c, t*y*z - x*s,
-                t*x*z - y*s, t*y*z + x*s,	t*z*z + c;
-         matInv = mat.inverse();
+         crossP = glm::cross(eRay, normal);
+         crossP = glm::normalize(crossP);
+         x = crossP.x; y = crossP.y; z = crossP.z;
+         c = glm::dot(eRay, normal); s = sin(acos(glm::dot(eRay, normal))); t = 1.0 - c;
+         mat = glm::mat3(t*x*x + c, t*x*y - z*s, t*x*z + y*s,
+                         t*x*y + z*s, t*y*y + c, t*y*z - x*s,
+                         t*x*z - y*s, t*y*z + x*s,	t*z*z + c);
+         matInv = glm::inverse(mat);
       } else {
-         matInv << 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0;
+         matInv = glm::mat3();
       }
       if (numCPhotons > 0) rootC1->locatePhotons(1, iPt, &locateHeap, 0.05, &newRadSqrd, matInv, numCPhotons);
       causts = locateHeap.size();
@@ -135,19 +135,19 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
       for (int i = 0; i < locateHeap.size(); i++) {
          //BRDF
          if (i < causts) {
-            d = (locateHeap[i]->pt - iPt).norm();
+            d = glm::length(locateHeap[i]->pt - iPt);
             w = alpha * (1 - ((1 - pow(e, -1 * beta * ((d * d) / (2 * newRadSqrd)))) / (1 - pow(e, -1 * beta))));
-            color += (locateHeap[i]->intensity) * std::max((-locateHeap[i]->incidence).dot(normal), 0.0f);// * w;//* (1.0 - ((locateHeap[i]->pt - intersectPt).norm() / sqrt(newRadSqrd)));
+            color += (locateHeap[i]->intensity) * std::max(glm::dot(-locateHeap[i]->incidence, normal), 0.0f);// * w;//* (1.0 - ((locateHeap[i]->pt - intersectPt).norm() / sqrt(newRadSqrd)));
          } else {
-            color += (locateHeap[i]->intensity) * std::max((-locateHeap[i]->incidence).dot(normal), 0.0f);
+            color += (locateHeap[i]->intensity) * std::max(glm::dot(-locateHeap[i]->incidence, normal), 0.0f);
          }
       }
       color /= newRadSqrd * M_PI;
       
       color *= (1.0 - obj->reflection) * scale;
-      absorbClr.r = color.x();
-      absorbClr.g = color.y();
-      absorbClr.b = color.z();
+      absorbClr.r = color.x;
+      absorbClr.g = color.y;
+      absorbClr.b = color.z;
       
    } else {
       if (depth > 0) {         
@@ -173,7 +173,7 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
       delete(col);
    }
 
-   time = (iPt - start).norm();
+   time = glm::length(iPt - start);
    float dropoffCalc = pow(dropoff, time);
    clr.r += (absorbClr.r + reflectClr.r + refractClr.r) * dropoffCalc;
    clr.g += (absorbClr.g + reflectClr.g + refractClr.g) * dropoffCalc;
@@ -182,26 +182,26 @@ color_t RayTracer::calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, Scen
 	return clr;
 }
                   
-Eigen::Vector3f RayTracer::findReflect(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj) {
-   Eigen::Vector3f reflectRay;
+glm::vec3 RayTracer::findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj) {
+   glm::vec3 reflectRay;
    
-   reflectRay = ray + (2.0*normal*(normal.dot(-ray)));
-   reflectRay.normalize();
+   reflectRay = ray + (2.0f*normal*glm::dot(normal, -ray));
+   reflectRay = glm::normalize(reflectRay);
    
    return reflectRay;
 }
 
-Eigen::Vector3f RayTracer::findRefract(Eigen::Vector3f ray, Eigen::Vector3f normalI, SceneObject* obj, float n1, float* n2, float* R, float* dropoff) {
-   Eigen::Vector3f refractRay, normal = normalI;
+glm::vec3 RayTracer::findRefract(glm::vec3 ray, glm::vec3 normalI, SceneObject* obj, float n1, float* n2, float* R, float* dropoff) {
+   glm::vec3 refractRay, normal = normalI;
    float dots1, R0, sroot, innersqr;
    
    //Determine object-ray status
-   dots1 = (-ray).dot(normal);
+   dots1 = glm::dot(-ray, normal);
    if (dots1 < 0.0f) { //Exitting
       *n2 = 1.0f; //Assume no refract object collision
       *dropoff = 1.0f;
       normal *= -1.0f;
-      dots1 = (-ray).dot(normal);
+      dots1 = glm::dot(-ray, normal);
    } else { //Entering
       *n2 = obj->indexRefraction;
       *dropoff = obj->dropoff;
@@ -220,7 +220,7 @@ Eigen::Vector3f RayTracer::findRefract(Eigen::Vector3f ray, Eigen::Vector3f norm
       *R = R0 + ((1.0f - R0) * innersqr);
       
       refractRay = ((n1 / *n2) * (ray + (normal * dots1))) - (normal * sqrt(sroot));
-      refractRay.normalize();
+      refractRay = glm::normalize(refractRay);
    }
    
    return refractRay;

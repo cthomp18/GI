@@ -6,11 +6,13 @@
 #ifndef __KDNODE_H__
 #define __KDNODE_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include <iostream>
 #include "Photon.h"
 #include "structs.h"
 #include <vector>
+#include <algorithm>
 
 
 
@@ -31,7 +33,7 @@ class KDTreeNode {
       float findMin(std::vector<Photon*> pmap, int axis);
       float findMax(std::vector<Photon*> pmap, int axis);
       
-      void locatePhotons(int i, Eigen::Vector3f pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, Eigen::Matrix3f mInv, int numPhotons);
+      void locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons);
 };
 
 #endif

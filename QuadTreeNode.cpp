@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "QuadTreeNode.h"
 
 #define TOLERANCE 0.001
@@ -15,9 +15,9 @@ int sortAxisQuad = 0;
 
 bool sorterQuad(SceneObject* s1, SceneObject* s2) { 
    if (sortAxisQuad == 0) {
-      return s1->boundingBox->middle.x() < s2->boundingBox->middle.x();
+      return s1->boundingBox->middle.x < s2->boundingBox->middle.x;
    } else if (sortAxisQuad == 2) {
-      return s1->boundingBox->middle.z() < s2->boundingBox->middle.z();
+      return s1->boundingBox->middle.z < s2->boundingBox->middle.z;
    } else {
       std::cout << "fuck" << std::endl;
       return false; //fuck
@@ -94,20 +94,20 @@ QuadTreeNode::QuadTreeNode(std::vector<SceneObject*> objects, int n, int depth) 
 QuadTreeNode::QuadTreeNode() : SceneObject() {}
 QuadTreeNode::~QuadTreeNode() {}
 
-float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time, SceneObject** object) {
-   Eigen::Vector4f startTransform;
+float QuadTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+   glm::vec4 startTransform;
    float t, tempT;
    SceneObject *obj1, *obj2, *obj3, *obj4;
    t = tempT = -1.0f;
    //hitObj = NULL;
    
   // if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
-   startTransform << start, 1.0f;
+   startTransform = glm::vec4(start, 1.0f);
    if (boundingBox->checkCollision(start, ray, time) < TOLERANCE) return -1.0f;
    
 
    if (q1->transformed) {
-      t = q1->checkCollision((q1->transform * startTransform).segment<3>(0), q1->transform.block<3,3>(0,0) * ray, time, &obj1);
+      t = q1->checkCollision(glm::vec3(q1->transform * startTransform), glm::mat3(q1->transform) * ray, time, &obj1);
    } else {
       t = q1->checkCollision(start, ray, time, &obj1);
    }
@@ -118,7 +118,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
          tempT = q2->boundingBox->checkCollision(start, ray, time);
          if (tempT >= TOLERANCE && tempT < t) {
             if (q2->transformed) {
-               tempT = q2->checkCollision((q2->transform * startTransform).segment<3>(0), q2->transform.block<3,3>(0,0) * ray, time, &obj2);
+               tempT = q2->checkCollision(glm::vec3(q2->transform * startTransform), glm::mat3(q2->transform) * ray, time, &obj2);
             } else {
                tempT = q2->checkCollision(start, ray, time, &obj2);
             }
@@ -128,7 +128,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
             }
          }
       } else {
-         t = q2->checkCollision((q2->transform * startTransform).segment<3>(0), q2->transform.block<3,3>(0,0) * ray, time, &obj2);
+         t = q2->checkCollision(glm::vec3(q2->transform * startTransform), glm::mat3(q2->transform) * ray, time, &obj2);
          *object = obj2;
       }
    }
@@ -138,7 +138,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
          tempT = q3->boundingBox->checkCollision(start, ray, time);
          if (tempT >= TOLERANCE && tempT < t) {
             if (q3->transformed) {
-               tempT = q3->checkCollision((q3->transform * startTransform).segment<3>(0), q3->transform.block<3,3>(0,0) * ray, time, &obj3);
+               tempT = q3->checkCollision(glm::vec3(q3->transform * startTransform), glm::mat3(q3->transform) * ray, time, &obj3);
             } else {
                tempT = q3->checkCollision(start, ray, time, &obj3);
             }
@@ -148,7 +148,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
             }
          }
       } else {
-         t = q3->checkCollision((q3->transform * startTransform).segment<3>(0), q3->transform.block<3,3>(0,0) * ray, time, &obj3);
+         t = q3->checkCollision(glm::vec3(q3->transform * startTransform), glm::mat3(q3->transform) * ray, time, &obj3);
          *object = obj3;
       }
    }
@@ -158,7 +158,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
          tempT = q4->boundingBox->checkCollision(start, ray, time);
          if (tempT >= TOLERANCE && tempT < t) {
             if (q4->transformed) {
-               tempT = q4->checkCollision((q4->transform * startTransform).segment<3>(0), q4->transform.block<3,3>(0,0) * ray, time, &obj4);
+               tempT = q4->checkCollision(glm::vec3(q4->transform * startTransform), glm::mat3(q4->transform) * ray, time, &obj4);
             } else {
                tempT = q4->checkCollision(start, ray, time, &obj4);
             }
@@ -168,7 +168,7 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
             }
          }
       } else {
-         t = q4->checkCollision((q4->transform * startTransform).segment<3>(0), q4->transform.block<3,3>(0,0) * ray, time, &obj4);
+         t = q4->checkCollision(glm::vec3(q4->transform * startTransform), glm::mat3(q4->transform) * ray, time, &obj4);
          *object = obj4;
       }
    }
@@ -182,9 +182,9 @@ float QuadTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, f
    return t;
 }
 
-Eigen::Vector3f QuadTreeNode::getNormal(Eigen::Vector3f iPt) {
+glm::vec3 QuadTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
-   return Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+   return glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 SceneObject* QuadTreeNode::getObj() {
@@ -207,10 +207,10 @@ void QuadTreeNode::printObj() {
 }
 
 Box* QuadTreeNode::combineBB(Box* box1, Box* box2, Box* box3, Box* box4) {
-   return new Box(Eigen::Vector3f(fmin(fmin(fmin(box1->minPt[0], box2->minPt[0]), box3->minPt[0]), box4->minPt[0]),
-                                  fmin(fmin(fmin(box1->minPt[1], box2->minPt[1]), box3->minPt[1]), box4->minPt[1]),
-                                  fmin(fmin(fmin(box1->minPt[2], box2->minPt[2]), box3->minPt[2]), box4->minPt[2])),
-                  Eigen::Vector3f(fmax(fmax(fmax(box1->maxPt[0], box2->maxPt[0]), box3->maxPt[0]), box4->maxPt[0]),
-                                  fmax(fmax(fmax(box1->maxPt[1], box2->maxPt[1]), box3->maxPt[1]), box4->maxPt[1]),
-                                  fmax(fmax(fmax(box1->maxPt[2], box2->maxPt[2]), box3->maxPt[2]), box4->maxPt[2])));
+   return new Box(glm::vec3(fmin(fmin(fmin(box1->minPt[0], box2->minPt[0]), box3->minPt[0]), box4->minPt[0]),
+                            fmin(fmin(fmin(box1->minPt[1], box2->minPt[1]), box3->minPt[1]), box4->minPt[1]),
+                            fmin(fmin(fmin(box1->minPt[2], box2->minPt[2]), box3->minPt[2]), box4->minPt[2])),
+                  glm::vec3(fmax(fmax(fmax(box1->maxPt[0], box2->maxPt[0]), box3->maxPt[0]), box4->maxPt[0]),
+                            fmax(fmax(fmax(box1->maxPt[1], box2->maxPt[1]), box3->maxPt[1]), box4->maxPt[1]),
+                            fmax(fmax(fmax(box1->maxPt[2], box2->maxPt[2]), box3->maxPt[2]), box4->maxPt[2])));
 }

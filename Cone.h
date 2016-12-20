@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 #include "SceneObject.h"
 #include "Collision.h"
@@ -14,17 +14,17 @@
 
 class Cone : public SceneObject {
    public:
-      Cone(Eigen::Vector3f endPt1, float rad1, Eigen::Vector3f endPt2, float rad2);
+      Cone(glm::vec3 endPt1, float rad1, glm::vec3 endPt2, float rad2);
       Cone();
       ~Cone();
    
-      Eigen::Vector3f a;
-      Eigen::Vector3f b;
+      glm::vec3 a;
+      glm::vec3 b;
       float radiusA;
       float radiusB;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      glm::vec3 getNormal(glm::vec3 iPt, float time);
    private:
    
 };

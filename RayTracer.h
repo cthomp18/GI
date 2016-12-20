@@ -6,7 +6,7 @@
 #ifndef __RAYTRACER_H__
 #define __RAYTRACER_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <vector>
 #include <iostream>
 
@@ -25,9 +25,9 @@ class RayTracer {
       RayTracer();
       ~RayTracer();
       
-      Collision* trace(Eigen::Vector3f start, Eigen::Vector3f ray, bool unit);
-      Eigen::Vector3f findReflect(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj);
-      Eigen::Vector3f findRefract(Eigen::Vector3f ray, Eigen::Vector3f normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
+      Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit);
+      glm::vec3 findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj);
+      glm::vec3 findRefract(glm::vec3 ray, glm::vec3 normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
       
       std::vector<Light*> lights;
       std::vector<SceneObject*> objects;
@@ -37,7 +37,7 @@ class RayTracer {
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      color_t calcRadiance(Eigen::Vector3f start, Eigen::Vector3f iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
+      color_t calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
    private:
       
 };

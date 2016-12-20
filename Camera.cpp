@@ -4,10 +4,10 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "Camera.h"
 
-Camera::Camera(Eigen::Vector3f pos, Eigen::Vector3f u, Eigen::Vector3f r, Eigen::Vector3f lA) {
+Camera::Camera(glm::vec3 pos, glm::vec3 u, glm::vec3 r, glm::vec3 lA) {
    position = pos;
    up = u;
    right = r;
@@ -23,26 +23,26 @@ Camera::Camera() {
 
 Camera::~Camera() {}
       
-void Camera::move(Eigen::Vector3f pos) {
+void Camera::move(glm::vec3 pos) {
    position = pos;
 }
 
-void Camera::change(Eigen::Vector3f lA) {
+void Camera::change(glm::vec3 lA) {
    lookAt = lA;
 }
 
-Eigen::Vector3f Camera::getPosition() {
+glm::vec3 Camera::getPosition() {
    return position;
 }
 
-Eigen::Vector3f Camera::getLookAt() {
+glm::vec3 Camera::getLookAt() {
    return lookAt;
 }
 
-Eigen::Vector3f Camera::getUp() {
+glm::vec3 Camera::getUp() {
    return up;
 }
 
-Eigen::Vector3f Camera::getRight() {
+glm::vec3 Camera::getRight() {
    return right;
 }

@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "SceneObject.h"
 #include "Collision.h"
 
@@ -13,16 +13,16 @@
 
 class Plane : public SceneObject {
    public:
-      Plane(Eigen::Vector3f n, float d);
+      Plane(glm::vec3 n, float d);
       Plane();
       ~Plane();
       
-      Eigen::Vector3f normal;
+      glm::vec3 normal;
       float distance;
-      Eigen::Vector3f planePt;
+      glm::vec3 planePt;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      glm::vec3 getNormal(glm::vec3 iPt, float time);
       
    private:
    

@@ -7,7 +7,6 @@
 #ifndef __BiTreeNode_H__
 #define __BiTreeNode_H__
 
-#include <Eigen/Dense>
 #include <vector>
 #include <iostream>
 #include <algorithm>
@@ -28,8 +27,8 @@ class BiTreeNode : public SceneObject {
       SceneObject *right;
       //int sortAxis;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time, SceneObject** object);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      glm::vec3 getNormal(glm::vec3 iPt);
       SceneObject* getObj();
       
       void printTree();

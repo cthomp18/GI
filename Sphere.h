@@ -7,7 +7,7 @@
 #ifndef __SPHERE_H__
 #define __SPHERE_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "SceneObject.h"
 #include "Collision.h"
 #include "structs.h"
@@ -15,15 +15,15 @@
 
 class Sphere : public SceneObject {
    public:
-      Sphere(Eigen::Vector3f pos, float rad);
+      Sphere(glm::vec3 pos, float rad);
       Sphere();
       ~Sphere();
    
-      Eigen::Vector3f position;
+      glm::vec3 position;
       float radius;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      glm::vec3 getNormal(glm::vec3 iPt, float time);
       void constructBB();
       
    private:

@@ -4,25 +4,25 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
 
 class Light {
    public:
-      Light(Eigen::Vector3f pos, Eigen::Vector3f col);
+      Light(glm::vec3 pos, glm::vec3 col);
       Light();
       ~Light();
       
-      void move(Eigen::Vector3f pos);
-      void changeColor(Eigen::Vector3f col);
-      Eigen::Vector3f getPosition();
-      Eigen::Vector3f getColor();
+      void move(glm::vec3 pos);
+      void changeColor(glm::vec3 col);
+      glm::vec3 getPosition();
+      glm::vec3 getColor();
       
    private:
-      Eigen::Vector3f position;
-      Eigen::Vector3f color;
+      glm::vec3 position;
+      glm::vec3 color;
 };
 
 #endif

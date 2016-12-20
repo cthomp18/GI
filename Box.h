@@ -7,25 +7,25 @@
 #ifndef __BOX_H__
 #define __BOX_H__
 
-#include <Eigen/Dense>
 #include <iostream>
 #include <float.h>
 #include "Collision.h"
 #include "SceneObject.h"
+#include "glm/glm.hpp"
 
 class Box : public SceneObject {
    public:
-      Box(Eigen::Vector3f cornerPt1, Eigen::Vector3f cornerPt2);
+      Box(glm::vec3 cornerPt1, glm::vec3 cornerPt2);
       Box();
       ~Box();
    
-      Eigen::Vector3f minPt;
-      Eigen::Vector3f maxPt;
-      Eigen::Vector3f middle;
+      glm::vec3 minPt;
+      glm::vec3 maxPt;
+      glm::vec3 middle;
       bool unit;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      glm::vec3 getNormal(glm::vec3 iPt);
       void constructBB();
 
    private:

@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <vector>
 #include <iostream>
 #include <math.h>
@@ -20,11 +20,11 @@ class SceneObject {
       SceneObject();
       ~SceneObject();
       
-      Eigen::Vector4f pigment;
-      Eigen::Vector3f translateVector;
-      Eigen::Vector3f rotateVector;
-      Eigen::Vector3f scaleVector;
-      Eigen::Matrix4f transform;
+      glm::vec4 pigment;
+      glm::vec3 translateVector;
+      glm::vec3 rotateVector;
+      glm::vec3 scaleVector;
+      glm::mat4 transform;
       
       float ambient;
       float diffuse;
@@ -43,9 +43,9 @@ class SceneObject {
       SceneObject* hitObj;
       void constructBB();
       bool transformed;
-      virtual float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      virtual float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time, SceneObject** object);
-      virtual Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      virtual glm::vec3 getNormal(glm::vec3 iPt, float time);
       virtual SceneObject* getObj();
       
       void applyTransforms();

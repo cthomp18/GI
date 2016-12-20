@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 #include "SceneObject.h"
 #include "Collision.h"
@@ -23,11 +23,11 @@ Collision::Collision() {
 
 Collision::~Collision() {}
 
-void Collision::detectRayCollision(Eigen::Vector3f start, Eigen::Vector3f ray, std::vector<SceneObject*> objects, int omitInd, bool unit) {
+void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, std::vector<SceneObject*> objects, int omitInd, bool unit) {
    float tempT;
-   Eigen::Vector3f rayTransform;
-   Eigen::Vector4f startTransform;
-   startTransform << start, 1.0f;
+   glm::vec3 rayTransform;
+   glm::vec4 startTransform;
+   startTransform = glm::vec4(start, 1.0f);
    SceneObject *tempObject;
    time = -1.0;
    object = NULL;
@@ -36,7 +36,7 @@ void Collision::detectRayCollision(Eigen::Vector3f start, Eigen::Vector3f ray, s
       if (i == omitInd) continue;
       
       if (objects[i]->transformed) {
-         tempT = objects[i]->checkCollision((objects[i]->transform * startTransform).segment<3>(0), objects[i]->transform.block<3,3>(0,0) * ray, 2.0f, &tempObject);
+         tempT = objects[i]->checkCollision(glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
       } else {
          tempT = objects[i]->checkCollision(start, ray, 2.0f, &tempObject);
       }

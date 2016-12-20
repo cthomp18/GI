@@ -26,7 +26,7 @@ void PhotonMapper::buildGlobalMap() {
    int count = 0;
    Photon *p;
    Light *light;
-   Eigen::Vector3f ray, intersectPt, normal, reflectRay, tempIntensity, tempIPt;
+   glm::vec3 ray, intersectPt, normal, reflectRay, tempIntensity, tempIPt;
    float n1 = AIR_REFRACT_INDEX, n2, randTracker, reflect, refract, angle, t;
    RayTracer* raytrace = new RayTracer(lights, objects);
    Collision* col;
@@ -47,8 +47,8 @@ void PhotonMapper::buildGlobalMap() {
          u2 = (((float)(rand()) / (float)(RAND_MAX)) * 2.0) - 1.0;
          r = sqrt(1.0f - u1 * u1);
          phi = 2 * M_PI * u2;
-         ray = Eigen::Vector3f(cos(phi) * r, sin(phi) * r, u1);
-         ray.normalize();
+         ray = glm::vec3(cos(phi) * r, sin(phi) * r, u1);
+         ray = glm::normalize(ray);
          
          col = raytrace->trace(light->getPosition(), ray, -1);
          
@@ -163,7 +163,7 @@ void PhotonMapper::buildCausticMap() {
    float nP = (float)GLOBALPHOTONS;
    Photon *p;
    Light *light;
-   Eigen::Vector3f ray, intersectPt, reflectRay, tempIntensity, pos, lpos, normal;
+   glm::vec3 ray, intersectPt, reflectRay, tempIntensity, pos, lpos, normal;
    float n1 = AIR_REFRACT_INDEX, n2, randTracker, rad;
    int depth = 0, missCount = 0, index;
    float minX, minY, minZ, maxX, maxY, maxZ;
@@ -202,7 +202,7 @@ void PhotonMapper::buildCausticMap() {
                ray[0] = minX + (((float)(rand()) / (float)(RAND_MAX)) * (maxX - minX));
                ray[1] = minY + (((float)(rand()) / (float)(RAND_MAX)) * (maxY - minY));
                ray[2] = minZ + (((float)(rand()) / (float)(RAND_MAX)) * (maxZ - minZ));
-               ray = ray.normalized();
+               ray = glm::normalize(ray);
                col = raytrace->trace(lpos, ray, -1);
 
                if (col->time >= TOLERANCE && fabs(col->object->refraction - 1.0f) < TOLERANCE) {

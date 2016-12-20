@@ -6,18 +6,18 @@
 #ifndef __PHOTON_H__
 #define __PHOTON_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 
 class Photon {
    public:
-      Eigen::Vector3f pt;
-      Eigen::Vector3f intensity;
+      glm::vec3 pt;
+      glm::vec3 intensity;
       int type; //0 Direct, 1 Indirect, 2 Shadow
-      Eigen::Vector3f incidence;
+      glm::vec3 incidence;
       int sortAxis;
       
-      Photon(Eigen::Vector3f p, Eigen::Vector3f inc, Eigen::Vector3f i, int t);
+      Photon(glm::vec3 p, glm::vec3 inc, glm::vec3 i, int t);
       Photon();
       ~Photon();
       

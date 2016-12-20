@@ -98,16 +98,16 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
    return node;
 }
 
-void KDTreeNode::locatePhotons(int i, Eigen::Vector3f pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, Eigen::Matrix3f mInv, int numPhotons) {
-   Eigen::Vector3f rayBetween = pt - photon->pt;
-   float distToPhotonSqrd = rayBetween.norm() * rayBetween.norm();
+void KDTreeNode::locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons) {
+   glm::vec3 rayBetween = pt - photon->pt;
+   float distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
    
    if (2*i + 1 < numPhotons) {
       float distToPlane;
       //Find distance to plane (difference WRT splitting axis)
-      if (axis == 0) distToPlane = pt.x() - photon->pt.x();
-      else if (axis == 1) distToPlane = pt.y() - photon->pt.y();
-      else if (axis == 2) distToPlane = pt.z() - photon->pt.z();
+      if (axis == 0) distToPlane = pt.x - photon->pt.x;
+      else if (axis == 1) distToPlane = pt.y - photon->pt.y;
+      else if (axis == 2) distToPlane = pt.z - photon->pt.z;
       
       //Point is on the 'left' of the plane
       if (distToPlane < 0.0) {
@@ -131,13 +131,13 @@ void KDTreeNode::locatePhotons(int i, Eigen::Vector3f pt, std::vector<Photon*> *
    }
    //Check if photon is close enough to the point
    if (distToPhotonSqrd <= sampleDistSqrd && locateHeap->size() < CUTOFF_HEAP_SIZE) {
-      Eigen::MatrixXf originLoc(1,3);
-      originLoc << (photon->pt[0] - pt[0]), (photon->pt[1] - pt[1]), (photon->pt[2] - pt[2]);
+      glm::vec3 originLoc;
+      originLoc = glm::vec3(photon->pt[0] - pt[0], photon->pt[1] - pt[1], photon->pt[2] - pt[2]);
       float rad = sqrt(sampleDistSqrd) * ELLIPSOID_SCALE;
       if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE) {
          originLoc = originLoc * mInv;
       }
-      if (((originLoc(0,0)*originLoc(0,0))/sampleDistSqrd) + ((originLoc(0,1)*originLoc(0,1))/sampleDistSqrd) + ((originLoc(0,2)*originLoc(0,2))/(rad*rad)) < 1.0) {
+      if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0) {
          locateHeap->push_back(photon);
          //cout << "INCIDENCE: " << -node->photon->incidence[0] << " " << -node->photon->incidence[1] << " " << -node->photon->incidence[2] << endl;
          //cout << "INTENSITY: " << node->photon->intensity[0] << " " << node->photon->intensity[1] << " " << node->photon->intensity[2] << endl;
@@ -155,7 +155,7 @@ int KDTreeNode::Treesize(KDTreeNode *node) {
    return num;
 }
 void KDTreeNode::printTree(KDTreeNode *node) {
-   std::cout << "Pt: " << node->photon->pt << std::endl;
+   std::cout << "Pt: " << glm::to_string(node->photon->pt) << std::endl;
    std::cout << "Axis Split: " << node->axis << std::endl;
    if (node->left != NULL) {
       std::cout << "LEFT" << std::endl;

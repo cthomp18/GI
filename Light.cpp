@@ -9,10 +9,9 @@ Supports:
    Point Lights
 */
 
-#include <Eigen/Dense>
 #include "Light.h"
 
-Light::Light(Eigen::Vector3f pos, Eigen::Vector3f col) {
+Light::Light(glm::vec3 pos, glm::vec3 col) {
    position = pos;
    color = col;
 }
@@ -24,18 +23,18 @@ Light::Light() {
 
 Light::~Light() {}
       
-void Light::move(Eigen::Vector3f pos) {
+void Light::move(glm::vec3 pos) {
    position = pos;
 }
 
-void Light::changeColor(Eigen::Vector3f col) {
+void Light::changeColor(glm::vec3 col) {
    color = col;
 }
 
-Eigen::Vector3f Light::getPosition() {
+glm::vec3 Light::getPosition() {
    return position;
 }
 
-Eigen::Vector3f Light::getColor() {
+glm::vec3 Light::getColor() {
    return color;
 }

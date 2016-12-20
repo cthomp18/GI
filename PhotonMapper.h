@@ -6,7 +6,7 @@
 #ifndef __PHOTONMAP_H__
 #define __PHOTONMAP_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 #include <vector>
 

@@ -4,7 +4,8 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -12,6 +13,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 
 #include "Camera.h"
 #include "Light.h"
@@ -61,12 +63,12 @@ class PovParser {
       
       //Sub-Parser Stuff
       void parseObjProps(stringstream& buffer, SceneObject* object);
-      Eigen::Vector4f parsePigment(stringstream& buffer);
+      glm::vec4 parsePigment(stringstream& buffer);
       void parseFinish(stringstream& buffer, SceneObject* object);
       
       //Helper
-      Eigen::Vector3f parseEVect3(stringstream& buffer);
-      Eigen::Vector4f parseEVect4(stringstream& buffer);
+      glm::vec3 parseEVect3(stringstream& buffer);
+      glm::vec4 parseEVect4(stringstream& buffer);
       
       void locateOpenBrace(stringstream& buffer, string type);
       void locateCloseBrace(stringstream& buffer, string type);

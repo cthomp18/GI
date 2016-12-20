@@ -8,7 +8,7 @@
 Photon::Photon() { }
 Photon::~Photon() { }
 
-Photon::Photon(Eigen::Vector3f p, Eigen::Vector3f inc, Eigen::Vector3f i, int t) {
+Photon::Photon(glm::vec3 p, glm::vec3 inc, glm::vec3 i, int t) {
    pt = p;
    intensity = i;
    type = t;
@@ -19,11 +19,11 @@ Photon::Photon(Eigen::Vector3f p, Eigen::Vector3f inc, Eigen::Vector3f i, int t)
 
 bool operator<(const Photon p1, const Photon p2) { 
          if (p1.sortAxis == 0) {
-            return p1.pt.x() < p2.pt.x();
+            return p1.pt.x < p2.pt.x;
          } else if (p1.sortAxis == 1) {
-            return p1.pt.y() < p2.pt.y();
+            return p1.pt.y < p2.pt.y;
          } else if (p1.sortAxis == 2) {
-            return p1.pt.z() < p2.pt.z();
+            return p1.pt.z < p2.pt.z;
          } else {
             return false; //fuck
          }

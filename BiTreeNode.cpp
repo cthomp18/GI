@@ -4,7 +4,6 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
 #include "BiTreeNode.h"
 
 #define TOLERANCE 0.001
@@ -13,11 +12,11 @@ int sortAxisBi = 0;
 
 bool sorterBi(SceneObject* s1, SceneObject* s2) { 
    if (sortAxisBi == 0) {
-      return s1->boundingBox->middle.x() < s2->boundingBox->middle.x();
+      return s1->boundingBox->middle.x < s2->boundingBox->middle.x;
    } else if (sortAxisBi == 1) {
-      return s1->boundingBox->middle.y() < s2->boundingBox->middle.y();
+      return s1->boundingBox->middle.y < s2->boundingBox->middle.y;
    } else if (sortAxisBi == 2) {
-      return s1->boundingBox->middle.z() < s2->boundingBox->middle.z();
+      return s1->boundingBox->middle.z < s2->boundingBox->middle.z;
    } else {
       std::cout << "fuck" << std::endl;
       return false; //fuck
@@ -43,15 +42,15 @@ BiTreeNode::BiTreeNode(std::vector<SceneObject*> objects, int axis, int n) : Sce
       float minx, miny, minz, maxx, maxy, maxz;
       minx = miny = minz = FLT_MAX;
       maxx = maxy = maxz = FLT_MIN;
-      Eigen::Vector3f mid;
+      glm::vec3 mid;
       for (int i = 0; i < n; i++) {
          mid = objects[i]->boundingBox->middle;
-         if (minx > mid.x()) minx = mid.x();
-         if (maxx < mid.x()) maxx = mid.x();
-         if (miny > mid.y()) miny = mid.y();
-         if (maxy < mid.y()) maxy = mid.y();
-         if (minz > mid.z()) minz = mid.z();
-         if (maxz < mid.z()) maxz = mid.z();
+         if (minx > mid.x) minx = mid.x;
+         if (maxx < mid.x) maxx = mid.x;
+         if (miny > mid.y) miny = mid.y;
+         if (maxy < mid.y) maxy = mid.y;
+         if (minz > mid.z) minz = mid.z;
+         if (maxz < mid.z) maxz = mid.z;
       }
       
       if (maxx - minx > maxy - miny && maxx - minx > maxz - minz) {
@@ -97,19 +96,19 @@ BiTreeNode::BiTreeNode(std::vector<SceneObject*> objects, int axis, int n) : Sce
 BiTreeNode::BiTreeNode() : SceneObject() {}
 BiTreeNode::~BiTreeNode() {}
 
-float BiTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time, SceneObject** object) {
-   Eigen::Vector4f startTransform;
+float BiTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+   glm::vec4 startTransform;
    float t, tLeft, tRight;
    SceneObject *lObj, *rObj;
    t = tLeft = tRight = -1.0f;
    //hitObj = NULL;
    
   // if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
-   startTransform << start, 1.0f;
+   startTransform = glm::vec4(start, 1.0f);
    if (boundingBox->checkCollision(start, ray, time) < TOLERANCE) return -1.0f;
    //if (left) {
    if (left->transformed) {
-      tLeft = left->checkCollision((left->transform * startTransform).segment<3>(0), left->transform.block<3,3>(0,0) * ray, time, &lObj);
+      tLeft = left->checkCollision(glm::vec3(left->transform * startTransform), glm::mat3(left->transform) * ray, time, &lObj);
    } else {
       tLeft = left->checkCollision(start, ray, time, &lObj);
    }
@@ -118,7 +117,7 @@ float BiTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, flo
          tRight = right->boundingBox->checkCollision(start, ray, time);
          if (tRight >= TOLERANCE && tRight < tLeft) {
             if (right->transformed) {
-               tRight = right->checkCollision((right->transform * startTransform).segment<3>(0), right->transform.block<3,3>(0,0) * ray, time, &rObj);
+               tRight = right->checkCollision(glm::vec3(right->transform * startTransform), glm::mat3(right->transform) * ray, time, &rObj);
             } else {
                tRight = right->checkCollision(start, ray, time, &rObj);
             }
@@ -126,7 +125,7 @@ float BiTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, flo
             tRight = -1.0f;
          }
       } else {
-         tRight = right->checkCollision((right->transform * startTransform).segment<3>(0), right->transform.block<3,3>(0,0) * ray, time, &rObj);
+         tRight = right->checkCollision(glm::vec3(right->transform * startTransform), glm::mat3(right->transform) * ray, time, &rObj);
       }
    }
    //}
@@ -157,9 +156,9 @@ float BiTreeNode::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, flo
    return t;
 }
 
-Eigen::Vector3f BiTreeNode::getNormal(Eigen::Vector3f iPt) {
+glm::vec3 BiTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
-   return Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+   return glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
 SceneObject* BiTreeNode::getObj() {
@@ -177,6 +176,6 @@ void BiTreeNode::printTree() {
 }
 
 Box* BiTreeNode::combineBB(Box* box1, Box* box2) {
-   return new Box(Eigen::Vector3f(fmin(box1->minPt[0], box2->minPt[0]), fmin(box1->minPt[1], box2->minPt[1]), fmin(box1->minPt[2], box2->minPt[2])),
-                  Eigen::Vector3f(fmax(box1->maxPt[0], box2->maxPt[0]), fmax(box1->maxPt[1], box2->maxPt[1]), fmax(box1->maxPt[2], box2->maxPt[2])));
+   return new Box(glm::vec3(fmin(box1->minPt[0], box2->minPt[0]), fmin(box1->minPt[1], box2->minPt[1]), fmin(box1->minPt[2], box2->minPt[2])),
+                  glm::vec3(fmax(box1->maxPt[0], box2->maxPt[0]), fmax(box1->maxPt[1], box2->maxPt[1]), fmax(box1->maxPt[2], box2->maxPt[2])));
 }

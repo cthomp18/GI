@@ -6,7 +6,7 @@
 #ifndef __GERSTNER_H__
 #define __GERSTNER_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 #include <fstream>
 #include "Collision.h"
@@ -17,26 +17,26 @@
 class GerstnerWave : public SceneObject {
    public:
       std::vector<float> amplitude;
-      std::vector<Eigen::Vector3f> direction;//(x,z)
+      std::vector<glm::vec3> direction;//(x,z)
       std::vector<float> wavelength;
       std::vector<float> speedPC;
       std::vector<float> frequency;
       std::vector<float> steepness;
       float yPos;//Level of water
-      Eigen::Vector3f lb;//Lower Left Bound (x,z)
-      Eigen::Vector3f ub;//Upper Right Bound (x,z)
+      glm::vec3 lb;//Lower Left Bound (x,z)
+      glm::vec3 ub;//Upper Right Bound (x,z)
       
       int waves;
       
-      GerstnerWave(float a, float w, float s, Eigen::Vector3f d, Eigen::Vector3f lowerleft, Eigen::Vector3f upperright, float yPosition);
+      GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
       GerstnerWave();
       ~GerstnerWave();
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      void addWave(float a, float w, float s, Eigen::Vector3f d);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      void addWave(float a, float w, float s, glm::vec3 d);
+      glm::vec3 getNormal(glm::vec3 iPt, float time);
       
-      Eigen::Vector3f getPoint(float x, float z, float time);
+      glm::vec3 getPoint(float x, float z, float time);
       
       void toPovFileMesh(char* fileName, float step, float time);
       void addTriangles(std::vector<SceneObject*> *objects, float step, float time);

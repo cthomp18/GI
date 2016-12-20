@@ -4,10 +4,10 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "Sphere.h"
 
-Sphere::Sphere(Eigen::Vector3f pos, float rad) : SceneObject() {
+Sphere::Sphere(glm::vec3 pos, float rad) : SceneObject() {
    position = pos;
    radius = rad;
 }
@@ -15,12 +15,12 @@ Sphere::Sphere(Eigen::Vector3f pos, float rad) : SceneObject() {
 Sphere::Sphere() : SceneObject() {}
 Sphere::~Sphere() {}
 
-float Sphere::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time) {
+float Sphere::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    float t = -1.0f, t0, t1, innerRoot, A, B, C;
 
-   A = ray.dot(ray);
-   B = 2.0f * ((start - position).dot(ray));
-   C = (start - position).dot(start - position) - (radius * radius);
+   A = glm::dot(ray, ray);
+   B = 2.0f * glm::dot(start - position, ray);
+   C = glm::dot(start - position, start - position) - (radius * radius);
    innerRoot = (B * B) - (4.0f * A * C);
    
    if (innerRoot >= 0.0f) {
@@ -36,11 +36,11 @@ float Sphere::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float t
    return t;
 }
 
-Eigen::Vector3f Sphere::getNormal(Eigen::Vector3f iPt, float time) {
+glm::vec3 Sphere::getNormal(glm::vec3 iPt, float time) {
    return (iPt - position) / radius;
 }
 
 void Sphere::constructBB() {
-   boundingBox = new Box(Eigen::Vector3f(position[0] - radius, position[1] - radius, position[2] - radius),
-                         Eigen::Vector3f(position[0] + radius, position[1] + radius, position[2] + radius));
+   boundingBox = new Box(glm::vec3(position[0] - radius, position[1] - radius, position[2] - radius),
+                         glm::vec3(position[0] + radius, position[1] + radius, position[2] + radius));
 }

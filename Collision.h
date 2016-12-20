@@ -7,7 +7,7 @@
 #ifndef __COLLISION_H__
 #define __COLLISION_H__
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <vector>
 #include <iostream>
 #include "structs.h"
@@ -19,7 +19,7 @@ class Collision {
       Collision();
       ~Collision();
       
-      void detectRayCollision(Eigen::Vector3f start, Eigen::Vector3f ray, std::vector<SceneObject*> objects, int omitInd, bool unit);
+      void detectRayCollision(glm::vec3 start, glm::vec3 ray, std::vector<SceneObject*> objects, int omitInd, bool unit);
       
       float time;
       SceneObject* object;

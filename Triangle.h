@@ -4,7 +4,7 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include <iostream>
 #include "SceneObject.h"
 #include "Collision.h"
@@ -17,27 +17,27 @@
 
 class Triangle : public SceneObject {
    public:
-      Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3);
-      Triangle(Eigen::Vector3f pt1, Eigen::Vector3f pt2, Eigen::Vector3f pt3, bool smoothCheck);
+      Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3);
+      Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, bool smoothCheck);
       Triangle();
       ~Triangle();
    
-      Eigen::Vector3f a;
-      Eigen::Vector3f b;
-      Eigen::Vector3f c;
+      glm::vec3 a;
+      glm::vec3 b;
+      glm::vec3 c;
       
-      Eigen::Vector3f normal;
+      glm::vec3 normal;
       
-      float checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time);
-      Eigen::Vector3f getNormal(Eigen::Vector3f iPt, float time);
+      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      glm::vec3 getNormal(glm::vec3 iPt, float time);
       void constructBB();
       void printObj();
       
       // Wave or 3d object settings
       bool smooth;
-      Eigen::Vector3f aNor;
-      Eigen::Vector3f bNor;
-      Eigen::Vector3f cNor;
+      glm::vec3 aNor;
+      glm::vec3 bNor;
+      glm::vec3 cNor;
       // Barycentric Precomputations
       float dotAB;
       float dotAC;

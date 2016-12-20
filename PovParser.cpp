@@ -94,7 +94,7 @@ void PovParser::parse(stringstream& buffer) {
 void PovParser::parseCamera(stringstream& buffer) {
    string name;
    char curChar;
-   Eigen::Vector3f loc, up, right, lookat;
+   glm::vec3 loc, up, right, lookat;
    locateOpenBrace(buffer, "Camera");
    while ((curChar = buffer.get()) != '}') { 
       if (!buffer || curChar == '{') {
@@ -132,7 +132,7 @@ void PovParser::parseCamera(stringstream& buffer) {
 void PovParser::parseLight(stringstream& buffer) {
    string name;
    char curChar;
-   Eigen::Vector3f lpos, lcol;
+   glm::vec3 lpos, lcol;
    
    locateOpenBrace(buffer, "Light");
 
@@ -159,7 +159,7 @@ void PovParser::parseLight(stringstream& buffer) {
 /***************OBJECT PARSING***************/
 
 void PovParser::parseSphere(stringstream& buffer) {
-   Eigen::Vector3f loc;
+   glm::vec3 loc;
    float rad;
    Sphere* sphere;
    
@@ -178,7 +178,7 @@ void PovParser::parseSphere(stringstream& buffer) {
 }
 
 void PovParser::parsePlane(stringstream& buffer) {
-   Eigen::Vector3f normal;
+   glm::vec3 normal;
    float distance;
    Plane* plane;
 
@@ -197,7 +197,7 @@ void PovParser::parsePlane(stringstream& buffer) {
 }
 
 void PovParser::parseTriangle(stringstream& buffer) {
-   Eigen::Vector3f pt1, pt2, pt3;
+   glm::vec3 pt1, pt2, pt3;
    Triangle* triangle;
    
    locateOpenBrace(buffer, "Triangle");
@@ -217,7 +217,7 @@ void PovParser::parseTriangle(stringstream& buffer) {
 }
 
 void PovParser::parseBox(stringstream& buffer) {
-   Eigen::Vector3f llbt, urft;
+   glm::vec3 llbt, urft;
    Box* box;
    
    locateOpenBrace(buffer, "Box");
@@ -237,9 +237,9 @@ void PovParser::parseBox(stringstream& buffer) {
 void PovParser::parseGW(stringstream& buffer) {
    string name;
    char curChar;
-   Eigen::Vector3f ll, ur, dir, dirsubwave, subwavestats;
+   glm::vec3 ll, ur, dir, dirsubwave, subwavestats;
    float amp = 0.0f, wavel = 0.0f, speed = 0.0f, ypos = 0.0f, val;
-   std::vector<Eigen::Vector3f> waves;
+   std::vector<glm::vec3> waves;
    waves.clear();
    
    GerstnerWave *gerstnerWave;
@@ -272,9 +272,9 @@ void PovParser::parseGW(stringstream& buffer) {
             buffer >> ypos;
          } else if (name == "wave") {
             locateOpenBrace(buffer, "GW_sub_wave");
-            buffer >> subwavestats.x();
-            buffer >> subwavestats.y();
-            buffer >> subwavestats.z();
+            buffer >> subwavestats.x;
+            buffer >> subwavestats.y;
+            buffer >> subwavestats.z;
             waves.push_back(subwavestats);
             waves.push_back(parseEVect3(buffer));
             locateCloseBrace(buffer, "GW_sub_wave");
@@ -291,8 +291,8 @@ void PovParser::parseGW(stringstream& buffer) {
    
    gerstnerWave = new GerstnerWave(amp, wavel, speed, dir, ll, ur, ypos);
    for (int i = 0; i < waves.size(); i+=2) {
-      waves[i+1].normalize();
-      gerstnerWave->addWave(waves[i].x(), waves[i].y(), waves[i].z(), waves[i+1]);
+      waves[i+1] = glm::normalize(waves[i+1]);
+      gerstnerWave->addWave(waves[i].x, waves[i].y, waves[i].z, waves[i+1]);
    }
    gerstnerWave->type = 5;
    
@@ -304,7 +304,7 @@ void PovParser::parseGW(stringstream& buffer) {
 }
 
 void PovParser::parseCone(stringstream& buffer) {
-   Eigen::Vector3f endpt1, endpt2;
+   glm::vec3 endpt1, endpt2;
    float rad1, rad2;
    Cone* cone;
    
@@ -362,10 +362,10 @@ void PovParser::parseObjProps(stringstream& buffer, SceneObject* object) {
    }
 }
 
-Eigen::Vector4f PovParser::parsePigment(stringstream& buffer) {
+glm::vec4 PovParser::parsePigment(stringstream& buffer) {
    char curChar;
    string name;
-   Eigen::Vector4f pigment;
+   glm::vec4 pigment;
    
    locateOpenBrace(buffer, "Pigment");
    buffer >> name;
@@ -376,8 +376,8 @@ Eigen::Vector4f PovParser::parsePigment(stringstream& buffer) {
    buffer >> name;
    
    if (name == "rgb") {
-      Eigen::Vector3f col = parseEVect3(buffer);
-      pigment = Eigen::Vector4f(col[0], col[1], col[2], 0.0);
+      glm::vec3 col = parseEVect3(buffer);
+      pigment = glm::vec4(col[0], col[1], col[2], 0.0);
    } else if (name == "rgbf") {
       pigment = parseEVect4(buffer);
    } else {
@@ -428,10 +428,10 @@ void PovParser::parseFinish(stringstream& buffer, SceneObject* object) {
 }
 
 /***************HELPERS***************/
-Eigen::Vector3f PovParser::parseEVect3(stringstream& buffer) {
+glm::vec3 PovParser::parseEVect3(stringstream& buffer) {
    char curChar;
    float v1, v2, v3;
-   Eigen::Vector3f vect;
+   glm::vec3 vect;
    
    locateOpenABrace(buffer, "Vector3Parse");
    buffer >> v1;
@@ -441,13 +441,13 @@ Eigen::Vector3f PovParser::parseEVect3(stringstream& buffer) {
    buffer >> v3;
    locateCloseABrace(buffer, "Vector3Parse");
    
-   return Eigen::Vector3f(v1, v2, v3);
+   return glm::vec3(v1, v2, v3);
 }
 
-Eigen::Vector4f PovParser::parseEVect4(stringstream& buffer) {
+glm::vec4 PovParser::parseEVect4(stringstream& buffer) {
    char curChar;
    float v1, v2, v3, v4;
-   Eigen::Vector4f vect;
+   glm::vec4 vect;
    
    locateOpenABrace(buffer, "Vector4Parse");
    buffer >> v1;
@@ -459,7 +459,7 @@ Eigen::Vector4f PovParser::parseEVect4(stringstream& buffer) {
    buffer >> v4;
    locateCloseABrace(buffer, "Vector4Parse");
    
-   return Eigen::Vector4f(v1, v2, v3, v4);
+   return glm::vec4(v1, v2, v3, v4);
 }
 
 void PovParser::locateOpenBrace(stringstream& buffer, string type) {
@@ -518,9 +518,9 @@ void PovParser::locateCloseABrace(stringstream& buffer, string type) {
 }
 
 void PovParser::printObjects() {
-   Eigen::Vector3f v;
-   Eigen::Vector4f v4;
-   Eigen::Matrix4f transform;
+   glm::vec3 v;
+   glm::vec4 v4;
+   glm::mat4 transform;
    cout << "Camera:" << endl;
    v = camera->getPosition();
    cout << "   Position: " << v[0] << " " << v[1] << " " << v[2] << endl;
@@ -548,7 +548,7 @@ void PovParser::printObjects() {
       v = objects[i]->scaleVector;
       cout << "   Scale: " << v[0] << " " << v[1] << " " << v[2] << endl;
       transform = objects[i]->transform;
-      cout << "   Transform Matrix:" << endl << transform << endl;
+      cout << "   Transform Matrix:" << endl << glm::to_string(transform) << endl;
       cout << "   Ambient: " << objects[i]->ambient << endl;
       cout << "   Diffuse: " << objects[i]->diffuse << endl;
       cout << "   Specular: " << objects[i]->specular << endl;
@@ -568,9 +568,9 @@ void PovParser::printObjects() {
          cout << "   Distance: " << p->distance << endl;
       } else if (objects[i]->type == 2) {
          Triangle* t = static_cast<Triangle*>(objects[i]);
-         cout << "   Point 1: " << t->a.x() << " " << t->a.y() << " " << t->a.z() << " " << endl;
-         cout << "   Point 2: " << t->b.x() << " " << t->b.y() << " " << t->b.z() << " " << endl;
-         cout << "   Point 3: " << t->c.x() << " " << t->c.y() << " " << t->c.z() << " " << endl;
+         cout << "   Point 1: " << t->a.x << " " << t->a.y << " " << t->a.z << " " << endl;
+         cout << "   Point 2: " << t->b.x << " " << t->b.y << " " << t->b.z << " " << endl;
+         cout << "   Point 3: " << t->c.x << " " << t->c.y << " " << t->c.z << " " << endl;
       }
    }
 }

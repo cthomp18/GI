@@ -4,11 +4,9 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
 #include "Box.h"
 
-
-Box::Box(Eigen::Vector3f cornerPt1, Eigen::Vector3f cornerPt2) : SceneObject() {
+Box::Box(glm::vec3 cornerPt1, glm::vec3 cornerPt2) : SceneObject() {
    for (int i = 0; i < 3; i++) {
       if (cornerPt1[i] < cornerPt2[i]) {
          minPt[i] = cornerPt1[i];
@@ -18,14 +16,14 @@ Box::Box(Eigen::Vector3f cornerPt1, Eigen::Vector3f cornerPt2) : SceneObject() {
          maxPt[i] = cornerPt1[i];
       }
    }
-   middle = Eigen::Vector3f((maxPt[0] + minPt[0]) / 2.0f, (maxPt[1] + minPt[1]) / 2.0f, (maxPt[2] + minPt[2]) / 2.0f);
+   middle = glm::vec3((maxPt[0] + minPt[0]) / 2.0f, (maxPt[1] + minPt[1]) / 2.0f, (maxPt[2] + minPt[2]) / 2.0f);
    unit = false;
 }
 
 Box::Box() : SceneObject() {}
 Box::~Box() {}
 
-float Box::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time) {
+float Box::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    //std::cout << "Box Collision" << std::endl;
    float tgmin = FLT_MIN, tgmax = FLT_MAX, t1, t2, temp, t = -1.0f;
 
@@ -61,8 +59,8 @@ float Box::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time
    return tgmin;
 }
 
-Eigen::Vector3f Box::getNormal(Eigen::Vector3f iPt) {
-   Eigen::Vector3f normal = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+glm::vec3 Box::getNormal(glm::vec3 iPt) {
+   glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
    
    for (int i = 0; i < 3; i++) {
       if (fabs(iPt[i] - minPt[i]) < TOLERANCE) {

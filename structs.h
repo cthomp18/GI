@@ -14,7 +14,7 @@
 #define DEPTH 2
 
 typedef struct Pixel {
-   Eigen::Vector3f pt;
+   glm::vec3 pt;
    color_t clr;
 } Pixel;
 

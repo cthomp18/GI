@@ -4,29 +4,29 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
 class Camera {
    public:
-      Camera(Eigen::Vector3f pos, Eigen::Vector3f u, Eigen::Vector3f r, Eigen::Vector3f lA);
+      Camera(glm::vec3 pos, glm::vec3 u, glm::vec3 r, glm::vec3 lA);
       Camera();
       ~Camera();
       
-      void move(Eigen::Vector3f pos);
-      void change(Eigen::Vector3f lA);
-      Eigen::Vector3f getPosition();
-      Eigen::Vector3f getLookAt();
-      Eigen::Vector3f getUp();
-      Eigen::Vector3f getRight();
+      void move(glm::vec3 pos);
+      void change(glm::vec3 lA);
+      glm::vec3 getPosition();
+      glm::vec3 getLookAt();
+      glm::vec3 getUp();
+      glm::vec3 getRight();
       
    private:
-      Eigen::Vector3f position;
-      Eigen::Vector3f up;
-      Eigen::Vector3f right;
-      Eigen::Vector3f lookAt;
+      glm::vec3 position;
+      glm::vec3 up;
+      glm::vec3 right;
+      glm::vec3 lookAt;
 };
 
 #endif

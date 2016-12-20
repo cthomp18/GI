@@ -10,9 +10,6 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-#include <Eigen/Geometry>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 #include <pthread.h>
 #include <omp.h>
 #include <time.h>
@@ -32,6 +29,10 @@
 #include "GerstnerWave.h"
 #include "QuadTreeNode.h"
 #include "BiTreeNode.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
+#include "glm/gtc/type_ptr.hpp" //value_ptr
 
 std::vector<SceneObject*> objects;
 
@@ -57,8 +58,8 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    
    int height, width;
    float left, right, top, bottom, u_s, v_s, w_s = -1.0f;
-   Eigen::Vector3f campos, rightV, upV, lookAt, tempV;
-   Eigen::Vector3f u_v, v_v, w_v;
+   glm::vec3 campos, rightV, upV, lookAt, tempV;
+   glm::vec3 u_v, v_v, w_v;
    
    if (argc != 4) {
       perror("Required Format: trace <width> <height> <povray_file_name>");
@@ -178,18 +179,18 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    upV = camera->getUp();
    lookAt = camera->getLookAt();
    
-   left = -(rightV.norm()) / 2.0;
-   right = rightV.norm() / 2.0;
-   bottom = -(upV.norm()) / 2.0;
-   top = upV.norm() / 2.0;
+   left = -glm::length(rightV) / 2.0;
+   right = glm::length(rightV) / 2.0;
+   bottom = glm::length(upV) / 2.0;
+   top = glm::length(upV) / 2.0;
    
    w_v = lookAt - campos;
-   w_v.normalize();
+   w_v = glm::normalize(w_v);
    w_v = -w_v;
    u_v = rightV;
-   u_v.normalize();
+   u_v = glm::normalize(u_v);
    v_v = upV;
-   v_v.normalize();
+   v_v = glm::normalize(v_v);
    
    float dx = 1.0f / (float)imgwidth;
    float dy = 1.0f / (float)imgheight;
@@ -270,7 +271,7 @@ int main(int argc, char* argv[]) {
    cout << "Global Tree size: " << kd->Treesize(root) << endl;
    cout << "Caustic Tree size: " << kd->Treesize(rootC1) << endl;
    
-   Eigen::Vector3f cPos = camera->getPosition();
+   glm::vec3 cPos = camera->getPosition();
    RayTracer* raytrace = new RayTracer(lights, objects, photonMap, causticMap, root, rootC1);
    time_t startTime, endTime;
    time(&startTime);
@@ -279,13 +280,13 @@ int main(int argc, char* argv[]) {
    for (int i = 0; i < imgwidth; i++) {
       //cout << "i: " << i << endl;
       Collision* col;
-      Eigen::Vector3f ray, tempColor;
+      glm::vec3 ray, tempColor;
       bool unit = false;
       for (int j = 0; j < imgheight; j++) {
       
          ray = pixels[i][j].pt;// - cPos;
          //ray[0] *= (float)imgwidth / (float)imgheight;
-         ray.normalize();
+         ray = glm::normalize(ray);
          //pixels[i][j].clr = calcRadiance(intersectPt, pixels[i][j].pt, ray, normal, col, root, rootC1, 2, 1.0, false);
          unit = false;
          if (i == imgwidth / 2 && j == imgheight / 2) unit = true;

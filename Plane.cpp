@@ -4,12 +4,12 @@
    Spring 2016
 */
 
-#include <Eigen/Dense>
+#include "glm/glm.hpp"
 #include "Plane.h"
 
-Plane::Plane(Eigen::Vector3f n, float d) : SceneObject() {
+Plane::Plane(glm::vec3 n, float d) : SceneObject() {
    normal = n;
-   normal.normalize();
+   normal = glm::normalize(normal);
    distance = d;
    planePt = normal * distance;
 }
@@ -17,12 +17,12 @@ Plane::Plane(Eigen::Vector3f n, float d) : SceneObject() {
 Plane::Plane() : SceneObject() {}
 Plane::~Plane() {}
 
-float Plane::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float time) {
+float Plane::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    float t = -1.0f;
-   Eigen::Vector3f origin = Eigen::Vector3f(0.0f, 0.0f, 0.0f);
+   glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
    
-   if (ray.dot(normal) != 0.0f) {
-      t = (planePt - start).dot(normal) / (ray.dot(normal));
+   if (glm::dot(ray, normal) != 0.0f) {
+      t = glm::dot(planePt - start, normal) / glm::dot(ray, normal);
    }
    
    return t;
@@ -66,6 +66,6 @@ float Plane::checkCollision(Eigen::Vector3f start, Eigen::Vector3f ray, float ti
    return t;*/
 }
 
-Eigen::Vector3f Plane::getNormal(Eigen::Vector3f iPt, float time) {
+glm::vec3 Plane::getNormal(glm::vec3 iPt, float time) {
    return normal;
 }
