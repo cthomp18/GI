@@ -126,7 +126,7 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
                          t*x*z - y*s, t*y*z + x*s,	t*z*z + c);
          matInv = glm::inverse(mat);
       } else {
-         matInv = glm::mat3();
+         matInv = glm::mat3(1.0f);
       }
       if (numCPhotons > 0) rootC1->locatePhotons(1, iPt, &locateHeap, 0.05, &newRadSqrd, matInv, numCPhotons);
       causts = locateHeap.size();
@@ -185,7 +185,7 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
 glm::vec3 RayTracer::findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj) {
    glm::vec3 reflectRay;
    
-   reflectRay = ray + (2.0f*normal*glm::dot(normal, -ray));
+   reflectRay = ray + (2.0f*normal*(glm::dot(normal, -ray)));
    reflectRay = glm::normalize(reflectRay);
    
    return reflectRay;

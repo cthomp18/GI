@@ -10,11 +10,11 @@
 #include "Box.h"
 
 SceneObject::SceneObject() {
-   pigment = glm::vec4 (-1.0, -1.0, -1.0, 0.0);
-   translateVector = glm::vec3 (0.0, 0.0, 0.0);
-   rotateVector = glm::vec3 (0.0, 0.0, 0.0);
-   scaleVector = glm::vec3 (1.0, 1.0, 1.0);
-   transform = glm::mat4();
+   pigment = glm::vec4 (-1.0f, -1.0f, -1.0f, 0.0f);
+   translateVector = glm::vec3 (0.0f, 0.0f, 0.0f);
+   rotateVector = glm::vec3 (0.0f, 0.0f, 0.0f);
+   scaleVector = glm::vec3 (1.0f, 1.0f, 1.0f);
+   transform = glm::mat4(1.0f);
    
    ambient = 0.1f;
    diffuse = 0.6f;
@@ -122,7 +122,7 @@ void SceneObject::applyTransforms() {
 }
 
 void SceneObject::scale() {
-   glm::mat4 scaleMat = glm::mat4();
+   glm::mat4 scaleMat = glm::mat4(1.0f);
    for (int i = 0; i < 3; i++) scaleMat[i][i] = scaleVector[i];
    transform = scaleMat * transform;
    transformed = true;
@@ -133,7 +133,7 @@ void SceneObject::rotate() {
    glm::mat4 rotMat;
    float ang;
    for (int i = 0; i < 3; i++) {
-      rotMat = glm::mat4();
+      rotMat = glm::mat4(1.0f);
       if (fabs(ang = (rotateVector[i] * M_PI / 180.0f)) > 0.001f) {
          miniRotMat = glm::mat2(cos(ang), -sin(ang), sin(ang), cos(ang));
          switch (i) {
@@ -165,8 +165,8 @@ void SceneObject::rotate() {
 }
 
 void SceneObject::translate() {
-   glm::mat4 transMat = glm::mat4();
-   for (int i = 0; i < 3; i++) transMat[i][3] = translateVector[i];
+   glm::mat4 transMat = glm::mat4(1.0f);
+   for (int i = 0; i < 3; i++) transMat[3][i] = translateVector[i];
    transform = transMat * transform;
    transformed = true;
 }

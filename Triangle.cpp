@@ -53,17 +53,17 @@ float Triangle::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    //if (std::fabs(detA) > 0.0f) {
       //std::cout << "hi?" << std::endl;
       Ai = A;
-      Ai[0][2] = a.x - start.x; Ai[1][2] = a.y - start.y; Ai[2][2] = a.z - start.z;
+      Ai[2][0] = a.x - start.x; Ai[2][1] = a.y - start.y; Ai[2][2] = a.z - start.z;
       t = glm::determinant(Ai) / detA;
       if (t > TOLERANCE) {
          //std::cout << "hiya" << std::endl;
          Ai = A;
-         Ai[0][0] = a.x - start.x; Ai[1][0] = a.y - start.y; Ai[2][0] = a.z - start.z;
+         Ai[0][0] = a.x - start.x; Ai[0][1] = a.y - start.y; Ai[0][2] = a.z - start.z;
          gamma = glm::determinant(Ai) / detA;
          if (gamma >= 0.0f && gamma <= 1.0f) {
             //std::cout << "hello" << std::endl;
             Ai = A;
-            Ai[0][1] = a.x - start.x; Ai[1][1] = a.y - start.y; Ai[2][1] = a.z - start.z;
+            Ai[1][0] = a.x - start.x; Ai[1][1] = a.y - start.y; Ai[1][2] = a.z - start.z;
             beta = glm::determinant(Ai) / detA;
             //std::cout << "Beta: " << beta << " Gamma: " << gamma << std::endl;
             if (beta >= 0.0f && beta + gamma <= 1.0f) {

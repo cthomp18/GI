@@ -179,9 +179,9 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    upV = camera->getUp();
    lookAt = camera->getLookAt();
    
-   left = -glm::length(rightV) / 2.0;
+   left = -(glm::length(rightV)) / 2.0;
    right = glm::length(rightV) / 2.0;
-   bottom = glm::length(upV) / 2.0;
+   bottom = -(glm::length(upV)) / 2.0;
    top = glm::length(upV) / 2.0;
    
    w_v = lookAt - campos;
@@ -248,7 +248,7 @@ int main(int argc, char* argv[]) {
    cout << "Building Global Photon Map... " << endl;
    pm->buildGlobalMap();
    cout << "Building Caustic Photon Map(s)... " << endl;
-   pm->buildCausticMap();
+   //pm->buildCausticMap();
    cout << "Done!" << endl;
    cout << photonMap.size() << endl;
    cout << GLOBALPHOTONS << endl;
