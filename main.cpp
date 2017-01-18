@@ -248,7 +248,7 @@ int main(int argc, char* argv[]) {
    cout << "Building Global Photon Map... " << endl;
    pm->buildGlobalMap();
    cout << "Building Caustic Photon Map(s)... " << endl;
-   //pm->buildCausticMap();
+   pm->buildCausticMap();
    cout << "Done!" << endl;
    cout << photonMap.size() << endl;
    cout << GLOBALPHOTONS << endl;
