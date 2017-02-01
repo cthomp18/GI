@@ -40,6 +40,7 @@ class PovParser {
       std::vector<SceneObject*> getObjects();
       
       void parse(stringstream& buffer);
+      void ObjToPov(string filename);
       //Print
       void printObjects();
       
@@ -56,10 +57,11 @@ class PovParser {
       //Objects
       void parseSphere(stringstream& buffer);
       void parsePlane(stringstream& buffer);
-      void parseTriangle(stringstream& buffer);
+      void parseTriangle(stringstream& buffer, int norms);
       void parseCone(stringstream& buffer);
       void parseBox(stringstream& buffer);
       void parseGW(stringstream& buffer);
+      void parseObj(stringstream& buffer);
       
       //Sub-Parser Stuff
       void parseObjProps(stringstream& buffer, SceneObject* object);

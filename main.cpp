@@ -27,6 +27,7 @@
 #include "Light.h"
 #include "PovParser.h"
 #include "GerstnerWave.h"
+#include "OctTreeNode.h"
 #include "QuadTreeNode.h"
 #include "BiTreeNode.h"
 
@@ -150,6 +151,7 @@ void setup(int argc, char* argv[], Pixel** pixels) {
          cout << tempObjects.size() << endl;
       }
    }
+   //cout << tempObjects.size() << endl;
    for (int i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 1 || tempObjects[i]->type == 5) {
          objects.push_back(tempObjects[i]);
@@ -166,13 +168,16 @@ void setup(int argc, char* argv[], Pixel** pixels) {
       objects.push_back(tempObjects[i]->boundingBox);
       objects[objects.size() - 1]->pigment = Eigen::Vector4f(0.7, 0.7, 0.7, 1.0f);
    }*/
-   QuadTreeNode* root;
+   
+   OctTreeNode* root;
    if (tempObjects.size() > 0) {
-      root = new QuadTreeNode(tempObjects, tempObjects.size(), 0);
-      cout << "Quad Tree made" << endl;
+      cout << tempObjects.size() << endl;
+      root = new OctTreeNode(tempObjects, tempObjects.size(), 0);
+      cout << "Octree made" << endl;
       //root->printObj();
       objects.push_back(root);
    }
+   //root->printObj();
    
    campos = camera->getPosition();
    rightV = camera->getRight();
@@ -239,16 +244,16 @@ int main(int argc, char* argv[]) {
    for (int i = 0; i < imgwidth; i++) {
       pixels[i] = new Pixel[imgheight];
    }
-   
+
    setup(argc, argv, pixels);
 
    KDTreeNode* kd = new KDTreeNode();
    Image* img = new Image(imgwidth, imgheight);
    PhotonMapper* pm = new PhotonMapper(lights, objects);
    cout << "Building Global Photon Map... " << endl;
-   pm->buildGlobalMap();
+   //pm->buildGlobalMap();
    cout << "Building Caustic Photon Map(s)... " << endl;
-   pm->buildCausticMap();
+   //pm->buildCausticMap();
    cout << "Done!" << endl;
    cout << photonMap.size() << endl;
    cout << GLOBALPHOTONS << endl;
@@ -293,14 +298,14 @@ int main(int argc, char* argv[]) {
          col = raytrace->trace(cPos, ray, unit);
          
          if (col->time > TOLERANCE) {
-            pixels[i][j].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 5); //Cam must start in air
-            /*tempColor = col->object->getNormal(cPos + ray * col->time, 2.0f);
-            pixels[i][j].clr.r = tempColor.x() * 0.5f + 0.5f;
-            pixels[i][j].clr.g = tempColor.y() * 0.5f + 0.5f;
-            pixels[i][j].clr.b = tempColor.z() * 0.5f + 0.5f;*/
+            //pixels[i][j].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 5); //Cam must start in air
+            tempColor = col->object->getNormal(cPos + ray * col->time, 2.0f);
+            pixels[i][j].clr.r = tempColor.x * 0.5f + 0.5f;
+            pixels[i][j].clr.g = tempColor.y * 0.5f + 0.5f;
+            pixels[i][j].clr.b = tempColor.z * 0.5f + 0.5f;
          }
          else {
-            pixels[i][j].clr.r = pixels[i][j].clr.g = pixels[i][j].clr.b = 0.0f;
+            pixels[i][j].clr.r = pixels[i][j].clr.g = pixels[i][j].clr.b = 1.0f;
          }
          //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
       }

@@ -73,13 +73,17 @@ void PovParser::parse(stringstream& buffer) {
          parsePlane(buffer);
          //cout << "Parsed Plane" << endl;
       } else if (name == "triangle") {
-         parseTriangle(buffer);
+         parseTriangle(buffer, 0);
+      } else if (name == "triangleN") {
+         parseTriangle(buffer, 1);
       } else if (name == "cone") {
          parseCone(buffer);
       } else if (name == "box") {
          parseBox(buffer);
       } else if (name == "gerstner_wave") {
          parseGW(buffer);
+      } else if (name == "object") {
+         parseObj(buffer);
       } else if (name == "\0") {
          cout << "good" << endl;
       } else {
@@ -196,8 +200,9 @@ void PovParser::parsePlane(stringstream& buffer) {
    objects.push_back(plane);
 }
 
-void PovParser::parseTriangle(stringstream& buffer) {
+void PovParser::parseTriangle(stringstream& buffer, int norms) {
    glm::vec3 pt1, pt2, pt3;
+   glm::vec3 n1, n2, n3;
    Triangle* triangle;
    
    locateOpenBrace(buffer, "Triangle");
@@ -208,6 +213,21 @@ void PovParser::parseTriangle(stringstream& buffer) {
    pt3 = parseEVect3(buffer);
    
    triangle = new Triangle(pt1, pt2, pt3);
+   
+   if (norms) {
+      locateOpenBrace(buffer, "Triangle");
+      n1 = parseEVect3(buffer);
+      locateComma(buffer, "Triangle");
+      n2 = parseEVect3(buffer);
+      locateComma(buffer, "Triangle");
+      n3 = parseEVect3(buffer);
+      
+      triangle->smooth = true;
+      triangle->aNor = n1;
+      triangle->bNor = n2;
+      triangle->cNor = n3;
+   }
+   
    triangle->type = 2;
    parseObjProps(buffer, triangle);
    triangle->constructBB();
@@ -301,6 +321,16 @@ void PovParser::parseGW(stringstream& buffer) {
    //gerstnerWave->applyTransforms();
    
    objects.push_back(gerstnerWave);
+}
+
+void PovParser::parseObj(stringstream& buffer) {
+   string objFileName;
+   
+   locateOpenBrace(buffer, "Object");
+   buffer >> objFileName;
+   ObjToPov(objFileName);
+   
+   locateCloseBrace(buffer, "Object");
 }
 
 void PovParser::parseCone(stringstream& buffer) {
@@ -573,4 +603,163 @@ void PovParser::printObjects() {
          cout << "   Point 3: " << t->c.x << " " << t->c.y << " " << t->c.z << " " << endl;
       }
    }
+}
+
+/* Very simple OBJ to Povray file converter (insert without extension)
+   Requires an mtl, otherwise defaulted material to white full diffuse
+   If there is an mtl file, it must be the same as the obj
+   Yes, I know it's only an extra parameter. I don't care.
+*/
+void PovParser::ObjToPov(string filename) {
+   ifstream file;
+   const char *fn;
+   
+   fn = (filename + ".obj").c_str();
+   file.open(fn);
+   if (!file) {
+      perror("Bad File");
+      exit(1);
+   }
+
+   stringstream buffer;
+   buffer.clear();
+   //buffer << file.rdbuf();
+   
+   ofstream meshFile;
+   
+   std::vector<glm::vec3> verts;
+   std::vector<glm::vec3> norms;
+   float t1, t2, t3;
+   int i, j, k;
+   string action, temp, line;
+   Triangle *objTri;
+   
+   float shrink = 20.0f;
+   bool calc = false;
+   float minx = FLT_MAX, miny = FLT_MAX, minz = FLT_MAX;
+   float maxx = FLT_MIN, maxy = FLT_MIN, maxz = FLT_MIN;
+   float rangex = 0, rangey = 0, rangez = 0;
+   
+   glm::vec3 trans = glm::vec3(0.0f, 0.0f, 0.0f);
+   
+   while (!file.eof()) {
+      std::getline(file, line);
+      buffer.str(line);
+      buffer >> action;
+      if (!action.compare("v")) {
+         buffer >> t1;
+         buffer >> t2;
+         buffer >> t3;
+         
+         if (t1 < minx) minx = t1;
+         else if (t1 > maxx) maxx = t1;
+         if (t2 < miny) miny = t2;
+         else if (t2 > maxy) maxy = t2;
+         if (t3 < minz) minz = t3;
+         else if (t3 > maxz) maxz = t3;
+         
+         verts.push_back(glm::vec3(t1, t2, t3));
+         //cout << t1 << " " << t2 << " " << t3 << endl;
+      } else if (!action.compare("vn")) {
+         buffer >> t1;
+         buffer >> t2;
+         buffer >> t3;
+         norms.push_back(glm::vec3(t1, t2, t3));
+         //cout << t1 << " " << t2 << " " << t3 << endl;
+      } else if (!action.compare("f")) {
+         if (!calc) {
+            rangex = maxx - minx;
+            rangey = maxy - miny;
+            rangez = maxz - minz;
+            
+            if (rangex > rangey && rangex > rangez) shrink = rangex / shrink;
+            else if (rangey > rangex && rangey > rangez) shrink = rangey / shrink;
+            else shrink = rangez / shrink;
+            
+            minx = miny = minz = FLT_MAX;
+            maxx = maxy = maxz = FLT_MIN;
+            for (int i = 0; i < verts.size(); i++) {
+               verts[i].x /= shrink;
+               verts[i].y /= shrink;
+               verts[i].z /= shrink;
+               if (verts[i].x < minx) minx = verts[i].x;
+               else if (verts[i].x > maxx) maxx = verts[i].x;
+               if (verts[i].y < miny) miny = verts[i].y;
+               else if (verts[i].y > maxy) maxy = verts[i].y;
+               if (verts[i].z < minz) minz = verts[i].z;
+               else if (verts[i].z > maxz) maxz = verts[i].z;
+            }
+            
+            trans.x = -((maxx + minx) / 2.0f);
+            trans.y = -((maxy + miny) / 2.0f);
+            trans.z = -((maxz + minz) / 2.0f);
+            
+            for (int i = 0; i < verts.size(); i++) {
+               verts[i].x = verts[i].x + trans.x;
+               verts[i].y = verts[i].y + trans.y;
+               verts[i].z = verts[i].z + trans.z;
+            }
+            
+            calc = true;
+            
+            /*cout << "Mins: " << minx << " " << miny << " " << minz << endl;
+            cout << "Maxs: " << maxx << " " << maxy << " " << maxz << endl;
+            cout << "Ranges: " << rangex << " " << rangey << " " << rangez << endl;
+            cout << "Trans: " << trans.x << " " << trans.y << " " << trans.z << endl;
+            cout << "Shrink: " << shrink << endl;*/
+            
+            
+            
+            /*minx = miny = minz = FLT_MAX;
+            maxx = maxy = maxz = FLT_MIN;
+            cout << "SIZE: " << verts.size() << endl;;
+            cout << "Mins: " << minx << " " << miny << " " << minz << endl;
+            cout << "Maxs: " << maxx << " " << maxy << " " << maxz << endl;
+            for (int i = 0; i < verts.size(); i++) {
+               //cout << " HELLO ??? " << endl;
+               if (verts[i].x < minx) minx = verts[i].x;
+               else if (verts[i].x > maxx) maxx = verts[i].x;
+               if (verts[i].y < miny) miny = verts[i].y;
+               else if (verts[i].y > maxy) maxy = verts[i].y;
+               if (verts[i].z < minz) minz = verts[i].z;
+               else if (verts[i].z > maxz) maxz = verts[i].z;
+            }
+            rangex = maxx - minx;
+            rangey = maxy - miny;
+            rangez = maxz - minz;
+            
+            trans.x = -((maxx + minx) / 2.0f);
+            trans.y = -((maxy + miny) / 2.0f);
+            trans.z = -((maxz + minz) / 2.0f);
+            if (rangex > rangey && rangex > rangez) shrink = rangex / shrink;
+            if (rangey > rangex && rangey > rangez) shrink = rangey / shrink;
+            else shrink = rangez / shrink;
+            
+            cout << "Mins: " << minx << " " << miny << " " << minz << endl;
+            cout << "Maxs: " << maxx << " " << maxy << " " << maxz << endl;
+            cout << "Ranges: " << rangex << " " << rangey << " " << rangez << endl;
+            cout << "Trans: " << trans.x << " " << trans.y << " " << trans.z << endl;
+            cout << "Shrink: " << shrink << endl;*/
+         }
+         buffer >> i;
+         buffer >> temp;
+         buffer >> j;
+         buffer >> temp;
+         buffer >> k;
+         buffer >> temp;
+         //cout << i << " " << j << " " << k << endl;
+         objTri = new Triangle(verts[i-1], verts[j-1], verts[k-1], true);
+         objTri->aNor = norms[i-1];
+         objTri->bNor = norms[j-1];
+         objTri->cNor = norms[k-1];
+         objTri->pigment = glm::vec4(1.0, 1.0, 1.0, 0.0);
+         objTri->photonReflectance = 0.5;
+         objTri->photonRefractance = 0.0;
+         objTri->type = 2;
+         objTri->constructBB();
+         
+         objects.push_back(objTri);
+      }
+   }
+   file.close();
 }
