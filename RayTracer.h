@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 
+#include "cuda_helper.h"
 #include "Light.h"
 #include "SceneObject.h"
 #include "Image.h"
@@ -20,24 +21,26 @@
 
 class RayTracer {
    public:
-      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o);
-      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, std::vector<Photon*> gM, std::vector<Photon*> cM, KDTreeNode* gr, KDTreeNode* cr);
-      RayTracer();
-      ~RayTracer();
+      CUDA_CALLABLE RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o);
+      CUDA_CALLABLE RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
+      CUDA_CALLABLE RayTracer(SceneObject** o, int osize, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
+      CUDA_CALLABLE RayTracer();
+      CUDA_CALLABLE ~RayTracer();
       
-      Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit);
-      glm::vec3 findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj);
-      glm::vec3 findRefract(glm::vec3 ray, glm::vec3 normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
+      CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit);
+      CUDA_CALLABLE glm::vec3 findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj);
+      CUDA_CALLABLE glm::vec3 findRefract(glm::vec3 ray, glm::vec3 normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
       
-      std::vector<Light*> lights;
-      std::vector<SceneObject*> objects;
+      thrust::host_vector<Light*> lights;
+      SceneObject** objects;
+      int objSize;
       
-      std::vector<Photon*> globalMap;
-      std::vector<Photon*> causticMap;
+      int numGPhotons;
+      int numCPhotons;
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      color_t calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
+      CUDA_CALLABLE color_t calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
    private:
       
 };

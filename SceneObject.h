@@ -4,21 +4,25 @@
    Spring 2016
 */
 
+#ifndef __SCENEOBJECT_H__
+#define __SCENEOBJECT_H__
+
+#include "cuda_helper.h"
 #include "glm/glm.hpp"
+#include "BoundingBox.h"
+#include "Collision.h"
 #include <vector>
 #include <iostream>
 #include <math.h>
 
-#ifndef __SCENEOBJECT_H__
-#define __SCENEOBJECT_H__
-
 class Collision;
-class Box;
 
 class SceneObject {
    public:
-      SceneObject();
-      ~SceneObject();
+      //typedef float SceneObject::* functionPtr;
+      
+      CUDA_CALLABLE SceneObject();
+      CUDA_CALLABLE virtual ~SceneObject();
       
       glm::vec4 pigment;
       glm::vec3 translateVector;
@@ -38,19 +42,22 @@ class SceneObject {
       float dropoff;
       
       int type;
+      int blahblah;
+      //float (SceneObject::*checkCollision) (glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
       
-      Box* boundingBox;
-      SceneObject* hitObj;
+      BoundingBox boundingBox;
+      //SceneObject* hitObj;
       void constructBB();
       bool transformed;
-      virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      virtual glm::vec3 getNormal(glm::vec3 iPt, float time);
+      CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      CUDA_CALLABLE virtual glm::vec3 getNormal(glm::vec3 iPt, float time);
       virtual SceneObject* getObj();
       
       void applyTransforms();
       
-      virtual void printObj();
+      CUDA_CALLABLE virtual void printObj();
+      CUDA_CALLABLE void copyData(SceneObject *o);
       
    private:
       void rotate();

@@ -13,6 +13,7 @@
 #include "SceneObject.h"
 #include "structs.h"
 #include "Triangle.h"
+#include "cuda_helper.h"
 
 class GerstnerWave : public SceneObject {
    public:
@@ -28,13 +29,13 @@ class GerstnerWave : public SceneObject {
       
       int waves;
       
-      GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
-      GerstnerWave();
-      ~GerstnerWave();
+      CUDA_CALLABLE GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
+      CUDA_CALLABLE GerstnerWave();
+      CUDA_CALLABLE virtual ~GerstnerWave();
       
-      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
       void addWave(float a, float w, float s, glm::vec3 d);
-      glm::vec3 getNormal(glm::vec3 iPt, float time);
+      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       
       glm::vec3 getPoint(float x, float z, float time);
       

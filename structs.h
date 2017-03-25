@@ -15,7 +15,7 @@
 
 typedef struct Pixel {
    glm::vec3 pt;
-   color_t clr;
+   glm::vec3 clr;
 } Pixel;
 
 #endif

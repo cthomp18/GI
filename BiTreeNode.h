@@ -16,26 +16,27 @@
 #include "Collision.h"
 #include "structs.h"
 #include "Box.h"
+#include "cuda_helper.h"
+#include "glm/glm.hpp"
 
 class BiTreeNode : public SceneObject {
    public:
       BiTreeNode(std::vector<SceneObject*> objects, int axis, int n);
       BiTreeNode();
-      ~BiTreeNode();
+      CUDA_CALLABLE virtual ~BiTreeNode();
       
       SceneObject *left;
       SceneObject *right;
       //int sortAxis;
       
-      float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      glm::vec3 getNormal(glm::vec3 iPt);
-      SceneObject* getObj();
+      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
       void printTree();
       
    private:
       //bool sorter(const SceneObject* obj1, const SceneObject* obj2);
-      Box* combineBB(Box* box1, Box* box2);
+      CUDA_CALLABLE BoundingBox combineBB(BoundingBox* box1, BoundingBox* box2);
 };
 
 #endif

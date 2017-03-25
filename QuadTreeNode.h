@@ -16,13 +16,14 @@
 #include "SceneObject.h"
 #include "Collision.h"
 #include "structs.h"
-#include "Box.h"
+#include "BoundingBox.h"
+#include "cuda_helper.h"
 
 class QuadTreeNode : public SceneObject {
    public:
       QuadTreeNode(std::vector<SceneObject*> objects, int n, int depth);
       QuadTreeNode();
-      ~QuadTreeNode();
+      CUDA_CALLABLE virtual ~QuadTreeNode();
       
       SceneObject *q1;
       SceneObject *q2;
@@ -30,15 +31,14 @@ class QuadTreeNode : public SceneObject {
       SceneObject *q4;
       //int sortAxis;
       
-      float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      glm::vec3 getNormal(glm::vec3 iPt);
-      SceneObject* getObj();
+      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
-      void printObj();
+      CUDA_CALLABLE void printObj();
       
    private:
       //bool sorter(const SceneObject* obj1, const SceneObject* obj2);
-      Box* combineBB(Box* box1, Box* box2, Box* box3, Box* box4);
+      CUDA_CALLABLE BoundingBox combineBB(BoundingBox* box1, BoundingBox* box2, BoundingBox* box3, BoundingBox* box4);
 };
 
 #endif

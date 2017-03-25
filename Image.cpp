@@ -177,7 +177,7 @@ void Image::GenTestPattern()
     }
 }
 
-color_t Image::pixel(int x, int y)
+glm::vec3 Image::pixel(int x, int y)
 {
     if (x < 0 || x > _width - 1 ||
         y < 0 || y > _height - 1)
@@ -187,10 +187,15 @@ color_t Image::pixel(int x, int y)
         exit(EXIT_FAILURE);
     }
     
-    return _pixmap[x][y];
+    glm::vec3 pxl;
+    pxl.x = _pixmap[x][y].r;
+    pxl.y = _pixmap[x][y].g;
+    pxl.z = _pixmap[x][y].b;
+    
+    return pxl;
 }
 
-void Image::pixel(int x, int y, color_t pxl)
+void Image::pixel(int x, int y, glm::vec3 pxl_vec)
 {
    //std::cout << "This function should literally never be called, I've commented out every single call in the code and changed the function parameters. This is being called from something else that existed back when Image::pixel(int,int,color_t) was a thing. what the fuck is going on" << std::endl;
     if (x < 0 || x > _width - 1 ||
@@ -200,6 +205,11 @@ void Image::pixel(int x, int y, color_t pxl)
         fprintf(stderr, "ERROR: Image::pixel(%d, %d, pixel) outside range of the image!\n", x, y);
         exit(EXIT_FAILURE);
     }
+    
+    color_t pxl;
+    pxl.r = pxl_vec.x;
+    pxl.g = pxl_vec.y;
+    pxl.b = pxl_vec.z;
     
     _pixmap[x][y] = pxl;
 

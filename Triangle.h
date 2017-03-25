@@ -8,7 +8,8 @@
 #include <iostream>
 #include "SceneObject.h"
 #include "Collision.h"
-#include "Box.h"
+#include "BoundingBox.h"
+#include "cuda_helper.h"
 #include <float.h>
 #include <math.h>
 
@@ -17,10 +18,11 @@
 
 class Triangle : public SceneObject {
    public:
-      Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3);
-      Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, bool smoothCheck);
-      Triangle();
-      ~Triangle();
+      CUDA_CALLABLE Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3);
+      CUDA_CALLABLE Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, bool smoothCheck);
+      CUDA_CALLABLE Triangle();
+      CUDA_CALLABLE ~Triangle();
+      CUDA_CALLABLE Triangle(Triangle* o);
    
       glm::vec3 a;
       glm::vec3 b;
@@ -28,10 +30,10 @@ class Triangle : public SceneObject {
       
       glm::vec3 normal;
       
-      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      glm::vec3 getNormal(glm::vec3 iPt, float time);
-      void constructBB();
-      void printObj();
+      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      CUDA_CALLABLE void constructBB();
+      CUDA_CALLABLE void printObj();
       
       // Wave or 3d object settings
       bool smooth;

@@ -1,0 +1,78 @@
+{
+   dafuk
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+   obj:/usr/lib64/nvidia/libGL.so.367.48
+   obj:/usr/lib64/nvidia/libGL.so.367.48
+   fun:_dl_init
+   obj:/usr/lib64/ld-2.17.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+
+{
+   cuda1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   obj:/usr/lib64/nvidia/libcuda.so.367.48
+   ...
+}
+
+{
+   cuda2
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   obj:/usr/lib64/nvidia/libcuda.so.367.48
+   ...
+}
+
+{
+   cuda3
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   obj:/usr/lib64/nvidia/libcuda.so.367.48
+   ...
+}
+
+{
+   cuda4
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   ...
+   obj:/usr/lib64/nvidia/libcuda.so.367.48
+   ...
+}
+
+{
+   cuda5
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   obj:/usr/local/cuda-8.0/targets/x86_64-linux/lib/libcudart.so.8.0.44
+   ...
+}
+
+{
+   cuda1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   ...
+   obj:/usr/lib64/nvidia/libcuda.so.367.48
+   ...
+}
+

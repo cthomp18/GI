@@ -578,7 +578,7 @@ void PovParser::printObjects() {
       v = objects[i]->scaleVector;
       cout << "   Scale: " << v[0] << " " << v[1] << " " << v[2] << endl;
       transform = objects[i]->transform;
-      cout << "   Transform Matrix:" << endl << glm::to_string(transform) << endl;
+      //cout << "   Transform Matrix:" << endl << glm::to_string(transform) << endl;
       cout << "   Ambient: " << objects[i]->ambient << endl;
       cout << "   Diffuse: " << objects[i]->diffuse << endl;
       cout << "   Specular: " << objects[i]->specular << endl;
@@ -612,9 +612,9 @@ void PovParser::printObjects() {
 */
 void PovParser::ObjToPov(string filename) {
    ifstream file;
-   const char *fn;
+   filename += ".obj";
+   const char *fn = filename.c_str();
    
-   fn = (filename + ".obj").c_str();
    file.open(fn);
    if (!file) {
       perror("Bad File");

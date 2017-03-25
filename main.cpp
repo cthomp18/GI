@@ -4,6 +4,7 @@
    Image.cpp and Image.h made by Bob Sommers
 */
 
+//Thx http://stackoverflow.com/questions/6978643/cuda-and-classes
 
 #include <stdio.h>
 #include <fstream>
@@ -31,6 +32,8 @@
 #include "QuadTreeNode.h"
 #include "BiTreeNode.h"
 
+#include "tracer.h"
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
 #include "glm/gtc/type_ptr.hpp" //value_ptr
@@ -46,7 +49,7 @@ int imgheight, imgwidth;
 
 using namespace std;
 
-void setup(int argc, char* argv[], Pixel** pixels) {   
+void setup(int argc, char* argv[], Pixel* pixels) {   
    std::vector<SceneObject*> tempObjects;
    
    lights.clear();
@@ -82,6 +85,9 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    camera = pparse->getCamera();
    lights = pparse->getLights();
    tempObjects = pparse->getObjects();
+   delete pparse;
+   
+   
    //cout << "Objects: " << objects.size() << endl;
    //pparse->printObjects();
    //exit(1);
@@ -151,7 +157,7 @@ void setup(int argc, char* argv[], Pixel** pixels) {
          cout << tempObjects.size() << endl;
       }
    }
-   //cout << tempObjects.size() << endl;
+   cout << tempObjects.size() << endl;
    for (int i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 1 || tempObjects[i]->type == 5) {
          objects.push_back(tempObjects[i]);
@@ -172,11 +178,13 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    OctTreeNode* root;
    if (tempObjects.size() > 0) {
       cout << tempObjects.size() << endl;
+      //cout << sizeof(OctTreeNode) << endl;
       root = new OctTreeNode(tempObjects, tempObjects.size(), 0);
       cout << "Octree made" << endl;
       //root->printObj();
       objects.push_back(root);
    }
+   cout << "OTREE LEN: " << root->treeLength() << endl;
    //root->printObj();
    
    campos = camera->getPosition();
@@ -201,12 +209,13 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    float dy = 1.0f / (float)imgheight;
    
    Pixel pix;
+   pix.clr = glm::vec3(0.0f, 0.0f, 0.0f);
    for (int i = 0; i < imgwidth; i++) {
       for (int j = 0; j < imgheight; j++) {
          u_s = left + (right - left) * ((float(i) + 0.5f) / float(imgwidth));
          v_s = bottom + (top - bottom) * ((float(j) + 0.5f) / float(imgheight));
          pix.pt = (u_s * u_v) + (v_s * v_v) + (w_s * w_v);
-         pixels[i][j] = pix;
+         pixels[i*imgheight + j] = pix;
       }
    }
    
@@ -225,7 +234,7 @@ void setup(int argc, char* argv[], Pixel** pixels) {
    //objects.push_back(gwave);
    gwave->toPovFileMesh("wave-refract5.pov", 0.05f, 2.0f);
    std::terminate();*/
-}
+}   
 
 //__attribute__ ((target(mic)))
 
@@ -239,16 +248,14 @@ int main(int argc, char* argv[]) {
    argstuff << argv[2];
    argstuff >> imgheight;
    
-   Pixel** pixels;
-   pixels = new Pixel *[imgwidth];
-   for (int i = 0; i < imgwidth; i++) {
-      pixels[i] = new Pixel[imgheight];
-   }
-
-   setup(argc, argv, pixels);
-
-   KDTreeNode* kd = new KDTreeNode();
+   Pixel* pixels;
+   pixels = new Pixel[imgwidth * imgheight];
+   
    Image* img = new Image(imgwidth, imgheight);
+   
+   setup(argc, argv, pixels);
+   
+   KDTreeNode* kd = new KDTreeNode();
    PhotonMapper* pm = new PhotonMapper(lights, objects);
    cout << "Building Global Photon Map... " << endl;
    //pm->buildGlobalMap();
@@ -276,20 +283,24 @@ int main(int argc, char* argv[]) {
    cout << "Global Tree size: " << kd->Treesize(root) << endl;
    cout << "Caustic Tree size: " << kd->Treesize(rootC1) << endl;
    
-   glm::vec3 cPos = camera->getPosition();
-   RayTracer* raytrace = new RayTracer(lights, objects, photonMap, causticMap, root, rootC1);
+   //Start CUDA stuff
+   
+   RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera);
+   
+   /*glm::vec3 cPos = camera->getPosition();
+   RayTracer* raytrace = new RayTracer(lights, objects, photonMap.size(), causticMap.size(), root, rootC1);
    time_t startTime, endTime;
    time(&startTime);
+   int currentImgInd;*/
    
-   #pragma omp parallel for
-   for (int i = 0; i < imgwidth; i++) {
+   /*for (int i = 0; i < imgwidth; i++) {
       //cout << "i: " << i << endl;
       Collision* col;
       glm::vec3 ray, tempColor;
       bool unit = false;
       for (int j = 0; j < imgheight; j++) {
-      
-         ray = pixels[i][j].pt;// - cPos;
+         currentImgInd = i * imgheight + j;
+         ray = pixels[currentImgInd].pt;// - cPos;
          //ray[0] *= (float)imgwidth / (float)imgheight;
          ray = glm::normalize(ray);
          //pixels[i][j].clr = calcRadiance(intersectPt, pixels[i][j].pt, ray, normal, col, root, rootC1, 2, 1.0, false);
@@ -300,33 +311,99 @@ int main(int argc, char* argv[]) {
          if (col->time > TOLERANCE) {
             //pixels[i][j].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 5); //Cam must start in air
             tempColor = col->object->getNormal(cPos + ray * col->time, 2.0f);
-            pixels[i][j].clr.r = tempColor.x * 0.5f + 0.5f;
-            pixels[i][j].clr.g = tempColor.y * 0.5f + 0.5f;
-            pixels[i][j].clr.b = tempColor.z * 0.5f + 0.5f;
+            pixels[currentImgInd].clr.x = tempColor.x * 0.5f + 0.5f;
+            pixels[currentImgInd].clr.y = tempColor.y * 0.5f + 0.5f;
+            pixels[currentImgInd].clr.z = tempColor.z * 0.5f + 0.5f;
          }
          else {
-            pixels[i][j].clr.r = pixels[i][j].clr.g = pixels[i][j].clr.b = 1.0f;
+            pixels[currentImgInd].clr.x = pixels[currentImgInd].clr.y = pixels[currentImgInd].clr.z = 1.0f;
          }
-         //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
+         //cout << "PIXCOL: " << pixels[i][j].clr.x << " " << pixels[i][j].clr.y << " " << pixels[i][j].clr.z << endl;
       }
-   }
-   time(&endTime);
-   cout << endTime - startTime << " seconds\n";
+   }*/
+   //time(&endTime);
+   //cout << endTime - startTime << " seconds\n";
    //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
    //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
-  // set a square to be the color above
-  for (int i=0; i < imgwidth; i++) {
-    for (int j=0; j < imgheight; j++) {
-      //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
-      pixels[i][j].clr.r = std::min(pixels[i][j].clr.r, 1.0);
-      pixels[i][j].clr.g = std::min(pixels[i][j].clr.g, 1.0);
-      pixels[i][j].clr.b = std::min(pixels[i][j].clr.b, 1.0);
-      img->pixel(i, j, pixels[i][j].clr);
-    }
-  }
-
-  // write the targa file to disk
-  img->WriteTga((char *)"awesome.tga", true); 
-  // true to scale to max color, false to clamp to 1.0
-
+   int currentImgInd;
+   // set a square to be the color above
+   for (int i=0; i < imgwidth; i++) {
+      for (int j=0; j < imgheight; j++) {
+         currentImgInd = i * imgheight + j;
+         //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
+         pixels[currentImgInd].clr.x = std::min(double(pixels[currentImgInd].clr.x), 1.0);
+         pixels[currentImgInd].clr.y = std::min(double(pixels[currentImgInd].clr.y), 1.0);
+         pixels[currentImgInd].clr.z = std::min(double(pixels[currentImgInd].clr.z), 1.0);
+         img->pixel(i, j, pixels[currentImgInd].clr);
+      }
+   }
+   cout << "oh" << endl;
+   cout << imgwidth * imgheight << endl;
+   delete[] pixels;
+   
+   cout << "yo" << endl;
+   cout << objects.size() << endl;
+   //cout << ((OctTreeNode*)objects[0])->treeLength() << endl;
+   for (int i = 0; i < objects.size(); i++) {
+      //cout << "so uh" << endl;
+      delete objects[i];
+      //cout << objects[i]->type << endl;
+      //cout << "can you delete this?" << endl;
+   }
+   cout << "here right" << endl;
+   
+   if (kd) delete kd;
+   if (pm) delete pm;
+   if (root) delete root;
+   if (rootC1) delete rootC1;
+   
+   for (int i = 0; i < photonMap.size(); i++) {
+      delete photonMap[i];
+   }
+   photonMap.clear();
+   //delete photonMap;
+   
+   for (int i = 0; i < causticMap.size(); i++) {
+      delete causticMap[i];
+   }
+   causticMap.clear();
+   //delete causticMap;
+   /*cout << "LIGHTS: " << lights.size() << endl;*/
+   for (int i = 0; i < lights.size(); i++) {
+      delete lights[i];
+   }
+   lights.clear();
+   //delete lights;
+   if (camera) delete camera;
+   // write the targa file to disk
+   img->WriteTga((char *)"awesome.tga", true);
+   
+   if (img) delete(img);
+   
+   // true to scale to max color, false to clamp to 1.0
+   /*
+   int i;
+   Triangle t(glm::vec3(1.0,1.0,1.0), glm::vec3(1.0,1.0,1.0), glm::vec3(1.0,1.0,1.0));
+   OctTreeNode ot;
+   ot.type = 5;
+   Triangle ts[2];
+   cout << "Int size: " << sizeof(i) << endl;
+   cout << "SO size: " << sizeof(SceneObject) << endl;
+   cout << "Triangle size: " << sizeof(Triangle) << endl;
+   //cout << "Triangle instance size: " << sizeof(t) << endl;
+   cout << "Box size: " << sizeof(Box) << endl;
+   cout << "OctTreeNode size: " << sizeof(OctTreeNode) << endl;
+   
+   memcpy(ts, &t, sizeof(t));
+   memcpy(ts + 1, &ot, sizeof(ot));
+   
+   cout << "First Obj Type: " << ts[0].type << endl;
+   cout << "Second Obj Type: " << ts[1].type << endl;
+   OctTreeNode *ot2 = (OctTreeNode*)(ts + 1);
+   cout << "OT2 type: " << ot2->type << endl;
+   */
+   /*cout << "OBJ SIZE: " << objects.size() << endl;
+   for (int i = 0; i < objects.size(); i++) {
+      cout << objects[i]->type << endl;
+   }*/
 }

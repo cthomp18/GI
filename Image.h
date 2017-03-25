@@ -13,6 +13,10 @@
 #include <math.h>
 
 #include "types.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
+#include "glm/gtc/type_ptr.hpp" //value_ptr
+#include "glm/gtx/string_cast.hpp"
 
 class Image {
 public:
@@ -26,8 +30,8 @@ public:
     void GenTestPattern();
 
     // property accessors
-    color_t pixel(int x, int y);
-    void pixel(int x, int y, color_t pxl);
+    glm::vec3 pixel(int x, int y);
+    void pixel(int x, int y, glm::vec3 pxl);
     int width() const { return _width; }
     int height() const { return _height; }
     double max() const { return _max; }

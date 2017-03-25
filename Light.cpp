@@ -21,7 +21,7 @@ Light::Light() {
    //color = NULL;
 }
 
-Light::~Light() {}
+Light::~Light() {printf("LGITH DEC\n");}
       
 void Light::move(glm::vec3 pos) {
    position = pos;

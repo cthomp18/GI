@@ -11,20 +11,21 @@
 #include "SceneObject.h"
 #include "Collision.h"
 #include "structs.h"
-#include "Box.h"
+#include "BoundingBox.h"
+#include "cuda_helper.h"
 
 class Sphere : public SceneObject {
    public:
-      Sphere(glm::vec3 pos, float rad);
-      Sphere();
-      ~Sphere();
+      CUDA_CALLABLE Sphere(glm::vec3 pos, float rad);
+      CUDA_CALLABLE Sphere();
+      CUDA_CALLABLE virtual ~Sphere();
    
       glm::vec3 position;
       float radius;
       
-      float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      glm::vec3 getNormal(glm::vec3 iPt, float time);
-      void constructBB();
+      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      CUDA_CALLABLE void constructBB();
       
    private:
    
