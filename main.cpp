@@ -60,7 +60,7 @@ void setup(int argc, char* argv[], Pixel* pixels) {
    PovParser *pparse;
    ifstream file;
    
-   int height, width;
+   //int height, width;
    float left, right, top, bottom, u_s, v_s, w_s = -1.0f;
    glm::vec3 campos, rightV, upV, lookAt, tempV;
    glm::vec3 u_v, v_v, w_v;
@@ -93,7 +93,7 @@ void setup(int argc, char* argv[], Pixel* pixels) {
    //exit(1);
    
    // Prepare objects (so far only grestner wave(s))
-   for (int i = 0; i < tempObjects.size(); i++) {
+   for (uint i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 5) { // Grestner Wave
          // Preparing: Putting triangles in vector to represent the wave surface
          GerstnerWave *GW = static_cast<GerstnerWave*>(tempObjects[i]);
@@ -158,7 +158,7 @@ void setup(int argc, char* argv[], Pixel* pixels) {
       }
    }
    cout << tempObjects.size() << endl;
-   for (int i = 0; i < tempObjects.size(); i++) {
+   for (uint i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 1 || tempObjects[i]->type == 5) {
          objects.push_back(tempObjects[i]);
          tempObjects.erase(tempObjects.begin() + i);
@@ -183,8 +183,9 @@ void setup(int argc, char* argv[], Pixel* pixels) {
       cout << "Octree made" << endl;
       //root->printObj();
       objects.push_back(root);
+      cout << "OTREE LEN: " << root->treeLength() << endl;
    }
-   cout << "OTREE LEN: " << root->treeLength() << endl;
+   
    //root->printObj();
    
    campos = camera->getPosition();
@@ -205,8 +206,8 @@ void setup(int argc, char* argv[], Pixel* pixels) {
    v_v = upV;
    v_v = glm::normalize(v_v);
    
-   float dx = 1.0f / (float)imgwidth;
-   float dy = 1.0f / (float)imgheight;
+   //float dx = 1.0f / (float)imgwidth;
+   //float dy = 1.0f / (float)imgheight;
    
    Pixel pix;
    pix.clr = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -268,14 +269,14 @@ int main(int argc, char* argv[]) {
    causticMap = pm->causticPhotons;
    //causticMap.clear();
    int scount = 0;
-   for (int i = 0; i < photonMap.size(); i++) {
+   for (uint i = 0; i < photonMap.size(); i++) {
       if (photonMap[i]->type == 2) scount++;
    }
    cout << "Shadow Photons: " << scount << endl;
    cout << "Building Global KD Tree... " << endl;
-   KDTreeNode *root = kd->buildKDTree(photonMap, NULL);
+   KDTreeNode *root = kd->buildKDTree(photonMap, -1);
    cout << "Building Cautic KD Tree(s)... " << endl;
-   KDTreeNode *rootC1 = kd->buildKDTree(causticMap, NULL);
+   KDTreeNode *rootC1 = kd->buildKDTree(causticMap, -1);
    cout << "Done!" << endl;
    
    cout << "Global Photon Map Size: " << photonMap.size() << endl;
@@ -344,7 +345,7 @@ int main(int argc, char* argv[]) {
    cout << "yo" << endl;
    cout << objects.size() << endl;
    //cout << ((OctTreeNode*)objects[0])->treeLength() << endl;
-   for (int i = 0; i < objects.size(); i++) {
+   for (uint i = 0; i < objects.size(); i++) {
       //cout << "so uh" << endl;
       delete objects[i];
       //cout << objects[i]->type << endl;
@@ -357,26 +358,26 @@ int main(int argc, char* argv[]) {
    if (root) delete root;
    if (rootC1) delete rootC1;
    
-   for (int i = 0; i < photonMap.size(); i++) {
+   for (uint i = 0; i < photonMap.size(); i++) {
       delete photonMap[i];
    }
    photonMap.clear();
    //delete photonMap;
    
-   for (int i = 0; i < causticMap.size(); i++) {
+   for (uint i = 0; i < causticMap.size(); i++) {
       delete causticMap[i];
    }
    causticMap.clear();
    //delete causticMap;
    /*cout << "LIGHTS: " << lights.size() << endl;*/
-   for (int i = 0; i < lights.size(); i++) {
+   for (uint i = 0; i < lights.size(); i++) {
       delete lights[i];
    }
    lights.clear();
    //delete lights;
    if (camera) delete camera;
    // write the targa file to disk
-   img->WriteTga((char *)"awesome.tga", true);
+   img->WriteTga(const_cast<char*>(reinterpret_cast<const char*>("awesome.tga")), true);
    
    if (img) delete(img);
    

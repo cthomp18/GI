@@ -18,7 +18,7 @@ Cone::Cone() : SceneObject() {}
 Cone::~Cone() {}
 
 float Cone::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
-   std::cout << "Cone Collision" << std::endl;
+   printf("Cone Collision\n");
    
    return -1.0f;
 }

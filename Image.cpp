@@ -11,10 +11,10 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-Image::Image(int width, int height)
+Image::Image(int w, int h)
 {
-    _width = width;
-    _height = height;
+    _width = w;
+    _height = h;
     _max = 1.0;
 
     // allocate the first dimension, "width" number of color_t pointers...
@@ -136,6 +136,8 @@ void Image::GenTestPattern()
                 case 2: // blue
                     pxl.r = 0.0; pxl.g = 0.0; pxl.b = 1.0;
                     break;
+                default:
+                    break;
             }
 
             //pixel(x, y, pxl);
@@ -175,6 +177,7 @@ void Image::GenTestPattern()
             }
         }
     }
+    printf("pxl %f", pxl.r);
 }
 
 glm::vec3 Image::pixel(int x, int y)

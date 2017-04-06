@@ -20,19 +20,19 @@ PhotonMapper::PhotonMapper(std::vector<Light*> l, std::vector<SceneObject*> o) {
 }
 
 void PhotonMapper::buildGlobalMap() {
-   float nP = (float)GLOBALPHOTONS, u1, u2, phi, r;
-   int index;
+   float u1, u2, phi, r;
+   //int index;
    int depth;
    int count = 0;
    Photon *p;
    Light *light;
    glm::vec3 ray, intersectPt, normal, reflectRay, tempIntensity, tempIPt;
-   float n1 = AIR_REFRACT_INDEX, n2, randTracker, reflect, refract, angle, t;
+   float n1 = AIR_REFRACT_INDEX, n2, randTracker;
    RayTracer* raytrace = new RayTracer(lights, objects);
    Collision* col;
    SceneObject* obj;
       //cout << lights.size() << endl;
-   for (int l = 0; l < lights.size(); l++) {
+   for (uint l = 0; l < lights.size(); l++) {
       light = lights[l];
       for (int i = 0; i < GLOBALPHOTONS; i++) {
          if (i == 0) cout << "0%" << endl;
@@ -160,18 +160,17 @@ void PhotonMapper::buildGlobalMap() {
 }
 
 void PhotonMapper::buildCausticMap() {
-   float nP = (float)GLOBALPHOTONS;
    Photon *p;
    Light *light;
    glm::vec3 ray, intersectPt, reflectRay, tempIntensity, pos, lpos, normal;
-   float n1 = AIR_REFRACT_INDEX, n2, randTracker, rad;
-   int depth = 0, missCount = 0, index;
+   float n1 = AIR_REFRACT_INDEX, n2, randTracker;
+   int missCount = 0;//, depth = 0;//, index;
    float minX, minY, minZ, maxX, maxY, maxZ;
    SceneObject* obj, *tempobj;
    Collision* col;
    RayTracer* raytrace = new RayTracer(lights, objects);
    cout << "Caustics: " << causticPhotons.size() << endl;
-   for (int l = 0; l < lights.size(); l++) {
+   for (uint l = 0; l < lights.size(); l++) {
       light = lights[l];
       //for (int m = 0; m < objects.size(); m++) {
          //obj = objects[m];

@@ -21,8 +21,8 @@
 
 class RayTracer {
    public:
-      CUDA_CALLABLE RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o);
-      CUDA_CALLABLE RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
+      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o);
+      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
       CUDA_CALLABLE RayTracer(SceneObject** o, int osize, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
       CUDA_CALLABLE RayTracer();
       CUDA_CALLABLE ~RayTracer();
@@ -31,7 +31,8 @@ class RayTracer {
       CUDA_CALLABLE glm::vec3 findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj);
       CUDA_CALLABLE glm::vec3 findRefract(glm::vec3 ray, glm::vec3 normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
       
-      thrust::host_vector<Light*> lights;
+      Light** lights;
+      int lightSize;
       SceneObject** objects;
       int objSize;
       

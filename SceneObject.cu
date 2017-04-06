@@ -20,8 +20,8 @@ CUDA_CALLABLE SceneObject::SceneObject() {
    reflection = 0.0f;
    refraction = 0.0f;
    indexRefraction = 1.0f;
-   photonReflectance = 0.5;
-   photonRefractance = 0.0;
+   photonReflectance = 0.5f;
+   photonRefractance = 0.0f;
    dropoff = 1.0f;
    
    //checkCollision = NULL;
@@ -64,9 +64,9 @@ void SceneObject::applyTransforms() {
    float minx, maxx, miny, maxy, minz, maxz;
    minx = miny = minz = FLT_MAX;
    maxx = maxy = maxz = -FLT_MAX;
-   glm::vec2 x = glm::vec2(boundingBox.minPt[0], boundingBox.maxPt[0]),
+   /*glm::vec2 x = glm::vec2(boundingBox.minPt[0], boundingBox.maxPt[0]),
              y = glm::vec2(boundingBox.minPt[1], boundingBox.maxPt[1]),
-             z = glm::vec2(boundingBox.minPt[2], boundingBox.maxPt[2]);
+             z = glm::vec2(boundingBox.minPt[2], boundingBox.maxPt[2]);*/
    glm::vec3 bmin = boundingBox.minPt, bmax = boundingBox.maxPt;
    std::vector<glm::vec3> bbpts;
    bbpts.clear();
@@ -86,7 +86,7 @@ void SceneObject::applyTransforms() {
    bbpts.push_back(glm::vec3(bmax.x, bmax.y, bmin.z));
    bbpts.push_back(glm::vec3(bmax.x, bmax.y, bmax.z));
    //std::cout << "NEW_______________________________" << std::endl;
-   for (int i = 0; i < bbpts.size(); i++) {
+   for (uint i = 0; i < bbpts.size(); i++) {
       //std::cout << bbpts[i].x() << " " << bbpts[i].y() << " " << bbpts[i].z() << std::endl;
       bbpts[i] = glm::vec3(transform * glm::vec4(bbpts[i].x, bbpts[i].y, bbpts[i].z, 1.0f));
       //std::cout << bbpts[i].x() << " " << bbpts[i].y() << " " << bbpts[i].z() << std::endl;
@@ -97,7 +97,7 @@ void SceneObject::applyTransforms() {
    std::cout << minx << " " << miny << " " << minz << std::endl;
    std::cout << maxx << " " << maxy << " " << maxz << std::endl;*/
 
-   for (int i = 0; i < bbpts.size(); i++) {
+   for (uint i = 0; i < bbpts.size(); i++) {
       if (bbpts[i].x < minx) minx = bbpts[i].x;
       if (bbpts[i].x > maxx) maxx = bbpts[i].x;
       if (bbpts[i].y < miny) miny = bbpts[i].y;
@@ -173,7 +173,7 @@ void SceneObject::constructBB() {
 }
 
 void SceneObject::printObj() {
-   std::cout << "huh" << std::endl;
+   printf("huh\n");
 
 }
 

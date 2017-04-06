@@ -28,12 +28,13 @@ bool sorterOct(SceneObject* s1, SceneObject* s2) {
 
 OctTreeNode::OctTreeNode(std::vector<SceneObject*> objects, int n, int depth) : SceneObject() {
    
-   int middle, quarter, octer, curInd = 0;
+   int middle, quarter, curInd = 0;
+   uint octer;
    std::vector<SceneObject*> tempVect1, tempVect2, tempVect3;
    std::vector<SceneObject*> objs;
    std::vector<BoundingBox*> bbs;
    
-   SceneObject *hitObj = NULL;
+   //SceneObject *hitObj = NULL;
 
    objs.clear();
    bbs.clear();
@@ -90,24 +91,24 @@ OctTreeNode::OctTreeNode(std::vector<SceneObject*> objects, int n, int depth) : 
       std::sort(tempVect2.begin(), tempVect2.end(), sorterOct);
       
       tempVect3.clear();
-      for (int i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
       if (octer) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       tempVect3.clear();
-      for (int i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
       if (octer != tempVect2.size()) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       tempVect2.clear();
-      for (int i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
+      for (uint i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
       std::sort(tempVect2.begin(), tempVect2.end(), sorterOct);
       sortAxisOct = 1;
       
       tempVect3.clear();
-      for (int i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
       if (octer) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       tempVect3.clear();
-      for (int i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
       if (octer != tempVect2.size()) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       
@@ -121,23 +122,23 @@ OctTreeNode::OctTreeNode(std::vector<SceneObject*> objects, int n, int depth) : 
       std::sort(tempVect2.begin(), tempVect2.end(), sorterOct);
       
       tempVect3.clear();
-      for (int i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
       if (octer) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       tempVect3.clear();
-      for (int i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
       if (octer != tempVect2.size()) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
             
       tempVect2.clear();
-      for (int i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
+      for (uint i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
       std::sort(tempVect2.begin(), tempVect2.end(), sorterOct);
       
       tempVect3.clear();
-      for (int i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = 0; i < octer; i++) tempVect3.push_back(tempVect2[i]);
       if (octer) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       tempVect3.clear();
-      for (int i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
+      for (uint i = octer; i < tempVect2.size(); i++) tempVect3.push_back(tempVect2[i]);
       if (octer != tempVect2.size()) octants[curInd++] = new OctTreeNode(tempVect3, tempVect3.size(), depth + 1);
       
       for (int i = 0; i < curInd; i++) {
@@ -247,7 +248,10 @@ printf("otree collision\n");
 
    //if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
    startTransform = glm::vec4(start, 1.0f);
-   printf("Type? %d\n", this->type);
+   //if (this == NULL) printf("Seriously what the fuck\n");
+   printf("CURRENT MEM: %p\n", this);
+   int pf = printf("Type? %d\n", this->type);
+   printf("%d\n", pf);
    printf("blah? %d\n", this->blahblah);
    printf("amb? %f\n", this->ambient);
    printf("is it here?\n");
@@ -258,17 +262,24 @@ printf("otree collision\n");
    } else {
       printf("like i got a fat...\n");
    }
+   if (octants[0]) {
    if (octants[0]->transformed) {
       t = octants[0]->checkCollision(glm::vec3(octants[0]->transform * startTransform), glm::mat3(octants[0]->transform) * ray, time, &tempObj);
    } else {
-      printf("Type octant? %d\n", octants[0]->type);
-      octants[0]->type = 8;
+      pf = printf("Type octant? %d\n", octants[0]->type);
+      printf("%d\n", pf);
+      printf("BLAH octant? %d\n", octants[0]->blahblah);
+      printf("AMBi octant? %f\n", octants[0]->ambient);
+      
+      printf("OCTANT MEM: %p\n", &(this->octants[0]));
+      /*octants[0]->type = 8;
       octants[0]->blahblah = 1;
-      octants[0]->ambient = 4.0f;
+      octants[0]->ambient = 4.0f;*/
       t = octants[0]->checkCollision(start, ray, time, &tempObj);
    }
+   }
    *object = tempObj;
-   printf("t: %d\n", t);
+   printf("t: %f\n", t);
    printf("Type? %d\n", this->type);
    if (this->octants[1]) {
       printf("anything, really\n");
@@ -280,7 +291,7 @@ printf("otree collision\n");
    int i = 0;
    for (i = 1; i < 8; i++) {
       printf("please\n");
-      if (1 == 1) {
+      if (octants[i]) {
       printf("yo\n");
          if (t >= 0.001) {
             printf("hi\n");
@@ -338,7 +349,7 @@ void OctTreeNode::printObj() {
 BoundingBox OctTreeNode::combineBB(std::vector<BoundingBox*> boxes) {
    float xmin = boxes[0]->minPt[0], ymin = boxes[0]->minPt[1], zmin = boxes[0]->minPt[2];
    float xmax = boxes[0]->maxPt[0], ymax = boxes[0]->maxPt[1], zmax = boxes[0]->maxPt[2];
-   for (int i = 1; i < boxes.size(); i++) {
+   for (uint i = 1; i < boxes.size(); i++) {
       xmin = fmin(xmin, boxes[i]->minPt[0]);
       ymin = fmin(ymin, boxes[i]->minPt[1]);
       zmin = fmin(zmin, boxes[i]->minPt[2]);
@@ -380,16 +391,22 @@ void OctTreeNode::toSerialArray(Triangle* objectArray, int* currentIndex) {
       if (octants[i]) {
          indeces[i] = *currentIndex;
          if (octants[i]->type != 8) {
-            memcpy(objectArray + *currentIndex, octants[i], sizeof(Triangle));
+            if (*currentIndex >= 217450) printf("BAD ERROR ABORT\n");
+            //printf("TYPE BURH: %d\n", octants[i]->type);
+            assert(octants[i]->type == 2);
+            memcpy(objectArray + (*currentIndex), octants[i], sizeof(Triangle));
+            //printf("%p\n", (objectArray + (*currentIndex)));
             *currentIndex += 1;
          } else {
-            static_cast<OctTreeNode*>(octants[i])->toSerialArray(objectArray, currentIndex);
+            reinterpret_cast<OctTreeNode*>(octants[i])->toSerialArray(objectArray, currentIndex);
          }
          //delete(octants[i]);
          //octants[i] = NULL;
       }
    }
-   
+   //printf("%d\n", *currentIndex);
    //Put the current node into the array at the end
+   if (thisInd >= 217450) printf("BAD ERROR ABORT\n");
    memcpy(objectArray + thisInd, this, sizeof(OctTreeNode));
+   //printf("%p\n", (objectArray + thisInd));
 }

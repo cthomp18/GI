@@ -19,7 +19,7 @@ Plane::~Plane() {}
 
 float Plane::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    float t = -1.0f;
-   glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
+   //glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
    
    if (glm::dot(ray, normal) != 0.0f) {
       t = glm::dot(planePt - start, normal) / glm::dot(ray, normal);

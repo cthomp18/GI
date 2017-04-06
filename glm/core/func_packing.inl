@@ -136,17 +136,19 @@ namespace glm
 
 	GLM_FUNC_QUALIFIER double packDouble2x32(detail::tvec2<detail::uint32> const & v)
 	{
-		return *(double*)&v;
+		//return *(double*)&v;
+		return *(const_cast<double*>(reinterpret_cast<const double*>(&v)));
 	}
 
 	GLM_FUNC_QUALIFIER detail::tvec2<uint> unpackDouble2x32(double const & v)
 	{
-		return *(detail::tvec2<uint>*)&v;
+		//return *(detail::tvec2<uint>*)&v;
+		return *(const_cast<detail::tvec2<uint>*>(reinterpret_cast<const detail::tvec2<uint>*>(&v)));
 	}
 
 	GLM_FUNC_QUALIFIER uint packHalf2x16(detail::tvec2<float> const & v)
 	{
-        union helper
+        /*union helper
         { 
             uint other; 
             struct 
@@ -156,8 +158,19 @@ namespace glm
         } Pack; 
 
         Pack.orig.a = detail::toFloat16(v.x); 
-        Pack.orig.b = detail::toFloat16(v.y); 
-		return *(uint*)&Pack;
+        Pack.orig.b = detail::toFloat16(v.y); */
+      uint Pack = 0, mask = 4294901760;
+      
+      detail::hdata a, b;
+      a = detail::toFloat16(v.x);
+      b = detail::toFloat16(v.y);
+      
+      Pack = a;
+      Pack = (Pack << 16) & mask;
+      Pack = Pack | b;
+      
+		return Pack;
+		//return *(const_cast<uint*>(reinterpret_cast<const uint*>(&Pack)));
 	}
 
 	GLM_FUNC_QUALIFIER vec2 unpackHalf2x16(uint const & v)

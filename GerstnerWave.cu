@@ -6,20 +6,20 @@
 #include "GerstnerWave.h"
 using namespace std;
 GerstnerWave::GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition) : SceneObject() {
-   amplitude.clear();
-   wavelength.clear();
-   frequency.clear();
-   speedPC.clear();
-   direction.clear();
-   steepness.clear();
+   amplitude = (float*)malloc(sizeof(float));
+   wavelength = (float*)malloc(sizeof(float));
+   frequency = (float*)malloc(sizeof(float));
+   speedPC = (float*)malloc(sizeof(float));
+   direction = (glm::vec3*)malloc(sizeof(glm::vec3));
+   steepness = (float*)malloc(sizeof(float));
    
-   amplitude.push_back(a);
-   wavelength.push_back(w);
-   frequency.push_back(sqrt(9.81f * ((2.0f * M_PI) / w)));
-   speedPC.push_back(s * sqrt(9.81f * ((2.0f * M_PI) / w)));
+   amplitude[0] = a;
+   wavelength[0] = w;
+   frequency[0] = sqrt(9.81f * ((2.0f * M_PI) / w));
+   speedPC[0] = s * sqrt(9.81f * ((2.0f * M_PI) / w));
    d = glm::normalize(d);
-   direction.push_back(d);
-   steepness.push_back(1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * 2.0f));
+   direction[0] = d;
+   steepness[0] = 1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * 2.0f);
    lb = lowerleft;
    ub = upperright;
    yPos = yPosition;
@@ -28,15 +28,14 @@ GerstnerWave::GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 low
 }
 
 GerstnerWave::GerstnerWave() : SceneObject() {
-   amplitude.clear();
-   wavelength.clear();
-   frequency.clear();
-   speedPC.clear();
-   direction.clear();
-   steepness.clear();
+   amplitude = NULL;
+   wavelength = NULL;
+   frequency = NULL;
+   speedPC = NULL;
+   direction = NULL;
+   steepness = NULL;
 
    lb = ub = glm::vec3(0.0f,0.0f,0.0f);
-   steepness.clear();
    yPos = 0.0f;
    
    waves = 0;
@@ -113,20 +112,27 @@ glm::vec3 GerstnerWave::getPoint(float x, float z, float time) {
 }
 
 void GerstnerWave::addWave(float a, float w, float s, glm::vec3 d) {
-   amplitude.push_back(a);
-   wavelength.push_back(w);
-   frequency.push_back(sqrt(9.81f * ((2.0f * M_PI) / w)));
-   speedPC.push_back(s * sqrt(9.81f * ((2.0f * M_PI) / w)));
+   waves++;
+   
+   amplitude = (float*)realloc(amplitude, sizeof(float) * waves);
+   wavelength = (float*)realloc(wavelength, sizeof(float) * waves);
+   frequency = (float*)realloc(frequency, sizeof(float) * waves);
+   speedPC = (float*)realloc(speedPC, sizeof(float) * waves);
+   direction = (glm::vec3*)realloc(direction, sizeof(glm::vec3) * waves);
+   steepness = (float*)realloc(steepness, sizeof(float) * waves);
+   
+   amplitude[waves - 1] = a;
+   wavelength[waves - 1] = w;
+   frequency[waves - 1] = sqrt(9.81f * ((2.0f * M_PI) / w));
+   speedPC[waves - 1] = s * sqrt(9.81f * ((2.0f * M_PI) / w));
    d = glm::normalize(d);
-   direction.push_back(d);
-   steepness.push_back(1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * float(waves + 1)));
+   direction[waves - 1] = d;
+   steepness[waves - 1] = 1.0f / (sqrt(9.81f * ((2.0f * M_PI) / w)) * a * float(waves + 1));
    
    for (int i = 0; i < waves; i++) {
       steepness[i] *= float(waves);
       steepness[i] /= float(waves + 1);
    }
-   
-   waves++;
 }
 
 void GerstnerWave::addTriangles(std::vector<SceneObject*> *objects, float step, float time) {

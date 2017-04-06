@@ -25,7 +25,7 @@ Collision::Collision() {
 Collision::~Collision() {}
 
 //I need to make two equal collision detection functions because cuda #kms #fml
-void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, int omitInd, bool unit) {
+void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit) {
    float tempT;
    glm::vec3 rayTransform;
    glm::vec4 startTransform;
@@ -34,7 +34,7 @@ void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, thrust::host_
    time = -1.0;
    object = NULL;
    
-   for (int i = 0; i < objects.size(); i++) {
+   for (uint i = 0; i < objects.size(); i++) {
       if (i == omitInd) continue;
       
       if (objects[i]->transformed) {
@@ -59,7 +59,7 @@ void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject**
    startTransform = glm::vec4(start, 1.0f);
    SceneObject *tempObject;
    //printf("???\n");
-   SceneObject **huh = &tempObject;
+   //SceneObject **huh = &tempObject;
    printf("ok...\n");
    time = -1.0;
    object = NULL;

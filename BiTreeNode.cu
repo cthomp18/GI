@@ -155,7 +155,7 @@ float BiTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, Sce
 
 glm::vec3 BiTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
-   return glm::vec3(0.0f, 0.0f, 0.0f);
+   return iPt;
 }
 
 /*void BiTreeNode::constructBB() {

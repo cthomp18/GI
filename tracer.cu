@@ -1,5 +1,5 @@
 #include "tracer.h"
-
+// http://stackoverflow.com/questions/3016077/how-to-spot-undefined-behavior
 //Chris Lupo's error handling fuction/macro
 static void HandleError( cudaError_t err,
     const char *file,
@@ -14,9 +14,10 @@ static void HandleError( cudaError_t err,
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
 
 __global__ void toOctTree(Triangle *objectArray, int size, int gridDimension) {
-   
-   OctTreeNode tempO;
+   //printf("xd\n");
    Triangle* tempT;
+   OctTreeNode* tempO;
+   
    int threadInd = (blockIdx.y * (gridDimension * TILEWIDTH) * TILEWIDTH) + (blockIdx.x * TILEWIDTH) +
                    (threadIdx.y * (gridDimension * TILEWIDTH)) + threadIdx.x;//blockIdx.x;//*TILEWIDTH + threadIdx.x;
    int i;
@@ -31,19 +32,21 @@ __global__ void toOctTree(Triangle *objectArray, int size, int gridDimension) {
    }*/
    //printf("%d\n", threadInd);
    //printf("xd\n");
-   if (threadInd == 0) {
-      printf(":(\n");
+   if (threadInd < 7) {
+      //printf(":(\n");
+      //printf("SIZE ONODE: %d\n", sizeof(OctTreeNode));
+      //printf("SIZE TOTS: %d\n", sizeof(OctTreeNode) * size);
    if (threadInd == 0) { printf(":() %d\n", size); }
    if (threadInd == size - 1) { printf("UH SUH DUDE %d\n", size); }
    //__syncthreads();
-   if (threadInd < size) {
+   if (threadInd < size && threadInd >= 0) {
       /*if (threadInd == size - 1) {
          printf("Thread Index: %d\n", threadInd);
          printf("Block? %d\n", blockIdx.x);
       }*/
-      printf("suh\n");
+      //printf("suh\n");
       if (objectArray[threadInd].type == 8) {
-         tempO = OctTreeNode((OctTreeNode*)(&(objectArray[threadInd])));
+         tempO = new OctTreeNode((OctTreeNode*)(&(objectArray[threadInd])));
          /*for (i = 0; i < 8; i++) {
             tempO->octants[i] = NULL;
          }*/
@@ -52,24 +55,24 @@ __global__ void toOctTree(Triangle *objectArray, int size, int gridDimension) {
          //printf("B)\n");
          //tempO = (OctTreeNode*)(objectArray + threadInd);
          //printf("xd\n");
-         printf("fam\n");
+         //printf("fam\n");
          for (i = 0; i < 8; i++) {
             /*if (threadInd < 16) {
                printf("Index: %d\n", tempO->indeces[i]);
             }*/
-            if (tempO.indeces[i] != -1) {
-               printf("fuq\n");
+            if (tempO->indeces[i] != -1) {
+               //printf("fuq\n");
                /*if (tempO->octants[i] == NULL) {
                   printf("Cool: %d\n", i);
                }*/
                
-               tempO.octants[i] = (SceneObject*)(&(objectArray[tempO.indeces[i]]));
+               tempO->octants[i] = (SceneObject*)(&(objectArray[tempO->indeces[i]]));
                /*if (tempO->octants[i] == NULL) {
                   printf("Not Cool: %d\n", i);
                }*/
                
             } else {
-               tempO.octants[i] = NULL;
+               tempO->octants[i] = NULL;
             }
          }
          if (threadInd == 1) {
@@ -97,24 +100,32 @@ Index: 23784
 //printf("%f %f %f\n", t.x, t.y, t.z);
             //tempO->checkCollision(s, t, 0.0f, (SceneObject**)&tempT);
          }
-         printf("diddly\n");
-         memcpy(&(objectArray[threadInd]), &tempO, sizeof(OctTreeNode));
-         printf("ding\n");
-         //delete tempO;
-         printf("dong\n");
+         //printf("diddly\n");
+         memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
+         //printf("ding\n");
+         for (i = 0; i < 8; i++) tempO->octants[i] = NULL;
+         delete tempO;
+         //printf("dong\n");
          //}
       } else {
          //printf("Type: %d\n", objectArray[threadInd].type);
-         tempT = new Triangle((Triangle*)(&(objectArray[threadInd])));
-         memcpy(&(objectArray[threadInd]), tempT, sizeof(Triangle));
+         printf("%d\n", threadInd);
+         printf("%d\n", objectArray);
+         printf("%d\n", sizeof(Triangle));
+         printf("%d\n", sizeof(OctTreeNode));
+         printf("%d\n", &(objectArray[threadInd]));
+         tempT = new Triangle((Triangle*)(objectArray + threadInd));
+         //tempT = objectArray + threadInd;
+         //memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
+         //memcpy(&(objectArray[threadInd]), tempT, sizeof(Triangle));
          delete tempT;
       }
-      printf("damn\n");
+      //printf("damn\n");
    } else {
-      printf("WHAT\n");
-      printf("%d\n", threadInd);
-      printf("%d\n", size);
-      printf("COOL\n");
+      //printf("WHAT\n");
+      //printf("%d\n", threadInd);
+      //printf("%d\n", size);
+      //printf("COOL\n");
    }
    //printf("DAWG\n");
    //__syncthreads();
@@ -133,13 +144,13 @@ Index: 23784
             printf("bad %d\n", tempO->indeces[i]);
          }*/
       }
-         SceneObject **so;
+         //SceneObject **so;
          //tempO->checkCollision(s, t, 0.0f, so);
+   }
    }
    //memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
    //printf("THE FUCK\n");
    //__syncthreads();
-   }
    __syncthreads();
    //printf("FUCK\n");
 }
@@ -220,20 +231,20 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
 
 // Set the card up to run cuda
 void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObject*> objects, Camera *cam) {
-   SceneObject** objArrD;
-   SceneObject** objArrH;// = &objects[0];
-   int* sizesH;
-   int* sizesD;
-   int gridDimension;
+   SceneObject** objArrD = NULL;
+   SceneObject** objArrH = NULL;// = &objects[0];
+   int* sizesH = NULL;
+   int* sizesD = NULL;
+   int gridDimension = 0;
    
-   Triangle* tempOctTree;
-   Camera* cameraD;
-   Pixel* pixelsD;
-   RayTracer* raytracer;
-   int tempSize, tempInd, pixelArrSize;
+   Triangle* tempOctTree = NULL;
+   Camera* cameraD = NULL;
+   Pixel* pixelsD = NULL;
+   RayTracer* raytracer = NULL;
+   int tempSize = 0, tempInd = 0, pixelArrSize = 0;
    
-   dim3 dimGrid;
-   dim3 dimBlock;
+   dim3 dimGrid = dim3(0,0);
+   dim3 dimBlock = dim3(0,0);
    
    pixelArrSize = width * height * sizeof(Pixel);
    printf("Transferring Data...\n");
@@ -256,20 +267,24 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    printf("bruh\n");
    
    //printf("OBJ SIZE: %d\n", objects.size());
-   for (int i = 0; i < objects.size(); i++) {
+   for (uint i = 0; i < objects.size(); i++) {
       //printf("hello\n");
       if (objects[i]->type == 8) { //Oct tree handling
          //printf("yes\n");
-         tempInd = 0;
+         tempInd = 0; //yah
          //Get the proper size of the tree
          tempSize = static_cast<OctTreeNode*>(objects[i])->treeLength();
          sizesH[i] = tempSize;
          
          //Copy over array represenation of tree
-         
-         tempOctTree = (Triangle*)malloc(tempSize * sizeof(Triangle));
+         printf("TREE SIZE: %d\n", tempSize);
+         tempOctTree = (Triangle*)calloc(tempSize, sizeof(Triangle));
+         printf("ARR SIZE: %lu\n", tempSize * sizeof(Triangle));
+         printf("ARR START POS: %p\n", tempOctTree);
          printf("frick\n");
-         static_cast<OctTreeNode*>(objects[i])->toSerialArray(tempOctTree, &tempInd);
+         printf("TRI SIZE %lu\n", sizeof(Triangle));
+         printf("OCT SIZE %lu\n", sizeof(OctTreeNode));
+         reinterpret_cast<OctTreeNode*>(objects[i])->toSerialArray(tempOctTree, &tempInd);
          printf("frack\n");
          HANDLE_ERROR(cudaMalloc(&(objArrH[i]), tempSize * sizeof(Triangle)));
          printf("whats\n");
@@ -284,6 +299,8 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
          dimGrid = dim3(gridDimension, gridDimension);//dim3((tempSize / TILEWIDTH) + 1, 1);
          dimBlock = dim3(TILEWIDTH,TILEWIDTH);//dim3(TILEWIDTH, 1);
          //printf("kk\n");
+         HANDLE_ERROR(cudaPeekAtLastError());
+         HANDLE_ERROR(cudaDeviceSynchronize());
          toOctTree<<<dimGrid, dimBlock>>>((Triangle*)(objArrH[i]), tempSize, gridDimension);
          //printf("kkk\n");
          HANDLE_ERROR(cudaPeekAtLastError());
@@ -311,12 +328,12 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    printf("Calling Kernel...\n");
    //Run the Kernel code
    //cudaDeviceSetLimit(cudaLimitMallocHeapSize, size_t(3000000000));
-   //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, *raytracer);
+   GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, *raytracer);
    //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, objects.size(), pixelsD, cameraD, width, height);
    HANDLE_ERROR(cudaPeekAtLastError());
    HANDLE_ERROR(cudaDeviceSynchronize());
-   printf("SIZE GLM VEC: %d\n", sizeof(glm::vec3));
-   printf("SIZE PIXEL: %d\n", sizeof(Pixel));
+   printf("SIZE GLM VEC: %lu\n", sizeof(glm::vec3));
+   printf("SIZE PIXEL: %lu\n", sizeof(Pixel));
    //Copy modified pixel array from card back to host
    printf("Size parray: %d\n", pixelArrSize);
    HANDLE_ERROR(cudaMemcpy(pixels, pixelsD, pixelArrSize, cudaMemcpyDeviceToHost));
@@ -327,7 +344,7 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    HANDLE_ERROR(cudaFree(cameraD));
    printf("it\n");
    //Objects
-   for (int i = 0; i < objects.size(); i++) {
+   for (uint i = 0; i < objects.size(); i++) {
       HANDLE_ERROR(cudaFree(objArrH[i]));
    }
    printf("is\n");

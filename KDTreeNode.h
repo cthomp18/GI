@@ -27,13 +27,13 @@ class KDTreeNode {
       CUDA_CALLABLE KDTreeNode();
       CUDA_CALLABLE ~KDTreeNode();
       
-      CUDA_CALLABLE KDTreeNode* buildKDTree(std::vector<Photon*> pmap, int lastAxis);
+      KDTreeNode* buildKDTree(std::vector<Photon*> pmap, int lastAxis);
       CUDA_CALLABLE int Treesize(KDTreeNode *node);
       CUDA_CALLABLE void printTree(KDTreeNode *node);
-      CUDA_CALLABLE float findMin(std::vector<Photon*> pmap, int axis);
-      CUDA_CALLABLE float findMax(std::vector<Photon*> pmap, int axis);
+      float findMin(std::vector<Photon*> pmap, int axis);
+      float findMax(std::vector<Photon*> pmap, int axis);
       
-      CUDA_CALLABLE void locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons);
+      CUDA_CALLABLE void locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons);
 };
 
 #endif

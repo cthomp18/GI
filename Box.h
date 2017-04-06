@@ -21,6 +21,9 @@ class Box : public SceneObject {
       CUDA_CALLABLE Box();
       CUDA_CALLABLE virtual ~Box();
    
+      using SceneObject::checkCollision;
+      using SceneObject::getNormal;
+      
       glm::vec3 minPt;
       glm::vec3 maxPt;
       glm::vec3 middle;

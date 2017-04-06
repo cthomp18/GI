@@ -56,7 +56,7 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
    //cout << pmap.size() << endl;
    std::vector<Photon> tempPMap;
    tempPMap.clear();
-   for (int i = 0; i < pmap.size(); i++) {
+   for (uint i = 0; i < pmap.size(); i++) {
       pmap[i]->sortAxis = sortAxis;
       tempPMap.push_back(*pmap[i]);
    }
@@ -64,7 +64,7 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
    //cout << "Here?" << endl;
    std::sort(tempPMap.begin(), tempPMap.end());
    //cout << "yeeeeeee" << endl;
-   for (int i = 0; i < pmap.size(); i++) {
+   for (uint i = 0; i < pmap.size(); i++) {
       p = new Photon(tempPMap[i].pt, tempPMap[i].incidence, tempPMap[i].intensity, tempPMap[i].type);
       pmap[i] = p;
    }
@@ -81,7 +81,7 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
    for (int i = 0; i < median; i++) {
       subtreeL.push_back(pmap[i]);
    }
-   for (int i = median+1; i < pmap.size(); i++) {
+   for (uint i = median+1; i < pmap.size(); i++) {
       subtreeR.push_back(pmap[i]);
    }
    /*while(!pmap.empty()) {
@@ -98,12 +98,12 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
    return node;
 }
 
-void KDTreeNode::locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locateHeap, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons) {
+void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons) {
    glm::vec3 rayBetween = pt - photon->pt;
    float distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
    
    if (2*i + 1 < numPhotons) {
-      float distToPlane;
+      float distToPlane = 0.0f;
       //Find distance to plane (difference WRT splitting axis)
       if (axis == 0) distToPlane = pt.x - photon->pt.x;
       else if (axis == 1) distToPlane = pt.y - photon->pt.y;
@@ -112,25 +112,25 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locate
       //Point is on the 'left' of the plane
       if (distToPlane < 0.0) {
          //Search on left child
-         if (left != NULL) left->locatePhotons(2*i, pt, locateHeap, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
+         if (left != NULL) left->locatePhotons(2*i, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
          //If distance to plane is less than the sample distance radius, then
          //sample sphere intersects plane, so check right child as well
          if (distToPlane*distToPlane < sampleDistSqrd) {
-            if (right != NULL) right->locatePhotons(2*i + 1, pt, locateHeap, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
+            if (right != NULL) right->locatePhotons(2*i + 1, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
          }
       } else {
          //Point on 'right' of plane
          //Search on right child
-         if (right != NULL) right->locatePhotons(2*i + 1, pt, locateHeap, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
+         if (right != NULL) right->locatePhotons(2*i + 1, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
          //If distance to plane is less than the sample distance radius, then
          //sample sphere intersects plane, so check left child as well
          if (distToPlane*distToPlane < sampleDistSqrd) {
-            if (left != NULL) left->locatePhotons(2*i, pt, locateHeap, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
+            if (left != NULL) left->locatePhotons(2*i, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
          }
       }
    }
    //Check if photon is close enough to the point
-   if (distToPhotonSqrd <= sampleDistSqrd && locateHeap->size() < CUTOFF_HEAP_SIZE) {
+   if (distToPhotonSqrd <= sampleDistSqrd && *heapSize < CUTOFF_HEAP_SIZE) {
       glm::vec3 originLoc;
       originLoc = glm::vec3(photon->pt[0] - pt[0], photon->pt[1] - pt[1], photon->pt[2] - pt[2]);
       float rad = sqrt(sampleDistSqrd) * ELLIPSOID_SCALE;
@@ -138,10 +138,11 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, std::vector<Photon*> *locate
          originLoc = originLoc * mInv;
       }
       if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0) {
-         locateHeap->push_back(photon);
+         locateHeap[*heapSize] = photon;
+         *heapSize += 1;
          //cout << "INCIDENCE: " << -node->photon->incidence[0] << " " << -node->photon->incidence[1] << " " << -node->photon->incidence[2] << endl;
          //cout << "INTENSITY: " << node->photon->intensity[0] << " " << node->photon->intensity[1] << " " << node->photon->intensity[2] << endl;
-         if (locateHeap->size() == CUTOFF_HEAP_SIZE) {
+         if (*heapSize == CUTOFF_HEAP_SIZE) {
             *newRadSqrd = distToPhotonSqrd;
          }
       }
@@ -156,22 +157,22 @@ int KDTreeNode::Treesize(KDTreeNode *node) {
 }
 void KDTreeNode::printTree(KDTreeNode *node) {
    //std::cout << "Pt: " << glm::to_string(node->photon->pt) << std::endl;
-   std::cout << "Axis Split: " << node->axis << std::endl;
+   printf("Axis Split: %d\n", node->axis);
    if (node->left != NULL) {
-      std::cout << "LEFT" << std::endl;
+      printf("LEFT\n");
       printTree(node->left);
-      std::cout << "BACK" << std::endl;
+      printf("BACK\n");
    }
    if (node->right != NULL) {
-      std::cout << "RIGHT" << std::endl;
+      printf("RIGHT\n");
       printTree(node->right);
-      std::cout << "BACK" << std::endl;
+      printf("BACK\n");
    }
 }
 
 float KDTreeNode::findMin(std::vector<Photon*> pmap, int axis) {
-   float min;
-   for (int i = 0; i < pmap.size(); i++) {
+   float min = 0.0f;
+   for (uint i = 0; i < pmap.size(); i++) {
       if (i == 0 || pmap[i]->pt[axis] < min) {
          min = pmap[i]->pt[axis];
       }
@@ -180,8 +181,8 @@ float KDTreeNode::findMin(std::vector<Photon*> pmap, int axis) {
 }
 
 float KDTreeNode::findMax(std::vector<Photon*> pmap, int axis) {
-   float max;
-   for (int i = 0; i < pmap.size(); i++) {
+   float max = 0.0f;
+   for (uint i = 0; i < pmap.size(); i++) {
       if (i == 0 || pmap[i]->pt[axis] > max) {
          max = pmap[i]->pt[axis];
       }

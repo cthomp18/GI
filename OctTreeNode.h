@@ -29,6 +29,9 @@ class OctTreeNode : public SceneObject {
       SceneObject* octants[8];
       int indeces[8];
 
+      using SceneObject::checkCollision;
+      using SceneObject::getNormal;
+      
       //int sortAxis;
       CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
       //CUDA_CALLABLE float collision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);

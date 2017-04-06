@@ -83,7 +83,7 @@ QuadTreeNode::QuadTreeNode(std::vector<SceneObject*> objects, int n, int depth) 
       q3 = new QuadTreeNode(tempVect2, quarter, depth + 1);
       
       tempVect2.clear();
-      for (int i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
+      for (uint i = quarter; i < tempVect1.size(); i++) tempVect2.push_back(tempVect1[i]);
       q4 = new QuadTreeNode(tempVect2, tempVect2.size(), depth + 1);
       
       boundingBox = combineBB(&(q1->boundingBox), &(q2->boundingBox), &(q3->boundingBox), &(q4->boundingBox));
@@ -181,7 +181,7 @@ float QuadTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, S
 
 glm::vec3 QuadTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
-   return glm::vec3(0.0f, 0.0f, 0.0f);
+   return iPt;
 }
 
 /*void QuadTreeNode::constructBB() {
@@ -190,8 +190,8 @@ glm::vec3 QuadTreeNode::getNormal(glm::vec3 iPt) {
 }*/
 
 void QuadTreeNode::printObj() {
-   cout << "hello?" << endl;
-   if (q1->type == 2) { cout << "wut" << endl; }
+   printf("hello?\n");
+   if (q1->type == 2) { printf("wut\n"); }
    q1->printObj();
    if (q2) q2->printObj();
    if (q3) q3->printObj();

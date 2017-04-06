@@ -135,7 +135,6 @@ void PovParser::parseCamera(stringstream& buffer) {
 
 void PovParser::parseLight(stringstream& buffer) {
    string name;
-   char curChar;
    glm::vec3 lpos, lcol;
    
    locateOpenBrace(buffer, "Light");
@@ -258,7 +257,7 @@ void PovParser::parseGW(stringstream& buffer) {
    string name;
    char curChar;
    glm::vec3 ll, ur, dir, dirsubwave, subwavestats;
-   float amp = 0.0f, wavel = 0.0f, speed = 0.0f, ypos = 0.0f, val;
+   float amp = 0.0f, wavel = 0.0f, speed = 0.0f, ypos = 0.0f;
    std::vector<glm::vec3> waves;
    waves.clear();
    
@@ -310,7 +309,7 @@ void PovParser::parseGW(stringstream& buffer) {
    }
    
    gerstnerWave = new GerstnerWave(amp, wavel, speed, dir, ll, ur, ypos);
-   for (int i = 0; i < waves.size(); i+=2) {
+   for (uint i = 0; i < waves.size(); i+=2) {
       waves[i+1] = glm::normalize(waves[i+1]);
       gerstnerWave->addWave(waves[i].x, waves[i].y, waves[i].z, waves[i+1]);
    }
@@ -393,7 +392,6 @@ void PovParser::parseObjProps(stringstream& buffer, SceneObject* object) {
 }
 
 glm::vec4 PovParser::parsePigment(stringstream& buffer) {
-   char curChar;
    string name;
    glm::vec4 pigment;
    
@@ -459,7 +457,6 @@ void PovParser::parseFinish(stringstream& buffer, SceneObject* object) {
 
 /***************HELPERS***************/
 glm::vec3 PovParser::parseEVect3(stringstream& buffer) {
-   char curChar;
    float v1, v2, v3;
    glm::vec3 vect;
    
@@ -475,7 +472,6 @@ glm::vec3 PovParser::parseEVect3(stringstream& buffer) {
 }
 
 glm::vec4 PovParser::parseEVect4(stringstream& buffer) {
-   char curChar;
    float v1, v2, v3, v4;
    glm::vec4 vect;
    
@@ -495,7 +491,7 @@ glm::vec4 PovParser::parseEVect4(stringstream& buffer) {
 void PovParser::locateOpenBrace(stringstream& buffer, string type) {
    char curChar;
    while ((curChar = buffer.get()) != '{') {
-      if (!buffer || curChar != ' ' && curChar != '\n' && curChar != '\r') {
+      if (!buffer || (curChar != ' ' && curChar != '\n' && curChar != '\r')) {
          perror("Error - PovRay - Bad Format (No Open Brace)");
          cout << "Error on " << type << endl;
          exit(1);
@@ -560,14 +556,14 @@ void PovParser::printObjects() {
    cout << "   Right: " << v[0] << " " << v[1] << " " << v[2] << endl;
    v = camera->getLookAt();
    cout << "   LookAt: " << v[0] << " " << v[1] << " " << v[2] << endl;
-   for (int i = 0; i < lights.size(); i++) {
+   for (uint i = 0; i < lights.size(); i++) {
       cout << "Light " << i << ":" << endl;
       v = lights[i]->getPosition();
       cout << "   Position: " << v[0] << " " << v[1] << " " << v[2] << endl;
       v = lights[i]->getColor();
       cout << "   Color: " << v[0] << " " << v[1] << " " << v[2] << endl;
    }
-   for (int i = 0; i < objects.size(); i++) {
+   for (uint i = 0; i < objects.size(); i++) {
       cout << "Object " << i << ":" << endl;
       v4 = objects[i]->pigment;
       cout << "   Pigment: " << v4[0] << " " << v4[1] << " " << v4[2] << " " << v4[3] << endl;
@@ -678,7 +674,7 @@ void PovParser::ObjToPov(string filename) {
             
             minx = miny = minz = FLT_MAX;
             maxx = maxy = maxz = FLT_MIN;
-            for (int i = 0; i < verts.size(); i++) {
+            for (uint i = 0; i < verts.size(); i++) {
                verts[i].x /= shrink;
                verts[i].y /= shrink;
                verts[i].z /= shrink;
@@ -694,7 +690,7 @@ void PovParser::ObjToPov(string filename) {
             trans.y = -((maxy + miny) / 2.0f);
             trans.z = -((maxz + minz) / 2.0f);
             
-            for (int i = 0; i < verts.size(); i++) {
+            for (uint i = 0; i < verts.size(); i++) {
                verts[i].x = verts[i].x + trans.x;
                verts[i].y = verts[i].y + trans.y;
                verts[i].z = verts[i].z + trans.z;

@@ -13,14 +13,17 @@
 #include <math.h>
 
 #include "types.h"
+#pragma warning ( push, 0 )
+#pragma warning(disable:XXX)
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
 #include "glm/gtc/type_ptr.hpp" //value_ptr
 #include "glm/gtx/string_cast.hpp"
+#pragma warning pop
 
 class Image {
 public:
-    Image(int width, int height);
+    Image(int w, int h);
     ~Image();
 
     // if scale_color is true, the output targa will have its color space scaled

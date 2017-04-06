@@ -31,6 +31,9 @@ class QuadTreeNode : public SceneObject {
       SceneObject *q4;
       //int sortAxis;
       
+      using SceneObject::checkCollision;
+      using SceneObject::getNormal;
+      
       CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
       CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       

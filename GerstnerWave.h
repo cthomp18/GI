@@ -17,12 +17,12 @@
 
 class GerstnerWave : public SceneObject {
    public:
-      std::vector<float> amplitude;
-      std::vector<glm::vec3> direction;//(x,z)
-      std::vector<float> wavelength;
-      std::vector<float> speedPC;
-      std::vector<float> frequency;
-      std::vector<float> steepness;
+      float *amplitude;
+      glm::vec3 *direction;//(x,z)
+      float *wavelength;
+      float *speedPC;
+      float *frequency;
+      float *steepness;
       float yPos;//Level of water
       glm::vec3 lb;//Lower Left Bound (x,z)
       glm::vec3 ub;//Upper Right Bound (x,z)
@@ -32,6 +32,9 @@ class GerstnerWave : public SceneObject {
       CUDA_CALLABLE GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
       CUDA_CALLABLE GerstnerWave();
       CUDA_CALLABLE virtual ~GerstnerWave();
+      
+      using SceneObject::checkCollision;
+      using SceneObject::getNormal;
       
       CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
       void addWave(float a, float w, float s, glm::vec3 d);

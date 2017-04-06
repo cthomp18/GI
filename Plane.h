@@ -22,6 +22,9 @@ class Plane : public SceneObject {
       float distance;
       glm::vec3 planePt;
       
+      using SceneObject::checkCollision;
+      using SceneObject::getNormal;
+      
       CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
       CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       
