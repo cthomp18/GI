@@ -4,13 +4,15 @@
    Spring 2016
 */
 
+#ifndef __PLANE_H__
+#define __PLANE_H__
+
 #include "glm/glm.hpp"
 #include "SceneObject.h"
 #include "Collision.h"
 #include "cuda_helper.h"
-
-#ifndef __PLANE_H__
-#define __PLANE_H__
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 class Plane : public SceneObject {
    public:
@@ -22,11 +24,11 @@ class Plane : public SceneObject {
       float distance;
       glm::vec3 planePt;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       
    private:
    

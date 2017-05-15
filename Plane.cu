@@ -12,12 +12,17 @@ Plane::Plane(glm::vec3 n, float d) : SceneObject() {
    normal = glm::normalize(normal);
    distance = d;
    planePt = normal * distance;
+   checkCollision = &(checkPlaneCollision);
+   getNormal = &(getPlaneNormal);
 }
 
-Plane::Plane() : SceneObject() {}
+Plane::Plane() : SceneObject() {
+   checkCollision = &(checkPlaneCollision);
+   getNormal = &(getPlaneNormal);
+}
 Plane::~Plane() {}
 
-float Plane::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float Plane::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    float t = -1.0f;
    //glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
    
@@ -64,8 +69,8 @@ float Plane::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    
    t = tAccrue;
    return t;*/
-}
+//}
 
-glm::vec3 Plane::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 Plane::getNormal(glm::vec3 iPt, float time) {
    return normal;
-}
+}*/

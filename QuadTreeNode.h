@@ -14,10 +14,16 @@
 #include <math.h>
 
 #include "SceneObject.h"
+#include "Triangle.h"
 #include "Collision.h"
 #include "structs.h"
 #include "BoundingBox.h"
 #include "cuda_helper.h"
+#include "Triangle.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
+
+class Triangle;
 
 class QuadTreeNode : public SceneObject {
    public:
@@ -29,15 +35,18 @@ class QuadTreeNode : public SceneObject {
       SceneObject *q2;
       SceneObject *q3;
       SceneObject *q4;
+      int indeces[4];
       //int sortAxis;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
       CUDA_CALLABLE void printObj();
+      CUDA_CALLABLE int treeLength();
+      CUDA_CALLABLE void toSerialArray(Triangle *objectArray, int *currentIndex);
       
    private:
       //bool sorter(const SceneObject* obj1, const SceneObject* obj2);

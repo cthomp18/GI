@@ -20,6 +20,8 @@
 #pragma warning ( push, 0 )
 #include "glm/glm.hpp"
 #pragma warning pop
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 class BiTreeNode : public SceneObject {
    public:
@@ -31,11 +33,11 @@ class BiTreeNode : public SceneObject {
       SceneObject *right;
       //int sortAxis;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
       void printTree();
       

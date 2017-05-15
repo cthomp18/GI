@@ -147,7 +147,8 @@ OctTreeNode::OctTreeNode(std::vector<SceneObject*> objects, int n, int depth) : 
       boundingBox = combineBB(bbs);
    }
    type = 8;
-   //checkCollision = static_cast<float SceneObject::*>(&OctTreeNode::collision);
+   checkCollision = (&checkOctTreeCollision);
+   getNormal = (&getOctTreeNormal);
 }
 
 OctTreeNode::OctTreeNode(OctTreeNode* o) {
@@ -157,12 +158,16 @@ OctTreeNode::OctTreeNode(OctTreeNode* o) {
       indeces[i] = o->indeces[i];
    }
    copyData(o);
+   checkCollision = (&checkOctTreeCollision);
+   getNormal = (&getOctTreeNormal);
 }
 
 OctTreeNode::OctTreeNode() : SceneObject() {
    type = 8;
    //typedef float SceneObject::* fPtr;
    //checkCollision = static_cast<float (SceneObject::*)>(&OctTreeNode::collision);
+   checkCollision = (&checkOctTreeCollision);
+   getNormal = (&getOctTreeNormal);
 }
 OctTreeNode::~OctTreeNode() {
    int i;
@@ -174,7 +179,7 @@ OctTreeNode::~OctTreeNode() {
    }
 }
 
-float OctTreeNode::checkCollision2(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+/*float OctTreeNode::checkCollision2(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
 printf("otree collision\n");
 return -1.0f;
    /*printf("pls\n");
@@ -223,7 +228,7 @@ return -1.0f;
    }
    
    return t;*/
-}
+//}
 /*float OctTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    return -1.0f;
 }*/
@@ -232,7 +237,7 @@ SceneObject* OctTreeNode::getObj() {
    return NULL;
 }
 
-float OctTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+/*float OctTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
 //printf("%f %f %f\n", start.x, start.y, start.z);
 //printf("%f %f %f\n", ray.x, ray.y, ray.z);
 printf("otree collision\n");
@@ -272,9 +277,9 @@ printf("otree collision\n");
       printf("AMBi octant? %f\n", octants[0]->ambient);
       
       printf("OCTANT MEM: %p\n", &(this->octants[0]));
-      /*octants[0]->type = 8;
+      octants[0]->type = 8;
       octants[0]->blahblah = 1;
-      octants[0]->ambient = 4.0f;*/
+      octants[0]->ambient = 4.0f;
       t = octants[0]->checkCollision(start, ray, time, &tempObj);
    }
    }
@@ -328,12 +333,13 @@ printf("otree collision\n");
    }
    
    return t;
-}
+}*/
 
-CUDA_CALLABLE glm::vec3 OctTreeNode::getNormal(glm::vec3 iPt) {
+/*CUDA_CALLABLE glm::vec3 OctTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
+   printf("the fuck\n");
    return glm::vec3(0.0f, 0.0f, 0.0f);
-}
+}*/
 
 /*void OctTreeNode::constructBB() {
    boundingBox = new Box(Eigen::Vector3f(position[0] - rad, position[1] - rad, position[2] - rad),

@@ -24,7 +24,8 @@ CUDA_CALLABLE SceneObject::SceneObject() {
    photonRefractance = 0.0f;
    dropoff = 1.0f;
    
-   //checkCollision = NULL;
+   checkCollision = NULL;
+   getNormal = NULL;
    blahblah = -2;
    
    type = -1;
@@ -34,22 +35,22 @@ CUDA_CALLABLE SceneObject::SceneObject() {
 
 SceneObject::~SceneObject() {}//printf("a USH\n");}
 
-float SceneObject::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float SceneObject::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    printf("WHAT\n");
    printf("parent call\n");
    return -1.0f;
-}
+}*/
 
-float SceneObject::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+/*float SceneObject::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
    printf("WHATasdfasdf\n");
    printf("parent call\n");
    *object = this;
    return checkCollision(start, ray, time);
-}
+}*/
 
-glm::vec3 SceneObject::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 SceneObject::getNormal(glm::vec3 iPt, float time) {
    return glm::vec3(-1.0f, -1.0f, -1.0f);
-}
+}*/
 
 SceneObject* SceneObject::getObj() {
    return this;

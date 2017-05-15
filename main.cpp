@@ -160,7 +160,10 @@ void setup(int argc, char* argv[], Pixel* pixels) {
    cout << tempObjects.size() << endl;
    for (uint i = 0; i < tempObjects.size(); i++) {
       if (tempObjects[i]->type == 1 || tempObjects[i]->type == 5) {
-         objects.push_back(tempObjects[i]);
+         if (tempObjects[i]->type == 1) {
+            objects.push_back(tempObjects[i]);
+         }
+         if (tempObjects[i]->type == 5) delete tempObjects[i];
          tempObjects.erase(tempObjects.begin() + i);
          
          i--;
@@ -175,15 +178,17 @@ void setup(int argc, char* argv[], Pixel* pixels) {
       objects[objects.size() - 1]->pigment = Eigen::Vector4f(0.7, 0.7, 0.7, 1.0f);
    }*/
    
-   OctTreeNode* root;
+   QuadTreeNode* root;
    if (tempObjects.size() > 0) {
       cout << tempObjects.size() << endl;
       //cout << sizeof(OctTreeNode) << endl;
-      root = new OctTreeNode(tempObjects, tempObjects.size(), 0);
+      root = new QuadTreeNode(tempObjects, tempObjects.size(), 0);
       cout << "Octree made" << endl;
+      //printf("%f %f %f\n", root->boundingBox.minPt.x, root->boundingBox.minPt.y, root->boundingBox.minPt.z);
+      //printf("%f %f %f\n", root->boundingBox.maxPt.x, root->boundingBox.maxPt.y, root->boundingBox.maxPt.z);
       //root->printObj();
       objects.push_back(root);
-      cout << "OTREE LEN: " << root->treeLength() << endl;
+      cout << "QTREE LEN: " << root->treeLength() << endl;
    }
    
    //root->printObj();
@@ -255,11 +260,14 @@ int main(int argc, char* argv[]) {
    Image* img = new Image(imgwidth, imgheight);
    
    setup(argc, argv, pixels);
-   
+   printf("TYPE %d\n", (&(objects[0]))[0]->type);
+   for (int i = 0; i < objects.size(); i++) {
+      if (!objects[i]) printf("FUCK %d\n", i);
+   }
    KDTreeNode* kd = new KDTreeNode();
    PhotonMapper* pm = new PhotonMapper(lights, objects);
    cout << "Building Global Photon Map... " << endl;
-   //pm->buildGlobalMap();
+   pm->buildGlobalMap();
    cout << "Building Caustic Photon Map(s)... " << endl;
    //pm->buildCausticMap();
    cout << "Done!" << endl;
@@ -281,25 +289,27 @@ int main(int argc, char* argv[]) {
    
    cout << "Global Photon Map Size: " << photonMap.size() << endl;
    cout << "Caustic Photon Map Size: " << causticMap.size() << endl;
-   cout << "Global Tree size: " << kd->Treesize(root) << endl;
-   cout << "Caustic Tree size: " << kd->Treesize(rootC1) << endl;
+   cout << "Global Tree size: " << root->Treesize() << endl;
+   cout << "Caustic Tree size: " << rootC1->Treesize() << endl;
    
    //Start CUDA stuff
    
-   RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera);
+   RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera, root, rootC1);
    
-   /*glm::vec3 cPos = camera->getPosition();
-   RayTracer* raytrace = new RayTracer(lights, objects, photonMap.size(), causticMap.size(), root, rootC1);
+   glm::vec3 cPos = camera->getPosition();
+   RayTracer* raytrace = new RayTracer(&lights, &objects, photonMap.size(), causticMap.size(), root, NULL);
    time_t startTime, endTime;
    time(&startTime);
-   int currentImgInd;*/
+   int currentImgInd;
    
    /*for (int i = 0; i < imgwidth; i++) {
+      //if (i < 80) {
       //cout << "i: " << i << endl;
       Collision* col;
       glm::vec3 ray, tempColor;
       bool unit = false;
       for (int j = 0; j < imgheight; j++) {
+         //if (j == 50) {
          currentImgInd = i * imgheight + j;
          ray = pixels[currentImgInd].pt;// - cPos;
          //ray[0] *= (float)imgwidth / (float)imgheight;
@@ -310,23 +320,25 @@ int main(int argc, char* argv[]) {
          col = raytrace->trace(cPos, ray, unit);
          
          if (col->time > TOLERANCE) {
-            //pixels[i][j].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 5); //Cam must start in air
-            tempColor = col->object->getNormal(cPos + ray * col->time, 2.0f);
-            pixels[currentImgInd].clr.x = tempColor.x * 0.5f + 0.5f;
-            pixels[currentImgInd].clr.y = tempColor.y * 0.5f + 0.5f;
-            pixels[currentImgInd].clr.z = tempColor.z * 0.5f + 0.5f;
+            pixels[currentImgInd].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 1); //Cam must start in air
+            //tempColor = col->object->getNormal(col->object, cPos + ray * col->time, 2.0f);
+            //pixels[currentImgInd].clr.x = tempColor.x * 0.5f + 0.5f;
+            //pixels[currentImgInd].clr.y = tempColor.y * 0.5f + 0.5f;
+            //pixels[currentImgInd].clr.z = tempColor.z * 0.5f + 0.5f;
          }
          else {
             pixels[currentImgInd].clr.x = pixels[currentImgInd].clr.y = pixels[currentImgInd].clr.z = 1.0f;
          }
          //cout << "PIXCOL: " << pixels[i][j].clr.x << " " << pixels[i][j].clr.y << " " << pixels[i][j].clr.z << endl;
+         //}
       }
+      //}
    }*/
    //time(&endTime);
    //cout << endTime - startTime << " seconds\n";
    //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
    //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
-   int currentImgInd;
+   //int currentImgInd;
    // set a square to be the color above
    for (int i=0; i < imgwidth; i++) {
       for (int j=0; j < imgheight; j++) {
@@ -347,6 +359,9 @@ int main(int argc, char* argv[]) {
    //cout << ((OctTreeNode*)objects[0])->treeLength() << endl;
    for (uint i = 0; i < objects.size(); i++) {
       //cout << "so uh" << endl;
+      //cout << i << endl;
+      //if (objects[i]->type == 7) delete objects[i];
+      cout << objects[i]->type << endl;
       delete objects[i];
       //cout << objects[i]->type << endl;
       //cout << "can you delete this?" << endl;
@@ -354,20 +369,24 @@ int main(int argc, char* argv[]) {
    cout << "here right" << endl;
    
    if (kd) delete kd;
+   cout << "once more" << endl;
    if (pm) delete pm;
+   cout << "pinpointing again" << endl;
    if (root) delete root;
+   cout << "pinpointing above prob" << endl;
    if (rootC1) delete rootC1;
    
-   for (uint i = 0; i < photonMap.size(); i++) {
+   cout << "pinpointing" << endl;
+   /*for (uint i = 0; i < photonMap.size(); i++) {
       delete photonMap[i];
    }
-   photonMap.clear();
+   photonMap.clear();*/
    //delete photonMap;
    
-   for (uint i = 0; i < causticMap.size(); i++) {
+   /*for (uint i = 0; i < causticMap.size(); i++) {
       delete causticMap[i];
    }
-   causticMap.clear();
+   causticMap.clear();*/
    //delete causticMap;
    /*cout << "LIGHTS: " << lights.size() << endl;*/
    for (uint i = 0; i < lights.size(); i++) {

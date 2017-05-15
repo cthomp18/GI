@@ -4,17 +4,19 @@
    Spring 2016
 */
 
+#ifndef __TRIANGLE_H__
+#define __TRIANGLE_H__
+
 #include "glm/glm.hpp"
 #include <iostream>
 #include "SceneObject.h"
 #include "Collision.h"
 #include "BoundingBox.h"
 #include "cuda_helper.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 #include <float.h>
 #include <math.h>
-
-#ifndef __TRIANGLE_H__
-#define __TRIANGLE_H__
 
 class Triangle : public SceneObject {
    public:
@@ -30,11 +32,11 @@ class Triangle : public SceneObject {
       
       glm::vec3 normal;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       CUDA_CALLABLE void constructBB();
       CUDA_CALLABLE void printObj();
       

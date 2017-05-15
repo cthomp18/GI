@@ -12,17 +12,23 @@ Cone::Cone(glm::vec3 endPt1, float rad1, glm::vec3 endPt2, float rad2) : SceneOb
    radiusA = rad1;
    b = endPt2;
    radiusB = rad2;
+   
+   checkCollision = &(checkConeCollision);
+   getNormal = &(getConeNormal);
 }
 
-Cone::Cone() : SceneObject() {}
+Cone::Cone() : SceneObject() {
+   checkCollision = &(checkConeCollision);
+   getNormal = &(getConeNormal);
+}
 Cone::~Cone() {}
 
-float Cone::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float Cone::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    printf("Cone Collision\n");
    
    return -1.0f;
-}
+}*/
 
-glm::vec3 Cone::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 Cone::getNormal(glm::vec3 iPt, float time) {
    return glm::vec3(-1.0f, -1.0f, -1.0f);
-}
+}*/

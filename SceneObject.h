@@ -43,15 +43,17 @@ class SceneObject {
       
       int type;
       int blahblah;
-      //float (SceneObject::*checkCollision) (glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      
+      float (*checkCollision) (SceneObject *thisObj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      glm::vec3 (*getNormal) (SceneObject *thisObj, glm::vec3 iPt, float time);
       
       BoundingBox boundingBox;
       //SceneObject* hitObj;
       void constructBB();
       bool transformed;
-      CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      CUDA_CALLABLE virtual glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE virtual float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      //CUDA_CALLABLE virtual glm::vec3 getNormal(glm::vec3 iPt, float time);
       virtual SceneObject* getObj();
       
       void applyTransforms();

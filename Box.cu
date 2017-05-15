@@ -18,12 +18,18 @@ Box::Box(glm::vec3 cornerPt1, glm::vec3 cornerPt2) : SceneObject() {
    }
    middle = glm::vec3((maxPt[0] + minPt[0]) / 2.0f, (maxPt[1] + minPt[1]) / 2.0f, (maxPt[2] + minPt[2]) / 2.0f);
    unit = false;
+   
+   checkCollision = &(checkBoxCollision);
+   getNormal = &(getBoxNormal);
 }
 
-Box::Box() : SceneObject() {}
+Box::Box() : SceneObject() {
+   checkCollision = &(checkBoxCollision);
+   getNormal = &(getBoxNormal);
+}
 Box::~Box() {}
 
-float Box::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float Box::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    //std::cout << "Box Collision" << std::endl;
    float tgmin = FLT_MIN, tgmax = FLT_MAX, t1, t2, temp, t = -1.0f;
 
@@ -54,12 +60,12 @@ float Box::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    }*/
    //if (tgmin < TOLERANCE) return new Collision(tgmin, this);
    //if (tgmin > tgmax || tgmax < 0.001f) return new Collision(t, this);
-   if (tgmin > tgmax) return -1.0f;
+   /*if (tgmin > tgmax) return -1.0f;
    if (tgmin < TOLERANCE) return tgmax;
    return tgmin;
-}
+}*/
 
-glm::vec3 Box::getNormal(glm::vec3 iPt) {
+/*glm::vec3 Box::getNormal(glm::vec3 iPt) {
    glm::vec3 normal = glm::vec3(0.0f, 0.0f, 0.0f);
    
    for (int i = 0; i < 3; i++) {
@@ -71,7 +77,7 @@ glm::vec3 Box::getNormal(glm::vec3 iPt) {
    }
    
    return normal;
-}
+}*/
 
 void Box::constructBB() {
    boundingBox = BoundingBox(minPt, maxPt);

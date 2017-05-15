@@ -9,6 +9,8 @@
 #include "SceneObject.h"
 #include "Collision.h"
 #include "cuda_helper.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 #ifndef __CONE_H__
 #define __CONE_H__
@@ -24,11 +26,11 @@ class Cone : public SceneObject {
       float radiusA;
       float radiusB;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
    private:
    
 };

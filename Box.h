@@ -14,6 +14,8 @@
 #include "glm/glm.hpp"
 #include "BoundingBox.h"
 #include "cuda_helper.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 class Box : public SceneObject {
    public:
@@ -21,16 +23,16 @@ class Box : public SceneObject {
       CUDA_CALLABLE Box();
       CUDA_CALLABLE virtual ~Box();
    
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
       glm::vec3 minPt;
       glm::vec3 maxPt;
       glm::vec3 middle;
       bool unit;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       CUDA_CALLABLE void constructBB();
 
    private:

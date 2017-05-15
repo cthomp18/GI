@@ -698,11 +698,11 @@ void PovParser::ObjToPov(string filename) {
             
             calc = true;
             
-            /*cout << "Mins: " << minx << " " << miny << " " << minz << endl;
+            cout << "Mins: " << minx << " " << miny << " " << minz << endl;
             cout << "Maxs: " << maxx << " " << maxy << " " << maxz << endl;
             cout << "Ranges: " << rangex << " " << rangey << " " << rangez << endl;
             cout << "Trans: " << trans.x << " " << trans.y << " " << trans.z << endl;
-            cout << "Shrink: " << shrink << endl;*/
+            cout << "Shrink: " << shrink << endl;
             
             
             

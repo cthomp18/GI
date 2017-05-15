@@ -19,7 +19,7 @@ CPPFLAGS=-g --compiler-options "-Wall \
     -Wunused-label \
     -Wunused-value  -Wunused-variable \
     -Wvolatile-register-var  -Wwrite-strings"
-NVFLAGS= -ccbin g++ -m64 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS= -O2 -ccbin g++ -m64 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 CC=nvcc
 
 CPP_SRCS := $(wildcard *.cpp)
@@ -32,13 +32,13 @@ INCLUDES := -I/usr/local/cuda-8.0/samples/common/inc
 all: trace
 
 trace: $(CPP_OBJECTS) $(CU_OBJECTS)
-	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -lGL $(CPP_OBJECTS) $(CU_OBJECTS) -o trace
+	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL $(CPP_OBJECTS) $(CU_OBJECTS) -o trace
 	
 $(CPP_OBJECTS): %.o : %.cpp
-	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -lGL -dc $< -o $@
+	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
 	
 $(CU_OBJECTS): %.o : %.cu
-	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -lGL -dc $< -o $@
+	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
 
 clean:
 	rm -rf *o trace

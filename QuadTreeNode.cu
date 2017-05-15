@@ -35,7 +35,7 @@ QuadTreeNode::QuadTreeNode(std::vector<SceneObject*> objects, int n, int depth) 
    for (int i = 0; i < objects.size(); i++) {
       objects[i]->printObj();
    }*/
-   
+   indeces[0] = indeces[1] = indeces[2] = indeces[3] = -1;
    if (n <= 4) {
       q1 = objects[0];
       obj1 = q1;
@@ -88,13 +88,21 @@ QuadTreeNode::QuadTreeNode(std::vector<SceneObject*> objects, int n, int depth) 
       
       boundingBox = combineBB(&(q1->boundingBox), &(q2->boundingBox), &(q3->boundingBox), &(q4->boundingBox));
    }
-   type = 8;
+   type = 7;
+   
+   checkCollision = &(checkQuadTreeCollision);
+   getNormal = &(getQuadTreeNormal);
 }
 
 QuadTreeNode::QuadTreeNode() : SceneObject() {}
-QuadTreeNode::~QuadTreeNode() {}
+QuadTreeNode::~QuadTreeNode() {
+   if (q1) delete q1;
+   if (q2) delete q2;
+   if (q3) delete q3;
+   if (q4) delete q4;
+}
 
-float QuadTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+/*float QuadTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
    glm::vec4 startTransform;
    float t, tempT;
    SceneObject *obj1, *obj2, *obj3, *obj4;
@@ -177,12 +185,12 @@ float QuadTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, S
    }
    
    return t;
-}
+}*/
 
-glm::vec3 QuadTreeNode::getNormal(glm::vec3 iPt) {
+/*glm::vec3 QuadTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
    return iPt;
-}
+}*/
 
 /*void QuadTreeNode::constructBB() {
    boundingBox = new Box(Eigen::Vector3f(position[0] - rad, position[1] - rad, position[2] - rad),
@@ -205,4 +213,92 @@ BoundingBox QuadTreeNode::combineBB(BoundingBox* box1, BoundingBox* box2, Boundi
                       glm::vec3(fmax(fmax(fmax(box1->maxPt[0], box2->maxPt[0]), box3->maxPt[0]), box4->maxPt[0]),
                                 fmax(fmax(fmax(box1->maxPt[1], box2->maxPt[1]), box3->maxPt[1]), box4->maxPt[1]),
                                 fmax(fmax(fmax(box1->maxPt[2], box2->maxPt[2]), box3->maxPt[2]), box4->maxPt[2])));
+}
+
+int QuadTreeNode::treeLength() {
+   int length = 1;
+   
+   if (q1) {
+      if (q1->type != 7) {
+         length++;
+      } else {
+         length += static_cast<QuadTreeNode*>(q1)->treeLength();
+      }
+   }
+   if (q2) {
+      if (q2->type != 7) {
+         length++;
+      } else {
+         length += static_cast<QuadTreeNode*>(q2)->treeLength();
+      }
+   }
+   if (q3) {
+      if (q3->type != 7) {
+         length++;
+      } else {
+         length += static_cast<QuadTreeNode*>(q3)->treeLength();
+      }
+   }
+   if (q4) {
+      if (q4->type != 7) {
+         length++;
+      } else {
+         length += static_cast<QuadTreeNode*>(q4)->treeLength();
+      }
+   }
+
+   return length;
+}
+
+void QuadTreeNode::toSerialArray(Triangle *objectArray, int *currentIndex) {
+   int i;
+   int thisInd = *currentIndex;
+   
+   *currentIndex += 1;
+   
+   if (q1) {
+      indeces[0] = *currentIndex;
+      if (q1->type != 7) {
+         assert(q1->type == 2);
+         memcpy(objectArray + (*currentIndex), q1, sizeof(Triangle));
+         *currentIndex += 1;
+      } else {
+         reinterpret_cast<QuadTreeNode*>(q1)->toSerialArray(objectArray, currentIndex);
+      }
+   }
+   if (q2) {
+      indeces[1] = *currentIndex;
+      if (q2->type != 7) {
+         assert(q2->type == 2);
+         memcpy(objectArray + (*currentIndex), q2, sizeof(Triangle));
+         *currentIndex += 1;
+      } else {
+         reinterpret_cast<QuadTreeNode*>(q2)->toSerialArray(objectArray, currentIndex);
+      }
+   }
+   if (q3) {
+      indeces[2] = *currentIndex;
+      if (q3->type != 7) {
+         assert(q3->type == 2);
+         memcpy(objectArray + (*currentIndex), q3, sizeof(Triangle));
+         *currentIndex += 1;
+      } else {
+         reinterpret_cast<QuadTreeNode*>(q3)->toSerialArray(objectArray, currentIndex);
+      }
+   }
+   if (q4) {
+      indeces[3] = *currentIndex;
+      if (q4->type != 7) {
+         assert(q4->type == 2);
+         memcpy(objectArray + (*currentIndex), q4, sizeof(Triangle));
+         *currentIndex += 1;
+      } else {
+         reinterpret_cast<QuadTreeNode*>(q4)->toSerialArray(objectArray, currentIndex);
+      }
+   }
+   //printf("%d\n", *currentIndex);
+   //Put the current node into the array at the end
+   //if (thisInd >= 217450) printf("BAD ERROR ABORT\n");
+   memcpy(objectArray + thisInd, this, sizeof(QuadTreeNode));
+   //printf("%p\n", (objectArray + thisInd));
 }

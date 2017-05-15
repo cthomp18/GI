@@ -14,6 +14,8 @@
 #include "structs.h"
 #include "Triangle.h"
 #include "cuda_helper.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 class GerstnerWave : public SceneObject {
    public:
@@ -33,12 +35,12 @@ class GerstnerWave : public SceneObject {
       CUDA_CALLABLE GerstnerWave();
       CUDA_CALLABLE virtual ~GerstnerWave();
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
       void addWave(float a, float w, float s, glm::vec3 d);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       
       glm::vec3 getPoint(float x, float z, float time);
       

@@ -17,6 +17,9 @@ Triangle::Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3) : SceneObject() 
    normal = glm::normalize(normal);
    smooth = false;
    type = 3;
+   
+   checkCollision = (&checkTriCollision);
+   getNormal = (&getTriNormal);
 }
 
 Triangle::Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, bool smoothCheck) : SceneObject() {
@@ -36,6 +39,9 @@ Triangle::Triangle(glm::vec3 pt1, glm::vec3 pt2, glm::vec3 pt3, bool smoothCheck
       dotABC = glm::dot(v1, v2);
       multiplier = 1.0f / ((dotAB * dotAC) - (dotABC * dotABC));
    }
+   
+   checkCollision = (&checkTriCollision);
+   getNormal = (&getTriNormal);
 }
 
 Triangle::Triangle() : SceneObject() {}
@@ -59,10 +65,13 @@ Triangle::Triangle(Triangle* o) : SceneObject() {
    normal = o->normal;
    smooth = o->smooth;
    
+   checkCollision = (&checkTriCollision);
+   getNormal = (&getTriNormal);
+   
    copyData(o);
 }
 
-float Triangle::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float Triangle::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    std::cout << "Triangle Collision" << std::endl;
    glm::mat3 A, Ai;
    double detA, t, beta, gamma;
@@ -97,12 +106,12 @@ float Triangle::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    //}
    
    return -1.0f;
-}
+}*/
 
-glm::vec3 Triangle::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 Triangle::getNormal(glm::vec3 iPt, float time) {
    float alpha, beta, gamma;
    glm::vec3 normalConstructor = normal;
-   
+   printf("sup dawg\n");
    if (smooth) {
       float dotABP = glm::dot(b - a, iPt - a), dotACP = glm::dot(c - a, iPt - a);
       alpha = ((dotAC * dotABP) - (dotABC * dotACP)) * multiplier;
@@ -116,7 +125,7 @@ glm::vec3 Triangle::getNormal(glm::vec3 iPt, float time) {
    }
    
    return normalConstructor;
-}
+}*/
 
 void Triangle::constructBB() {
    glm::vec3 minPt = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);

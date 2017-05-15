@@ -13,6 +13,8 @@
 #include "structs.h"
 #include "BoundingBox.h"
 #include "cuda_helper.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
 
 class Sphere : public SceneObject {
    public:
@@ -23,11 +25,11 @@ class Sphere : public SceneObject {
       glm::vec3 position;
       float radius;
       
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt, float time);
       CUDA_CALLABLE void constructBB();
       
    private:

@@ -22,6 +22,7 @@ class Photon {
       ~Photon();
       
       friend bool operator<(Photon p1, Photon p2);
+      //friend bool operator<(Photon const* p1, Photon const* p2);
 };
 
 

@@ -18,6 +18,10 @@
 #include "Collision.h"
 #include "structs.h"
 #include "Triangle.h"
+#include "collisionFuncs.h"
+#include "normalFuncs.h"
+
+class Triangle;
 
 class OctTreeNode : public SceneObject {
    public:
@@ -29,14 +33,14 @@ class OctTreeNode : public SceneObject {
       SceneObject* octants[8];
       int indeces[8];
 
-      using SceneObject::checkCollision;
-      using SceneObject::getNormal;
+      //using SceneObject::checkCollision;
+      //using SceneObject::getNormal;
       
       //int sortAxis;
-      CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
       //CUDA_CALLABLE float collision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      CUDA_CALLABLE float checkCollision2(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
+      //CUDA_CALLABLE float checkCollision2(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
       SceneObject* getObj();
       CUDA_CALLABLE void printObj();

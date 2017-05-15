@@ -10,12 +10,15 @@
 Sphere::Sphere(glm::vec3 pos, float rad) : SceneObject() {
    position = pos;
    radius = rad;
+   
+   checkCollision = &(checkSphereCollision);
+   getNormal = &(getSphereNormal);
 }
 
 Sphere::Sphere() : SceneObject() {}
 Sphere::~Sphere() {}
 
-float Sphere::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float Sphere::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    float t = -1.0f, t0, t1, innerRoot, A, B, C;
 
    A = glm::dot(ray, ray);
@@ -34,11 +37,11 @@ float Sphere::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    }
    
    return t;
-}
+}*/
 
-glm::vec3 Sphere::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 Sphere::getNormal(glm::vec3 iPt, float time) {
    return (iPt - position) / radius;
-}
+}*/
 
 void Sphere::constructBB() {
    boundingBox = BoundingBox(glm::vec3(position[0] - radius, position[1] - radius, position[2] - radius),

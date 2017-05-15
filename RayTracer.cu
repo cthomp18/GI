@@ -8,20 +8,37 @@
 
 using namespace std;
 
-RayTracer::RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o) {
-   lights = &l[0];
-   objects = &o[0];
-   objSize = o.size();
+RayTracer::RayTracer(std::vector<Light*>* l, std::vector<SceneObject*>* o) {
+   lights = &((*l)[0]);
+   objects = &((*o)[0]);
+   objSize = (*o).size();
+   
+   /*printf("OBJ SIZE: %d\n", (*o).size());
+   printf("ADSFASDF %d\n", objSize);
+   printf("TYPE   %d\n", objects[0]->type);
+   for (int i = 0; i < (*o).size(); i++) {
+      if (!(*o)[i]) printf("FUCKKaadsfasdf %d\n", i);
+   }*/
+   
+   cudaStack = NULL;
 }
 
-RayTracer::RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr) {
-   lights = &l[0];
-   objects = &o[0];
-   objSize = o.size();
+RayTracer::RayTracer(std::vector<Light*>* l, std::vector<SceneObject*>* o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr) {
+   lights = &((*l)[0]);
+   objects = &((*o)[0]);
+   objSize = (*o).size();
    numGPhotons = gM;
    numCPhotons = cM;
    root = gr;
    rootC1 = cr;
+   /*printf("OBJ SIZE: %d\n", (*o).size());
+   printf("ADSFASDF %d\n", objSize);
+   printf("TYPE   %d\n", objects[0]->type);
+   for (int i = 0; i < (*o).size(); i++) {
+      if (!objects[i]) printf("FUCKKaadsfasdf %d\n", i);
+   }*/
+   
+   cudaStack = NULL;
 }
 
 RayTracer::RayTracer(SceneObject** o, int osize, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr) {
@@ -31,19 +48,30 @@ RayTracer::RayTracer(SceneObject** o, int osize, int gM, int cM, KDTreeNode* gr,
    numCPhotons = cM;
    root = gr;
    rootC1 = cr;
+   
+   cudaStack = NULL;
 }
 
-RayTracer::RayTracer() { }
+RayTracer::RayTracer() {
+   cudaStack = NULL;
+}
 RayTracer::~RayTracer() { }
 
 Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
    Collision* c = new Collision();
-   //printf("Here :)\n");
+   /*printf("OBJ SIZE: %d\n", objSize);
+   printf("TTYPE   %d\n", objects[0]->type);
+   for (int i = 0; i < objSize; i++) {
+      if (!objects[i]) printf("FUCKK %d\n", i);
+   }*/
+   /*printf("Here :)\n");
+   printf("COLL %f %f %f\n", objects[0]->boundingBox.minPt.x, objects[0]->boundingBox.minPt.y, objects[0]->boundingBox.minPt.z);
+   printf("COLL %f %f %f\n", objects[0]->boundingBox.maxPt.x, objects[0]->boundingBox.maxPt.y, objects[0]->boundingBox.maxPt.z);*/
    c->detectRayCollision(start, ray, objects, objSize, -1, unit);
    return c;
 }
 
-color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth) {
+glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth) {
    /*float e = 2.71828;
    float alpha = 0.918;
    float beta = 1.953;*/
@@ -56,7 +84,7 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
    glm::vec3 eRay = glm::vec3(0.0, 0.0, 1.0);
    glm::mat3 mat, matInv;
    
-   color_t clr, absorbClr, reflectClr, refractClr;
+   glm::vec3 clr, absorbClr, reflectClr, refractClr;
    float n2 = 0.0f, time = 0.0f, reflectScale = 0.0f, tempDO = 0.0f;//, dots1 = 0.0, dots2 = 0.0, temp, temp2, mainDist, mainT, dist, reflectance = 1.0f / obj->roughness, D, F, G, m, sroot, R = 0.0f, R0 = 0.0f, innersqr = 1.0f;
    glm::vec3 colorD, colorS, colorA, color, normal, reflectRay, newStart, newIPt, crossP;
    glm::vec4 tempNormal, tempStart, tempIPt;
@@ -64,11 +92,11 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
    glm::vec3 l, v, h, lcol, dir;
    
    color = glm::vec3(0.0f, 0.0f, 0.0f);
-   clr.r = clr.g = clr.b = 0.0;
+   clr.x = clr.y = clr.z = 0.0;
    //locateHeap.clear();
    sampleDistSqrd = newRadSqrd = INITIAL_SAMPLE_DIST_SQRD;
    
-   normal = obj->getNormal(iPt, 2.0f);
+   normal = obj->getNormal(obj, iPt, 2.0f);
    normal = glm::normalize(normal);
    
    v = start - iPt;
@@ -78,14 +106,20 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
    Collision* col;
    //bool shadow;
    
-   absorbClr.r = reflectClr.r = refractClr.r = 0.0;
-   absorbClr.g = reflectClr.g = refractClr.g = 0.0;
-   absorbClr.b = reflectClr.b = refractClr.b = 0.0;
+   absorbClr.x = reflectClr.x = refractClr.x = 0.0;
+   absorbClr.y = reflectClr.y = refractClr.y = 0.0;
+   absorbClr.z = reflectClr.z = refractClr.z = 0.0;
    
    colorD = pigment * obj->diffuse;
    colorS = pigment * obj->specular;
    colorA = pigment * obj->ambient;
 
+   /*if (threadNum == 0) {
+      printf("TREE START\n");
+      root->printTree(root);
+      printf("TREE END\n");
+   }*/  
+   
    if (fabs(1.0f - obj->refraction) > TOLERANCE || depth <= 0) {
       
       /*for (int lightnum = 0; lightnum < lights.size(); lightnum++) {
@@ -124,10 +158,10 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
       }*/
       reflectScale = obj->reflection;
       
-      if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE &&
-          (abs(abs(normal[0]) - eRay[0]) > TOLERANCE ||
-           abs(abs(normal[1]) - eRay[1]) > TOLERANCE ||
-           abs(abs(normal[2]) - eRay[2]) > TOLERANCE)) {
+      if (fabs(ELLIPSOID_SCALE - 1.0) > TOLERANCE &&
+          (fabs(fabs(normal[0]) - eRay[0]) > TOLERANCE ||
+           fabs(fabs(normal[1]) - eRay[1]) > TOLERANCE ||
+           fabs(fabs(normal[2]) - eRay[2]) > TOLERANCE)) {
          crossP = glm::cross(eRay, normal);
          crossP = glm::normalize(crossP);
          x = crossP.x; y = crossP.y; z = crossP.z;
@@ -143,10 +177,14 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
       locateHeap = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));
       
       heapSize = 0;
-      if (numCPhotons > 0) rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons);
+      //if (numCPhotons > 0) { printf("fucking wut\n"); rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition)); }
       causts = heapSize;
       //*heapSize = 0;
-      if (numGPhotons > 0) root->locatePhotons(1, iPt, locateHeap, &heapSize, sampleDistSqrd, &newRadSqrd, matInv, numGPhotons);
+      //printf("I'm guesssing here\n");
+      
+      if (numGPhotons > 0) root->locatePhotons(1, iPt, locateHeap, &heapSize, sampleDistSqrd, &newRadSqrd, matInv, numGPhotons, cudaStack + (threadNum * stackPartition));
+
+      //printf("sheeeet\n");
       
       for (int i = 0; i < heapSize; i++) {
          //BRDF
@@ -162,11 +200,13 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
       color /= newRadSqrd * M_PI;
       
       color *= (1.0 - obj->reflection) * scale;
-      absorbClr.r = color.x;
-      absorbClr.g = color.y;
-      absorbClr.b = color.z;
+      absorbClr.x = color.x;
+      absorbClr.y = color.y;
+      absorbClr.z = color.z;
+      
       
       free(locateHeap);
+      
    } else {
       if (depth > 0) {         
          //Do Refraction
@@ -174,7 +214,7 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
          if (fabs(reflectScale - 1.0f) >= TOLERANCE) { //Total internal reflection carry-over check
             col = trace(iPt, reflectRay, unit);
             if (col->time >TOLERANCE) {
-               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, depth - 1);
+               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, threadNum, depth - 1);
             }
             delete(col);
          }
@@ -186,16 +226,16 @@ color_t RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj
       reflectRay = findReflect(dir, normal, obj);
       col = trace(iPt, reflectRay, unit);
       if (col->time >= TOLERANCE) {
-         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, depth - 1);
+         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, threadNum, depth - 1);
       }
       delete(col);
    }
 
    time = glm::length(iPt - start);
    float dropoffCalc = pow(dropoff, time);
-   clr.r += (absorbClr.r + reflectClr.r + refractClr.r) * dropoffCalc;
-   clr.g += (absorbClr.g + reflectClr.g + refractClr.g) * dropoffCalc;
-   clr.b += (absorbClr.b + reflectClr.b + refractClr.b) * dropoffCalc;
+   clr.x += (absorbClr.x + reflectClr.x + refractClr.x) * dropoffCalc;
+   clr.y += (absorbClr.y + reflectClr.y + refractClr.y) * dropoffCalc;
+   clr.z += (absorbClr.z + reflectClr.z + refractClr.z) * dropoffCalc;
    
 	return clr;
 }

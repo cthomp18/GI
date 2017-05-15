@@ -12,11 +12,17 @@
 
 #include "cuda_helper.h"
 #include "OctTreeNode.h"
+#include "QuadTreeNode.h"
 #include "Triangle.h"
+#include "Sphere.h"
+#include "Box.h"
+#include "Plane.h"
+#include "Cone.h"
 #include "Camera.h"
 #include "RayTracer.h"
 #include "structs.h"
 #include "types.h"
+#include "collisionFuncs.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //perspective, trans etc
@@ -35,7 +41,9 @@ static void HandleError( cudaError_t err,
 //void MatrixMulOnDevice(TYPE *M, TYPE *N, TYPE *P, int width);
 //void output(TYPE* newMat);
 __global__ void toOctTree(Triangle *objectArray, int size, int gridDimension);
-__global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objsize, Pixel *pixelsD, Camera cam, int width, int height, RayTracer rt);
-void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObject*> objects, Camera *cam);
+__global__ void toQuadTree(Triangle *objectArray, int size, int gridDimension);
+__global__ void toKDTree(Photon *kdArray, int size, int gridDimension);
+__global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objsize, Pixel *pixelsD, Camera cam, int width, int height, RayTracer *rt); //, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons);
+void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObject*> objects, Camera *cam, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons);
 
 #endif

@@ -25,6 +25,9 @@ GerstnerWave::GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 low
    yPos = yPosition;
    
    waves = 1;
+   
+   checkCollision = &(checkGWCollision);
+   getNormal = &(getGWNormal);
 }
 
 GerstnerWave::GerstnerWave() : SceneObject() {
@@ -39,13 +42,23 @@ GerstnerWave::GerstnerWave() : SceneObject() {
    yPos = 0.0f;
    
    waves = 0;
+   
+   checkCollision = &(checkGWCollision);
+   getNormal = &(getGWNormal);
 }
 
-GerstnerWave::~GerstnerWave() {}
+GerstnerWave::~GerstnerWave() {
+   if (amplitude) free(amplitude);
+   if (wavelength) free(wavelength);
+   if (frequency) free(frequency);
+   if (speedPC) free(speedPC);
+   if (direction) free(direction);
+   if (steepness) free(steepness);
+}
 
 // Not using this function anymore btw
 
-float GerstnerWave::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
+/*float GerstnerWave::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    /*float t = -1.0f, tAccrue = 0.0f;
    
    //Ray Marching Boys
@@ -74,16 +87,16 @@ float GerstnerWave::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
       pt0 = pt1;
       pt1 = pt0 + (ray * step);
       ptW = getPoint(pt1.x(), pt1.z(), time);
-      normal = getNormal(pt1, time);
+      normal = getNormal(this, pt1, time);
       //std::cout << tAccrue << std::endl;
    }
    
    if (pt1.y() - ptW.y() <= TOLERANCE) { t = tAccrue; }
-   return t;*/
+   return t;
    return -1.0f;
-}
+}*/
 
-glm::vec3 GerstnerWave::getNormal(glm::vec3 iPt, float time) {
+/*glm::vec3 GerstnerWave::getNormal(glm::vec3 iPt, float time) {
    glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
    float wa, wdpt, coswa;
    
@@ -96,7 +109,7 @@ glm::vec3 GerstnerWave::getNormal(glm::vec3 iPt, float time) {
    normal = glm::normalize(normal);
    
    return normal;
-}
+}*/
 
 glm::vec3 GerstnerWave::getPoint(float x, float z, float time) {
    glm::vec3 iPt = glm::vec3(x, 0.0f, z);
@@ -146,7 +159,7 @@ void GerstnerWave::addTriangles(std::vector<SceneObject*> *objects, float step, 
    for (int i = 0; i < matDepth; i++) {
       for (int j = 0; j < matWidth; j++) {
          wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
-         waveNorms[i][j] = getNormal(wavePts[i][j], time);
+         waveNorms[i][j] = getNormal(this, wavePts[i][j], time);
       }
    }
    
@@ -221,7 +234,7 @@ void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
    for (int i = 0; i < matDepth; i++) {
       for (int j = 0; j < matWidth; j++) {
          wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
-         waveNorms[i][j] = getNormal(wavePts[i][j], time);
+         waveNorms[i][j] = getNormal(this, wavePts[i][j], time);
       }
    }
    

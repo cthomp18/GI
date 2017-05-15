@@ -92,12 +92,14 @@ BiTreeNode::BiTreeNode(std::vector<SceneObject*> objects, int axis, int n) : Sce
       boundingBox = combineBB(&(left->boundingBox), &(right->boundingBox));
    }
    type = 8;
+   checkCollision = &(checkBiTreeCollision);
+   getNormal = &(getBiTreeNormal);
 }
 
 BiTreeNode::BiTreeNode() : SceneObject() {}
 BiTreeNode::~BiTreeNode() {}
 
-float BiTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+/*float BiTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
    glm::vec4 startTransform;
    float t, tLeft, tRight;
    SceneObject *lObj, *rObj;
@@ -151,12 +153,12 @@ float BiTreeNode::checkCollision(glm::vec3 start, glm::vec3 ray, float time, Sce
    }
    
    return t;
-}
+}*/
 
-glm::vec3 BiTreeNode::getNormal(glm::vec3 iPt) {
+/*glm::vec3 BiTreeNode::getNormal(glm::vec3 iPt) {
    //std::cout << "Oh no! I fucked up!" << std::endl;
    return iPt;
-}
+}*/
 
 /*void BiTreeNode::constructBB() {
    boundingBox = new Box(Eigen::Vector3f(position[0] - rad, position[1] - rad, position[2] - rad),

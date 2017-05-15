@@ -15,6 +15,7 @@
 #include <algorithm>
 #include "cuda_helper.h"
 
+bool compPhotons(Photon* p1, Photon* p2);
 
 class KDTreeNode {
    public: 
@@ -23,17 +24,22 @@ class KDTreeNode {
       Photon *photon;
       int axis; //This is the axis that its children are separated on (x=0y=1z=2)
       
+      int leftInd;
+      int rightInd;
+      
       CUDA_CALLABLE KDTreeNode(KDTreeNode *l, KDTreeNode *r, Photon *p, int a);
       CUDA_CALLABLE KDTreeNode();
       CUDA_CALLABLE ~KDTreeNode();
       
       KDTreeNode* buildKDTree(std::vector<Photon*> pmap, int lastAxis);
-      CUDA_CALLABLE int Treesize(KDTreeNode *node);
+      CUDA_CALLABLE int Treesize();
       CUDA_CALLABLE void printTree(KDTreeNode *node);
       float findMin(std::vector<Photon*> pmap, int axis);
       float findMax(std::vector<Photon*> pmap, int axis);
       
-      CUDA_CALLABLE void locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons);
+      CUDA_CALLABLE void locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons, KDTreeNode **stack);
+      
+      CUDA_CALLABLE void toSerialArray(Photon *objectArray, int *currentIndex);
 };
 
 #endif

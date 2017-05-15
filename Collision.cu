@@ -38,9 +38,9 @@ void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, thrust::host_
       if (i == omitInd) continue;
       
       if (objects[i]->transformed) {
-         tempT = objects[i]->checkCollision(glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
+         tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
       } else {
-         tempT = objects[i]->checkCollision(start, ray, 2.0f, &tempObject);
+         tempT = objects[i]->checkCollision(objects[i], start, ray, 2.0f, &tempObject);
       }
       
       if (tempT < TOLERANCE) continue;
@@ -58,27 +58,43 @@ void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject**
    glm::vec4 startTransform;
    startTransform = glm::vec4(start, 1.0f);
    SceneObject *tempObject;
+   Triangle *objs;
    //printf("???\n");
    //SceneObject **huh = &tempObject;
-   printf("ok...\n");
+   //printf("ok...\n");
    time = -1.0;
    object = NULL;
    //printf("OBJSIZE: %d\n", objSize);
    //printf("OBJTYPE: %d\n", objects[0]->type);
+   /*printf("OBJ SIZE: %d\n", objSize);
+   for (int i = 0; i < objSize; i++) {
+      if (!objects[i]) printf("FUCKKKK %d\n", i);
+   }*/
    for (int i = 0; i < objSize; i++) {
       if (i == omitInd) continue;
       
       if (objects[i]->transformed) {
-         tempT = objects[i]->checkCollision(glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
+         tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
       } else {
       /*printf("here\n");
       printf("%f, %f, %f\n", start.x, start.y, start.z);
       printf("%f, %f, %f\n", ray.x, ray.y, ray.z);
       printf("OBJSIZE: %d\n", objSize);
       printf("OBJTYPE: %d\n", objects[i]->type);*/
-         printf("hello\n");
-         tempT = objects[i]->checkCollision(start, ray, 2.0f, &tempObject);
-         printf("k\n");
+         /*printf("hello\n");
+         //if (objects[i]) { printf("UHHH\n"); }
+         //else {printf("FUCK\n");}
+         printf("TYPE %d\n", objects[i]->type);
+         printf("ACTUAL FUNC LOC: %p\n", &checkOctTreeCollision);
+         printf("ACTUAL OTHER FUNC LOC: %p\n", &checkOctTreeCollision2);
+         printf("FUNC LOC: %p\n", objects[i]->checkCollision);*/
+         //objs = reinterpret_cast<Triangle*>(objects[i]);
+         //tempT = (objs + 190268)->checkCollision(objs + 190268, start, ray, 2.0f, &tempObject);
+        /* printf("PLEASE HERE\n");
+         printf("WE COLL %f %f %f\n", objects[0]->boundingBox.minPt.x, objects[0]->boundingBox.minPt.y, objects[0]->boundingBox.minPt.z);
+         printf("WE COLL %f %f %f\n", objects[0]->boundingBox.maxPt.x, objects[0]->boundingBox.maxPt.y, objects[0]->boundingBox.maxPt.z);*/
+         tempT = objects[i]->checkCollision(objects[i], start, ray, 2.0f, &tempObject);
+         //printf("k\n");
       }
       
       if (tempT < TOLERANCE) continue;

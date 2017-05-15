@@ -1,8 +1,8 @@
 camera {
-   location  <0.0, -1.0, 1.0>
+   location  <0.0, 1.0, 1.0>
    up        <0.0, 1.0, 0.0>
    right     <1.0, 0.0, 0.0>
-   look_at   <0.0, -1.0, 0.0>
+   look_at   <0.0, 1.0, 0.0>
 }
 
 light_source {<0.0, 2.7, -7.0> color rgb <400.0, 400.0, 400.0>}
@@ -56,4 +56,3 @@ gerstner_wave {
    pigment {color rgb <1.0, 1.0, 1.0>}
    finish {ior 1.33 refraction 1.0 preflect 0.0 prefract 1.0 dropoff 0.95}
 }
-

@@ -21,8 +21,8 @@
 
 class RayTracer {
    public:
-      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o);
-      RayTracer(std::vector<Light*> l, std::vector<SceneObject*> o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
+      RayTracer(std::vector<Light*>* l, std::vector<SceneObject*>* o);
+      RayTracer(std::vector<Light*>* l, std::vector<SceneObject*>* o, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
       CUDA_CALLABLE RayTracer(SceneObject** o, int osize, int gM, int cM, KDTreeNode* gr, KDTreeNode* cr);
       CUDA_CALLABLE RayTracer();
       CUDA_CALLABLE ~RayTracer();
@@ -36,12 +36,15 @@ class RayTracer {
       SceneObject** objects;
       int objSize;
       
+      KDTreeNode** cudaStack;
+      int stackPartition;
+      
       int numGPhotons;
       int numCPhotons;
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      CUDA_CALLABLE color_t calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int depth);
+      CUDA_CALLABLE glm::vec3 calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth);
    private:
       
 };
