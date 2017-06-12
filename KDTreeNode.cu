@@ -162,38 +162,40 @@ KDTreeNode* KDTreeNode::buildKDTree(std::vector<Photon*> pmap, int lastAxis) {
 }*/
 
 //iterative variant
-void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons, KDTreeNode **stack) {
+void KDTreeNode::locatePhotons(glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons, KDTreeNode** stack) {
    
    glm::vec3 rayBetween;// = pt - photon->pt;
    float distToPhotonSqrd;// = glm::length(rayBetween) * glm::length(rayBetween);
-   
+   //float rad;
    //KDTreeNode **stack;
+   //glm::vec3 originLoc;
    
-   
-   int depth = 1;
    int added = 0;
    int stackMade = 0;
    
+   
+   //float distToPlane;
+   
+   
+   
+      int depth = 1;
+   
    KDTreeNode *currentNode;// = this;
    KDTreeNode *previousNode = this;
-   
    int currentStackSpot = 0;
-   
-   
-   
    //depth *= 2;
-   //KDTreeNode *stack[30];
+   //KDTreeNode **stack;
    // Allocate space for the stack of nodes for the iterative solution
    //printf("prob this then\n");
    if (stack == NULL) {
       int treeLength = numPhotons;
-      
       // Find depth of tree (should be balanced, but depth will be one more just to be very safe)
       while (treeLength != 0) {
          depth++;
          treeLength /= 2;
       }
-      printf("HSADFAHSF\n");
+      //printf("HSADFAHSF\n");
+      //KDTreeNode **stack = (KDTreeNode **)malloc(depth * 2 * sizeof(KDTreeNode*));
       stack = (KDTreeNode **)malloc(depth * 2 * sizeof(KDTreeNode*));
       stackMade = 1;
    }
@@ -204,6 +206,9 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *he
    
    //printf("here?\n");
    //printf("DEPTH %d\n", depth);
+   
+   
+   
    while (currentStackSpot >= 0) {
       //printf("%d\n", currentStackSpot);
       //printf("uhh\n");
@@ -228,14 +233,12 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *he
                   currentStackSpot++;
                   stack[currentStackSpot] = currentNode->right;
                   added = 1;
-                  //right->locatePhotons(2*i + 1, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
                }
             }
             if (currentNode->left != NULL) {
                currentStackSpot++;
                stack[currentStackSpot] = currentNode->left;
                added = 1;
-               //left->locatePhotons(2*i, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
             }
          } else {
             if (distToPlane*distToPlane < sampleDistSqrd) {
@@ -243,21 +246,18 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *he
                   currentStackSpot++;
                   stack[currentStackSpot] = currentNode->left;
                   added = 1;
-                  //left->locatePhotons(2*i, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
                }
             }
             if (currentNode->right != NULL) {
                currentStackSpot++;
                stack[currentStackSpot] = currentNode->right;
                added = 1;
-               //right->locatePhotons(2*i + 1, pt, locateHeap, heapSize, sampleDistSqrd, newRadSqrd, mInv, numPhotons);
             }
          }
          
          // Add the current node back into the stack if it had children added
          // Otherwise modify the current stack spot
          if (!added) {
-            //currentStackSpot--;
             if (currentNode->left == NULL) {
                previousNode = currentNode->right;
             } else {
@@ -268,16 +268,50 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *he
          }
          //}
       } else {
+         //glm::vec3 rayBetween = pt - currentNode->photon->pt;
+         //float distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
+         //if (currentNode == NULL) printf("FUUUUUUUUUUCCCCCCCCCCCCCCCCCCCCKKKKKKKKKKKKKKKKKKKKKKKKKK\n");
          rayBetween = pt - currentNode->photon->pt;
          distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
          if (distToPhotonSqrd <= sampleDistSqrd && *heapSize < CUTOFF_HEAP_SIZE) {
+            //printf("WWWOOOOOOOOOOOOOOOOOOOOOOOOO\n");
             glm::vec3 originLoc;
+            //originLoc = currentNode->photon->pt - pt;
+            
             originLoc = glm::vec3(currentNode->photon->pt[0] - pt[0], currentNode->photon->pt[1] - pt[1], currentNode->photon->pt[2] - pt[2]);
             float rad = sqrt(sampleDistSqrd) * ELLIPSOID_SCALE;
+            //rad = sqrt(sampleDistSqrd) * ELLIPSOID_SCALE;
             if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE) {
                originLoc = originLoc * mInv;
             }
-            if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0) {
+            /*if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE) {
+               //originLoc = originLoc * mInv;
+               originLoc[0] = (originLoc[0] * mInv[0][0]) + (originLoc[0] * mInv[0][1]) + (originLoc[0] * mInv[0][2]);
+               originLoc[1] = (originLoc[0] * mInv[1][0]) + (originLoc[1] * mInv[1][1]) + (originLoc[1] * mInv[1][2]);
+               originLoc[2] = (originLoc[0] * mInv[2][0]) + (originLoc[2] * mInv[2][1]) + (originLoc[2] * mInv[2][2]);
+            }*/
+            //originLoc[0] = mInv[0][0] + mInv[0][1] + mInv[0][2];
+            //originLoc[1] = mInv[1][0] + mInv[1][1] + mInv[1][2];
+            //originLoc[2] = mInv[2][0] + mInv[2][1] + mInv[2][2];
+            //float oneoversampleDistsqrd = 1.0f / sampleDistSqrd;
+            //rad = rad* rad);
+            //float conditional = originLoc[0]*originLoc[0];
+            //conditional = conditional + originLoc[1]*originLoc[1];
+            //conditional = conditional / sampleDistSqrd;
+            //rad = rad * rad;
+            //originLoc[0] = originLoc[0] * originLoc[0];
+            //originLoc[0] = originLoc[0] / sampleDistSqrd;
+            //originLoc[1] = originLoc[1] * originLoc[1];
+            //originLoc[1] = originLoc[1] / sampleDistSqrd;
+            //originLoc[2] = originLoc[2] * originLoc[2];
+            //originLoc[2] = originLoc[2] / rad;
+            //conditional = conditional * rad;
+            //conditional = conditional + originLoc[2]*originLoc[2];
+            //conditional = conditional / rad;
+            if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0f) {
+            //if (((originLoc[0]*originLoc[0])*oneoversampleDistsqrd) + ((originLoc[1]*originLoc[1])*oneoversampleDistsqrd) + ((originLoc[2]*originLoc[2])*oneoverradsqrd) < 1.0) {
+            //if (conditional < 1.0f) {
+               //printf("YOOOOOOOOOOOOOOOOOOOOOOOOO: %d\n", *heapSize);
                locateHeap[*heapSize] = currentNode->photon;
                *heapSize += 1;
                if (*heapSize == CUTOFF_HEAP_SIZE) {
@@ -291,10 +325,279 @@ void KDTreeNode::locatePhotons(int i, glm::vec3 pt, Photon** locateHeap, int *he
       }
    }
    if (stackMade) {
-      printf("FREEING STACK\n");   
+     printf("FREEING STACK\n");   
       free(stack);
    }
 }
+
+
+/*void KDTreeNode::locatePhotons(glm::vec3 pt, int ts, Photon** locateHeap, float sampleDistSqrd, float *newRadSqrd, int numPhotons, float *sh) {
+      //glm::vec3 rayBetween;// = pt - photon->pt;
+   //float distToPhotonSqrd;// = glm::length(rayBetween) * glm::length(rayBetween);
+   
+   //KDTreeNode **stack;
+    
+   int added = 0;
+   //int stackMade = 0;
+
+   //depth *= 2;
+   //KDTreeNode **stack;
+   // Allocate space for the stack of nodes for the iterative solution
+   //printf("prob this then\n");
+   //if (stack == NULL) {
+      volatile int treeLength = numPhotons;
+      volatile int depth = 1;
+      // Find depth of tree (should be balanced, but depth will be one more just to be very safe)
+      while (treeLength != 0) {
+         depth++;
+         treeLength /= 2;
+      }
+      //printf("HSADFAHSF\n");
+      KDTreeNode **stack = (KDTreeNode **)malloc(depth * 2 * sizeof(KDTreeNode*));
+      //stackMade = 1;
+   //}
+   //printf("where\n");
+   //printf("confirming\n");
+   //printf("HI\n");
+   stack[0] = this;
+   
+   //printf("here?\n");
+   //printf("DEPTH %d\n", depth);
+   
+   volatile KDTreeNode *currentNode;// = this;
+   volatile KDTreeNode *previousNode = this;
+   volatile int currentStackSpot = 0;
+   
+   while (currentStackSpot >= 0) {
+      //printf("%d\n", currentStackSpot);
+      //printf("uhh\n");
+      currentNode = stack[currentStackSpot];
+      //printf("idk\n");
+      
+      if (currentNode->left != previousNode && currentNode->right != previousNode &&
+          (currentNode->left != NULL || currentNode->right != NULL)) {
+         //if (currentNode->left != NULL || currentNode->right != NULL) printf("k\n");
+         //currentStackSpot++;
+         //stack[currentStackSpot] = currentNode;
+         //if (2*i + 1 < numPhotons) {
+         float distToPlane = 0.0f;
+
+         if (currentNode->axis == 0) distToPlane = pt.x - currentNode->photon->pt.x;
+         else if (currentNode->axis == 1) distToPlane = pt.y - currentNode->photon->pt.y;
+         else if (currentNode->axis == 2) distToPlane = pt.z - currentNode->photon->pt.z;
+         
+         if (distToPlane < 0.0) {
+            if (distToPlane*distToPlane < sampleDistSqrd) {
+               if (currentNode->right != NULL) {
+                  currentStackSpot++;
+                  stack[currentStackSpot] = currentNode->right;
+                  added = 1;
+               }
+            }
+            if (currentNode->left != NULL) {
+               currentStackSpot++;
+               stack[currentStackSpot] = currentNode->left;
+               added = 1;
+            }
+         } else {
+            if (distToPlane*distToPlane < sampleDistSqrd) {
+               if (currentNode->left != NULL) {
+                  currentStackSpot++;
+                  stack[currentStackSpot] = currentNode->left;
+                  added = 1;
+               }
+            }
+            if (currentNode->right != NULL) {
+               currentStackSpot++;
+               stack[currentStackSpot] = currentNode->right;
+               added = 1;
+            }
+         }
+         
+         // Add the current node back into the stack if it had children added
+         // Otherwise modify the current stack spot
+         if (!added) {
+            if (currentNode->left == NULL) {
+               previousNode = currentNode->right;
+            } else {
+               previousNode = currentNode->left;
+            }
+         } else {
+            added = 0;
+         }
+         //}
+      } else {
+         glm::vec3 rayBetween = pt - currentNode->photon->pt;
+         volatile float distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
+         if (distToPhotonSqrd <= sampleDistSqrd && (int)sh[ts] < CUTOFF_HEAP_SIZE) {
+         //if (distToPhotonSqrd <= sampleDistSqrd && *heapSize < CUTOFF_HEAP_SIZE) {
+            glm::vec3 originLoc = currentNode->photon->pt - pt;
+            //glm::vec3 originLoc(currentNode->photon->pt.x - sh[pt], currentNode->photon->pt.y - sh[pt+1], currentNode->photon->pt.z - sh[pt+2]);
+            //originLoc = glm::vec3(currentNode->photon->pt[0] - pt[0], currentNode->photon->pt[1] - pt[1], currentNode->photon->pt[2] - pt[2]);
+            volatile float rad = sqrt(sampleDistSqrd) * ELLIPSOID_SCALE;
+            //if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE) {
+               //originLoc = originLoc * mInv;
+               //originLoc[0] = (originLoc[0] * mInv[0][0]) + (originLoc[0] * mInv[0][1]) + (originLoc[0] * mInv[0][2]);
+               //originLoc[1] = (originLoc[0] * mInv[1][0]) + (originLoc[1] * mInv[1][1]) + (originLoc[1] * mInv[1][2]);
+               //originLoc[2] = (originLoc[0] * mInv[2][0]) + (originLoc[2] * mInv[2][1]) + (originLoc[2] * mInv[2][2]);
+            //}
+
+            if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0f) {
+            //if (((originLoc[0]*originLoc[0])*oneoversampleDistsqrd) + ((originLoc[1]*originLoc[1])*oneoversampleDistsqrd) + ((originLoc[2]*originLoc[2])*oneoverradsqrd) < 1.0) {
+            //if (conditional < 1.0f) {
+               locateHeap[(int)sh[ts]] = currentNode->photon;
+               sh[ts] += 1;
+               if ((int)sh[ts] == CUTOFF_HEAP_SIZE) {
+                  *newRadSqrd = distToPhotonSqrd;
+                  return;
+               }
+            }
+            //if (((sh[pt+4]*sh[pt+4])/sh[pt+9]) + ((sh[pt+5]*sh[pt+5])/sh[pt+9]) + ((sh[pt+6]*sh[pt+6])/(rad*rad)) < 1.0f) {
+            //if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0f) {
+               //locateHeap[(int)sh[pt+10]] = currentNode->photon;
+               //sh[pt+10] += 1;
+               //if ((int)sh[pt+10] == CUTOFF_HEAP_SIZE) {
+               //   *nrs = sh[pt+7];
+               //   return;
+               //}
+            //}
+         }
+         previousNode = currentNode;
+         currentStackSpot--;
+      }
+   }
+   //if (stackMade) {
+   //  printf("FREEING STACK\n");   
+   //   free(stack);
+   //}
+}*/
+
+
+/*void KDTreeNode::locatePhotons(int pt, volatile Photon** locateHeap, float sampleDistSqrd, float *newRadSqrd, int numPhotons, float *sh) {
+   //extern __shared__ float sh[];
+   //volatile int added = 0;
+   sh[pt+5] = 0.001;
+
+      volatile int treeLength = numPhotons;
+      volatile int depth = 1;
+      while (treeLength != 0) {
+         depth++;
+         treeLength /= 2;
+      }
+      KDTreeNode **stack = (KDTreeNode **)malloc(depth * 2 * sizeof(KDTreeNode*));
+      printf("DEPTH:%d\n", depth);
+   stack[0] = this;
+   
+   volatile KDTreeNode *currentNode;// = this;
+   volatile KDTreeNode *previousNode = this;
+   sh[pt+8] = 0.1;
+   volatile KDTreeNode *what;
+   sh[pt+9] = sampleDistSqrd;
+   volatile float * nrs = newRadSqrd;
+   
+   while (sh[pt+8] >= 0) {
+      currentNode = stack[(int)sh[pt+8]];
+      
+      if (currentNode->left != previousNode && currentNode->right != previousNode &&
+          (currentNode->left != NULL || currentNode->right != NULL)) {
+         //volatile float distToPlane = 0.0f;
+         sh[pt+7] = 0.0f;
+         //volatile glm::vec3
+         if (currentNode->axis == 0) sh[pt+7] = sh[pt] - currentNode->photon->pt.x;
+         else if (currentNode->axis == 1) sh[pt+7] = sh[pt+1] - currentNode->photon->pt.y;
+         else if (currentNode->axis == 2) sh[pt+7] = sh[pt+2] - currentNode->photon->pt.z;
+         
+         if (sh[pt+7] < 0.0) {
+            if (sh[pt+7]*sh[pt+7] < sh[pt+9]) {
+               if (currentNode->right != NULL) {
+                  sh[pt+8]+=1;
+                  stack[(int)sh[pt+8]] = currentNode->right;
+                  //what = currentNode->right;
+                  //stack[(int)sh[pt+8]] = what;
+                  sh[pt+5] = 1.1;
+               }
+            }
+            if (currentNode->left != NULL) {
+               sh[pt+8]+=1;
+               stack[(int)sh[pt+8]] = currentNode->left;
+               //what = currentNode->left;
+               //stack[(int)sh[pt+8]] = what;
+               sh[pt+5] = 1.1;
+            }
+         } else {
+            if (sh[pt+7]*sh[pt+7] < sh[pt+9]) {
+               if (currentNode->left != NULL) {
+                  sh[pt+8]+=1;
+                  stack[(int)sh[pt+8]] = currentNode->left;
+                  //what = currentNode->left;
+                  //stack[(int)sh[pt+8]] = what;
+                  sh[pt+5] = 1.1;
+               }
+            }
+            if (currentNode->right != NULL) {
+               sh[pt+8]+=1;
+               stack[(int)sh[pt+8]] = currentNode->right;
+               //what = currentNode->right;
+               //stack[(int)sh[pt+8]] = what;
+               sh[pt+5] = 1.1;
+            }
+         }
+         
+         if (!((int)sh[pt+5])) {
+            if (currentNode->left == NULL) {
+               previousNode = currentNode->right;
+            } else {
+               previousNode = currentNode->left;
+            }
+         } else {
+            sh[pt+5] = 0.1;
+         }
+      } else {
+         //glm::vec3 rayBetween;
+         //rayBetween.x = sh[pt] - currentNode->photon->pt.x;
+         //rayBetween.y = sh[pt+1] - currentNode->photon->pt.y;
+         //rayBetween.z = sh[pt+2] - currentNode->photon->pt.z;
+         //sh[pt+4] = sh[pt] - currentNode->photon->pt.x;
+         //sh[pt+5] = sh[pt+1] - currentNode->photon->pt.y;
+         //sh[pt+6] = sh[pt+2] - currentNode->photon->pt.z;
+         //volatile glm::vec3 rayBetween = glm::vec3(sh[pt] - currentNode->photon->pt.x, sh[pt+1] - currentNode->photon->pt.y, sh[pt+2] - currentNode->photon->pt.z);
+         glm::vec3 rayBetween = glm::vec3(sh[pt] - currentNode->photon->pt.x, sh[pt+1] - currentNode->photon->pt.y, sh[pt+2] - currentNode->photon->pt.z);
+         //volatile float sum = sh[pt+4] * sh[pt+4];
+         //sum += sh[pt+5] * sh[pt+5];
+         //sum += sh[pt+6] * sh[pt+6];
+         //volatile float rb = sqrt(rayBetween.x * rayBetween.x + rayBetween.y * rayBetween.y + rayBetween.z * rayBetween.z);
+         //volatile float rb = sqrt(sum);
+         //volatile float distToPhotonSqrd = glm::length(rayBetween) * glm::length(rayBetween);
+         sh[pt+7] = glm::length(rayBetween) * glm::length(rayBetween);
+         if (sh[pt+7] <= sh[pt+9] && sh[pt+10] < CUTOFF_HEAP_SIZE) {
+            glm::vec3 originLoc(currentNode->photon->pt.x - sh[pt], currentNode->photon->pt.y - sh[pt+1], currentNode->photon->pt.z - sh[pt+2]);
+            //sh[pt+4] = currentNode->photon->pt.x - sh[pt];
+            //sh[pt+5] = currentNode->photon->pt.y - sh[pt+1];
+            //sh[pt+6] = currentNode->photon->pt.z - sh[pt+2];
+            
+            volatile float rad = sqrt(sh[pt+9]) * ELLIPSOID_SCALE;
+            //sh[pt+6] = sqrt(sh[pt+9]) * ELLIPSOID_SCALE;
+            //volatile float sds = sampleDistSqrd;
+            //if (abs(ELLIPSOID_SCALE - 1.0) > TOLERANCE) {
+            //   sh[pt+4] = (sh[pt+4] * mInv[0][0]) + (sh[pt+4] * mInv[0][1]) + (sh[pt+4] * mInv[0][2]);
+            //   sh[pt+5] = (sh[pt+5] * mInv[1][0]) + (sh[pt+5] * mInv[1][1]) + (sh[pt+5] * mInv[1][2]);
+            //   sh[pt+6] = (sh[pt+6] * mInv[2][0]) + (sh[pt+6] * mInv[2][1]) + (sh[pt+6] * mInv[2][2]);
+            //}
+            if (((sh[pt+4]*sh[pt+4])/sh[pt+9]) + ((sh[pt+5]*sh[pt+5])/sh[pt+9]) + ((sh[pt+6]*sh[pt+6])/(rad*rad)) < 1.0f) {
+            //if (((originLoc[0]*originLoc[0])/sampleDistSqrd) + ((originLoc[1]*originLoc[1])/sampleDistSqrd) + ((originLoc[2]*originLoc[2])/(rad*rad)) < 1.0f) {
+               locateHeap[(int)sh[pt+10]] = currentNode->photon;
+               sh[pt+10] += 1;
+               if ((int)sh[pt+10] == CUTOFF_HEAP_SIZE) {
+                  *nrs = sh[pt+7];
+                  return;
+               }
+            }
+         }
+         previousNode = currentNode;
+         sh[pt+8]-=1;
+      }
+   }
+}*/
 
 int KDTreeNode::Treesize() {
    int num = 1;

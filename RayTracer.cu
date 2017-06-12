@@ -8,6 +8,8 @@
 
 using namespace std;
 
+//extern __shared__ float sh[];
+
 RayTracer::RayTracer(std::vector<Light*>* l, std::vector<SceneObject*>* o) {
    lights = &((*l)[0]);
    objects = &((*o)[0]);
@@ -71,15 +73,16 @@ Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
    return c;
 }
 
-glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth) {
+glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, float *sh) {
    /*float e = 2.71828;
    float alpha = 0.918;
    float beta = 1.953;*/
-   
+
    int causts;
    float x = 0.0f, y = 0.0f, z = 0.0f, t = 0.0f, c = 0.0f, s = 0.0f;
+   //printf("THREADNUM: %d\n", threadNum);
    float sampleDistSqrd, newRadSqrd;//, scaleN;
-   Photon** locateHeap;
+   Photon** locateHeap;// = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));;
    int heapSize;
    glm::vec3 eRay = glm::vec3(0.0, 0.0, 1.0);
    glm::mat3 mat, matInv;
@@ -113,13 +116,16 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
    colorD = pigment * obj->diffuse;
    colorS = pigment * obj->specular;
    colorA = pigment * obj->ambient;
-
+   
+   /*if (threadNum == 0) {
+      printf("STACK PART: %d\n", stackPartition);
+   }*/
    /*if (threadNum == 0) {
       printf("TREE START\n");
       root->printTree(root);
       printf("TREE END\n");
-   }*/  
-   
+   } */ 
+   //if (threadNum == 0) {
    if (fabs(1.0f - obj->refraction) > TOLERANCE || depth <= 0) {
       
       /*for (int lightnum = 0; lightnum < lights.size(); lightnum++) {
@@ -158,42 +164,62 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       }*/
       reflectScale = obj->reflection;
       
+      //glm::mat3 matInv;
       if (fabs(ELLIPSOID_SCALE - 1.0) > TOLERANCE &&
           (fabs(fabs(normal[0]) - eRay[0]) > TOLERANCE ||
            fabs(fabs(normal[1]) - eRay[1]) > TOLERANCE ||
            fabs(fabs(normal[2]) - eRay[2]) > TOLERANCE)) {
          crossP = glm::cross(eRay, normal);
          crossP = glm::normalize(crossP);
+         
+         //float x = 0.0f, y = 0.0f, z = 0.0f, t = 0.0f, c = 0.0f, s = 0.0f;
          x = crossP.x; y = crossP.y; z = crossP.z;
          c = glm::dot(eRay, normal); s = sin(acos(glm::dot(eRay, normal))); t = 1.0 - c;
          mat = glm::mat3(t*x*x + c, t*x*y - z*s, t*x*z + y*s,
-                         t*x*y + z*s, t*y*y + c, t*y*z - x*s,
-                         t*x*z - y*s, t*y*z + x*s,	t*z*z + c);
+                                   t*x*y + z*s, t*y*y + c, t*y*z - x*s,
+                                   t*x*z - y*s, t*y*z + x*s,	t*z*z + c);
          matInv = glm::inverse(mat);
       } else {
          matInv = glm::mat3(1.0f);
       }
+      //printf("%d\n", threadNum);
+      //Photon** locateHeap = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));
       
       locateHeap = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));
-      
+      //int heapSize = 0;
       heapSize = 0;
       //if (numCPhotons > 0) { printf("fucking wut\n"); rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition)); }
       causts = heapSize;
-      //*heapSize = 0;
-      //printf("I'm guesssing here\n");
       
-      if (numGPhotons > 0) root->locatePhotons(1, iPt, locateHeap, &heapSize, sampleDistSqrd, &newRadSqrd, matInv, numGPhotons, cudaStack + (threadNum * stackPartition));
-
+      //printf("I'm guesssing here\n");
+      //int threadSpot = threadNum * 11;
+      //sh[threadSpot] = iPt.x;
+      //sh[threadSpot+1] = iPt.y;
+      //sh[threadSpot+2] = iPt.z;
+      if (numGPhotons > 0) root->locatePhotons(iPt, locateHeap, &heapSize, sampleDistSqrd, &newRadSqrd, matInv, numGPhotons, cudaStack + (threadNum * stackPartition));
+      //printf("HEAPSIZE FAM: %d\n", heapSize);
+      //sh[threadSpot] = 0.1f;
+      //if (numGPhotons > 0) root->locatePhotons(iPt, threadSpot, locateHeap, sampleDistSqrd, &newRadSqrd, numGPhotons, sh);
       //printf("sheeeet\n");
       
+      //for (int i = 0; i < heapSize; i++) {
       for (int i = 0; i < heapSize; i++) {
          //BRDF
          float dotProd = glm::dot(-locateHeap[i]->incidence, normal);
+         //volatile float dotProd = -(locateHeap[i]->incidence.x) * normal.x;//glm::dot(-locateHeap[i]->incidence, normal);
+         //dotProd += -(locateHeap[i]->incidence.y) * normal.y;
+         //dotProd += -(locateHeap[i]->incidence.z) * normal.z;
          if (i < causts) {
             //float d = glm::length(locateHeap[i]->pt - iPt);
             //float w = alpha * (1 - ((1 - pow(e, -1 * beta * ((d * d) / (2 * newRadSqrd)))) / (1 - pow(e, -1 * beta))));
             color += (locateHeap[i]->intensity) * (dotProd > 0.0f ? dotProd : 0.0f);// * w;//* (1.0 - ((locateHeap[i]->pt - intersectPt).norm() / sqrt(newRadSqrd)));
          } else {
+            //dotProd = (dotProd > 0.0f ? dotProd : 0.0f);
+            //color.x += locateHeap[i]->intensity.x * dotProd;
+            //color.y += locateHeap[i]->intensity.x * dotProd;
+            //color.z += locateHeap[i]->intensity.x * dotProd;
+            //if (dotProd < TOLERANCE) dotProd = 0.0f;
+            //color += locateHeap[i]->intensity * dotProd;
             color += (locateHeap[i]->intensity) * (dotProd > 0.0f ? dotProd : 0.0f);
          }
       }
@@ -214,7 +240,7 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
          if (fabs(reflectScale - 1.0f) >= TOLERANCE) { //Total internal reflection carry-over check
             col = trace(iPt, reflectRay, unit);
             if (col->time >TOLERANCE) {
-               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, threadNum, depth - 1);
+               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, threadNum, depth - 1, sh);
             }
             delete(col);
          }
@@ -226,7 +252,7 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       reflectRay = findReflect(dir, normal, obj);
       col = trace(iPt, reflectRay, unit);
       if (col->time >= TOLERANCE) {
-         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, threadNum, depth - 1);
+         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, threadNum, depth - 1, sh);
       }
       delete(col);
    }
@@ -239,6 +265,7 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
    
 	return clr;
 }
+//}
                   
 glm::vec3 RayTracer::findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj) {
    glm::vec3 reflectRay;

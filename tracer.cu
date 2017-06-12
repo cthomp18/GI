@@ -1,6 +1,9 @@
 #include "tracer.h"
 // http://stackoverflow.com/questions/3016077/how-to-spot-undefined-behavior
 //Chris Lupo's error handling fuction/macro
+
+//__shared__ float sh[TILEWIDTH*TILEWIDTH*11];
+
 static void HandleError( cudaError_t err,
     const char *file,
     int line ) {
@@ -278,11 +281,18 @@ __global__ void toKDTree(Photon *kdArray, int size, int gridDimension) {
    __syncthreads();
 }
 
+//__global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP )void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
 __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
    //__shared__ TYPE Mds[TILEWIDTH][TILEWIDTH];
    //__shared__ TYPE Nds[TILEWIDTH][TILEWIDTH];
+   
+   //extern __shared__ float sh[];
+   float *sh = NULL;
+   
    int row = blockIdx.y*TILEWIDTH + threadIdx.y;
    int col = blockIdx.x*TILEWIDTH + threadIdx.x;
+   //int currentImgInd = row * width + col;
+   int currentImgInd = col * height + row;
    //if (row == 0 && col == 0) printf("cool\n");
    //if (row == 639 && col == 639) printf("cooler\n");
    //if (row > 616) {// && col < 240) {
@@ -296,8 +306,8 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
    //glm::vec3 cPos = glm::vec3(0.0, 0.0, 0.0);
    //RayTracer* raytrace = new RayTracer(objArr, 0, 0, 0, 0, 0);
    //delete(raytrace);
-   int currentImgInd;
    
+   //printf("A NUMBER!\n");
    //Collision* col = new Collision();
    //delete(col);
    //for (int i = 0; i < width / TILEWIDTH; i++) {
@@ -308,7 +318,7 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
    Collision* collision;
    glm::vec3 ray, tempColor;
       //for (int j = 0; j < height; j++) {
-   currentImgInd = col * height + row;
+   
    ray = pixelsD[currentImgInd].pt;// - cPos;
    ray = glm::normalize(ray);
 
@@ -328,11 +338,11 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
       }
       printf("Tree size: %d\n", o->treeLength());
    }*/
-if (col < 100) {// && row == 0) {
+//if (col > 482 && row < 175) {
    //printf("Im running out of things to say: %p\n", raytracer->cudaStack);
    //printf("Im running out of things to say: %p\n", raytracer->cudaStack + 1);
    //printf("ROW %d\n", row);
-//if (currentImgInd < 0) {
+//if (currentImgInd < 128) {
    //printf("hello?\n");
     
    collision = raytracer->trace(cPos, ray, false);
@@ -347,13 +357,13 @@ if (col < 100) {// && row == 0) {
    }
    if (collision->time > TOLERANCE) {
       //printf("in here?\n");
-      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, currentImgInd, 0);//(threadIdx.y * TILEWIDTH) + threadIdx.x, 0); //Cam must start in air
-      if (collision->object) {
+      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, currentImgInd, 0, sh);//(threadIdx.y * TILEWIDTH) + threadIdx.x, 0, sh); //Cam must start in air
+      //if (collision->object) {
          //printf("yo wasuu\n");
          //printf("%d\n", collision->object->type);
-      } else {
+      //} else {
          //printf("k\n");
-      }
+      //}
       //tempColor = collision->object->getNormal(collision->object, cPos + ray * collision->time, 2.0f);
       //printf(" WUT \n");
       //pixelsD[currentImgInd].clr = (tempColor * 0.5f) + 0.5f;
@@ -368,7 +378,7 @@ if (col < 100) {// && row == 0) {
    //printf("WHAT\n");
    //printf("ROW END %d\n", row);
    delete(collision);
-}
+//}
    //}
          //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
       //}
@@ -382,7 +392,7 @@ if (col < 100) {// && row == 0) {
 }
 
 // Set the card up to run cuda
-void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObject*> objects, Camera *cam, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
+void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObject*> objects, Camera *cam, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons, time_t *startTime) {
    SceneObject** objArrD = NULL;
    SceneObject** objArrH = NULL;// = &objects[0];
    Photon* globalsD = NULL;
@@ -679,8 +689,9 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    }
    printf("DEPTH: %d\n", depth);
    
+   //HANDLE_ERROR(cudaMalloc(&cudaPhotonStack, depth * 2 * sizeof(KDTreeNode*) * width * height));
    HANDLE_ERROR(cudaMalloc(&cudaPhotonStack, depth * 2 * sizeof(KDTreeNode*) * 640 * 640));
-   
+   //printf("ELEMENTS CPR LINDSEY STIRLING: %d\n", depth * 2 * width * height);
    KDTreeNode *node[10];
    int stuff[10];
    printf("Im running out of things to say: %p\n", cudaPhotonStack);
@@ -706,16 +717,32 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    //Run the Kernel code
    //cudaDeviceSetLimit(cudaLimitMallocHeapSize, size_t(3000000000));
    
-   size_t lim;
+   size_t lim, freeM, totalM;
    cudaThreadGetLimit(&lim, cudaLimitStackSize);
    printf("THREAD LIM: %d\n", lim);
    //cudaThreadSetLimit(cudaLimitStackSize, 4096);
+   //cudaThreadSetLimit(cudaLimitStackSize, 6184);
    cudaThreadSetLimit(cudaLimitStackSize, 8192);
+   
+   //cudaMemGetInfo(&freeM, &totalM); 
+   //printf("%lu KB free of total %lu KB\n",((freeM/1024)/2048)/16,((totalM/1024)/2048)/16);
+
    //cudaThreadSetLimit(cudaLimitStackSize, 16384);
    cudaThreadGetLimit(&lim, cudaLimitStackSize);
    printf("NEW THREAD LIM: %d\n", lim);
    
+   //cudaThreadSetLimit(cudaLimitStackSize, 16384);
+   cudaThreadGetLimit(&lim, cudaLimitMallocHeapSize);
+   printf("THREAD HEAP LIM: %d\n", lim);
+   cudaThreadSetLimit(cudaLimitMallocHeapSize, lim*100);
+   cudaThreadGetLimit(&lim, cudaLimitMallocHeapSize);
+   printf("NEW THREAD HEAP LIM: %d\n", lim);
+   printf("TILE WIDTH: %d\n", TILEWIDTH);
+   //cudaLimitMallocHeapSize
    //BUG HAPPENS IN HERE
+   time(startTime);
+   //cudaFuncSetCacheConfig(GIPhotonMapKernel, cudaFuncCachePreferShared);
+   //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
    GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
    
    
@@ -738,6 +765,7 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    printf("it\n");
    //Objects
    for (uint i = 0; i < objects.size(); i++) {
+   
       HANDLE_ERROR(cudaFree(objArrH[i]));
    }
    printf("is\n");

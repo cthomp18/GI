@@ -293,14 +293,15 @@ int main(int argc, char* argv[]) {
    cout << "Caustic Tree size: " << rootC1->Treesize() << endl;
    
    //Start CUDA stuff
-   
-   RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera, root, rootC1);
-   
    glm::vec3 cPos = camera->getPosition();
    RayTracer* raytrace = new RayTracer(&lights, &objects, photonMap.size(), causticMap.size(), root, NULL);
    time_t startTime, endTime;
-   time(&startTime);
+   //time(&startTime);
    int currentImgInd;
+   
+   RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera, root, rootC1, &startTime);
+   
+   
    
    /*for (int i = 0; i < imgwidth; i++) {
       //if (i < 80) {
@@ -334,8 +335,8 @@ int main(int argc, char* argv[]) {
       }
       //}
    }*/
-   //time(&endTime);
-   //cout << endTime - startTime << " seconds\n";
+   time(&endTime);
+   cout << endTime - startTime << " seconds\n";
    //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
    //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
    //int currentImgInd;

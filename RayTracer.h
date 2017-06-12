@@ -44,7 +44,7 @@ class RayTracer {
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      CUDA_CALLABLE glm::vec3 calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth);
+      CUDA_CALLABLE glm::vec3 calcRadiance(glm::vec3 start, volatile glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, float *sh);
    private:
       
 };
