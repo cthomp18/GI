@@ -2,7 +2,9 @@
 // http://stackoverflow.com/questions/3016077/how-to-spot-undefined-behavior
 //Chris Lupo's error handling fuction/macro
 
-//__shared__ float sh[TILEWIDTH*TILEWIDTH*11];
+__shared__ float sharedFloats[TILEWIDTH*TILEWIDTH * 9];
+__shared__ int sharedInts[TILEWIDTH*TILEWIDTH * 3];
+
 
 static void HandleError( cudaError_t err,
     const char *file,
@@ -281,18 +283,25 @@ __global__ void toKDTree(Photon *kdArray, int size, int gridDimension) {
    __syncthreads();
 }
 
-//__global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP )void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
-__global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
+__global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP ) void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
+//__global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSize, Pixel *pixelsD, Camera *camera, int width, int height, RayTracer *raytracer) {//, KDTreeNode *globalPhotons, KDTreeNode *causticPhotons) {
    //__shared__ TYPE Mds[TILEWIDTH][TILEWIDTH];
    //__shared__ TYPE Nds[TILEWIDTH][TILEWIDTH];
    
    //extern __shared__ float sh[];
-   float *sh = NULL;
+   //extern __shared__ float uh[];
+   //float *sh = NULL;
    
    int row = blockIdx.y*TILEWIDTH + threadIdx.y;
    int col = blockIdx.x*TILEWIDTH + threadIdx.x;
    //int currentImgInd = row * width + col;
    int currentImgInd = col * height + row;
+   
+   int threadNum = (threadIdx.y * TILEWIDTH) + threadIdx.x;
+   
+   int threadSpotF = threadNum * 9;
+   int threadSpotI = threadNum * 3;
+   
    //if (row == 0 && col == 0) printf("cool\n");
    //if (row == 639 && col == 639) printf("cooler\n");
    //if (row > 616) {// && col < 240) {
@@ -342,10 +351,10 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
    //printf("Im running out of things to say: %p\n", raytracer->cudaStack);
    //printf("Im running out of things to say: %p\n", raytracer->cudaStack + 1);
    //printf("ROW %d\n", row);
-//if (currentImgInd < 128) {
+//if (currentImgInd < 400000) {
    //printf("hello?\n");
     
-   collision = raytracer->trace(cPos, ray, false);
+   collision = raytracer->trace(cPos, ray, sharedFloats + threadSpotF, sharedInts + threadSpotI);
     
    //printf("whats up?\n");
          //printf("Making sure ;)\n");
@@ -357,7 +366,7 @@ __global__ void GIPhotonMapKernel(SceneObject **objArr, int *objSizes, int objSi
    }
    if (collision->time > TOLERANCE) {
       //printf("in here?\n");
-      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, currentImgInd, 0, sh);//(threadIdx.y * TILEWIDTH) + threadIdx.x, 0, sh); //Cam must start in air
+      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, threadNum, 0, sharedFloats + threadSpotF, sharedInts + threadSpotI); //Cam must start in air
       //if (collision->object) {
          //printf("yo wasuu\n");
          //printf("%d\n", collision->object->type);
@@ -724,8 +733,8 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    //cudaThreadSetLimit(cudaLimitStackSize, 6184);
    cudaThreadSetLimit(cudaLimitStackSize, 8192);
    
-   //cudaMemGetInfo(&freeM, &totalM); 
-   //printf("%lu KB free of total %lu KB\n",((freeM/1024)/2048)/16,((totalM/1024)/2048)/16);
+   cudaMemGetInfo(&freeM, &totalM); 
+   printf("%lu KB free of total %lu KB\n",((freeM/1024)/2048)/16,((totalM/1024)/2048)/16);
 
    //cudaThreadSetLimit(cudaLimitStackSize, 16384);
    cudaThreadGetLimit(&lim, cudaLimitStackSize);
@@ -743,7 +752,32 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    time(startTime);
    //cudaFuncSetCacheConfig(GIPhotonMapKernel, cudaFuncCachePreferShared);
    //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
+   
+   
+   
+   
+   
+   
+   
+   //HERE OKAY
+   
+   
+   
+   
+   
+   
+   //GIPhotonMapKernel<<<dimGrid, dimBlock, TILEWIDTH * TILEWIDTH * 12 * sizeof(float)>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
    GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
    
    
    //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, objects.size(), pixelsD, cameraD, width, height);

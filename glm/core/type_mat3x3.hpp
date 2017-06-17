@@ -70,10 +70,13 @@ namespace detail
 		GLM_FUNC_DECL tmat3x3<T> _inverse() const;
 
 	private:
-		// Data
-		col_type value[3];
+		
 
 	public:
+	
+	   // Data
+		col_type value[3];
+		
 		// Constructors
 		GLM_FUNC_DECL tmat3x3();
 		GLM_FUNC_DECL tmat3x3(tmat3x3 const & m);

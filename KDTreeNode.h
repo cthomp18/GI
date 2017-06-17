@@ -37,8 +37,9 @@ class KDTreeNode {
       float findMin(std::vector<Photon*> pmap, int axis);
       float findMax(std::vector<Photon*> pmap, int axis);
       
-      CUDA_CALLABLE void locatePhotons(glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons, KDTreeNode **stack);
+      //CUDA_CALLABLE void locatePhotons(glm::vec3 pt, Photon** locateHeap, int *heapSize, float sampleDistSqrd, float *newRadSqrd, glm::mat3 mInv, int numPhotons, KDTreeNode **stack);
       //CUDA_CALLABLE void locatePhotons(glm::vec3 pt, int ts, Photon** locateHeap, float sampleDistSqrd, float *newRadSqrd, int numPhotons, float *sh);
+      CUDA_CALLABLE void locatePhotons(glm::vec3 pt, Photon** locateHeap, volatile float * volatile mInv, int numPhotons, float *shF, int *shI);
       
       CUDA_CALLABLE void toSerialArray(Photon *objectArray, int *currentIndex);
 };

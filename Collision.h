@@ -20,8 +20,9 @@ class Collision {
       CUDA_CALLABLE Collision();
       CUDA_CALLABLE ~Collision();
       
-      void detectRayCollision(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit);
-      CUDA_CALLABLE void detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, int omitInd, bool unit);
+      void detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit);
+      CUDA_CALLABLE void detectRayCollision2(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, int omitInd, bool unit);
+      CUDA_CALLABLE void detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, float *shF, int *shI);
       
       float time;
       SceneObject* object;

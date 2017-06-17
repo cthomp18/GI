@@ -19,10 +19,10 @@ CPPFLAGS=-g --compiler-options "-Wall \
     -Wunused-label \
     -Wunused-value  -Wunused-variable \
     -Wvolatile-register-var  -Wwrite-strings"
-NVFLAGS4= -O2 -ccbin g++ -m64 --ptxas-options=-v -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
-NVFLAGS= -O2 -ccbin g++ -m64 -maxrregcount=32 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS3= -O2 -ccbin g++ -m64 --ptxas-options=-v -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS4= -O2 -ccbin g++ -m64 -maxrregcount=32 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 NVFLAGS2= -O2 -ccbin g++ -m64 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
-NVFLAGS3= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 CC=nvcc
 
 CPP_SRCS := $(wildcard *.cpp)
@@ -48,6 +48,7 @@ $(CPP_OBJECTS): %.o : %.cpp
 	
 $(CU_OBJECTS): %.o : %.cu
 	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
+
 
 clean:
 	rm -rf *o trace
