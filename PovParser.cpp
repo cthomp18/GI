@@ -378,10 +378,13 @@ void PovParser::parseObjProps(stringstream& buffer, SceneObject* object) {
             parseFinish(buffer, object);
          } else if (name == "translate") {
             object->translateVector = parseEVect3(buffer);
+            object->transformed = true;
          } else if (name == "rotate") {
             object->rotateVector = parseEVect3(buffer);
+            object->transformed = true;
          } else if (name == "scale") {
             object->scaleVector = parseEVect3(buffer);
+            object->transformed = true;
          } else { 
             perror("Error - PovRay - SceneObject - Bad Name");
             cout << "Name Given: " << name << endl;

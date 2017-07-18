@@ -25,7 +25,8 @@ Collision::Collision() {
 Collision::~Collision() {}
 
 //I need to make two equal collision detection functions because cuda #kms #fml
-void Collision::detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit) {
+//void Collision::detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit) {
+void Collision::detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::host_vector<SceneObject*> objects, uint omitInd, bool unit, int *shI, float *shF) {
    float tempT;
    glm::vec3 rayTransform;
    glm::vec4 startTransform;
@@ -38,9 +39,9 @@ void Collision::detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::h
       if (i == omitInd) continue;
       
       if (objects[i]->transformed) {
-         tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
+         //tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject, shI, shF);
       } else {
-         tempT = objects[i]->checkCollision(objects[i], start, ray, 2.0f, &tempObject);
+         tempT = objects[i]->checkCollision(objects[i], ray, &tempObject, shI, shF);
       }
       
       if (tempT < TOLERANCE) continue;
@@ -52,7 +53,8 @@ void Collision::detectRayCollisionHost(glm::vec3 start, glm::vec3 ray, thrust::h
    }
 }
 
-void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, float *shF, int *shI) {
+//void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int *shI, float *shF) {
+void Collision::detectRayCollision(glm::vec3 ray, SceneObject** objects, int *shI, float *shF) {
 
    //F08: Temporary local
 
@@ -61,25 +63,29 @@ void Collision::detectRayCollision(glm::vec3 start, glm::vec3 ray, SceneObject**
    
    //NOTE: PLEASE SEE THE BELOW COMMENTED FUNCTION FOR BETTER VARIABLE USE AS COMPARISON
 
-   SceneObject *tempObject;
+   SceneObject *tempObject = NULL;
 
-   for (int i = 0; i < objSize; i++) {
-      shF[8] = objects[i]->checkCollision(objects[i], start, ray, 2.0f, &tempObject);
+   for (int i = 0; i < shI[2]; i++) {
+      //glm::vec3 start(shF[6], shF[7], shF[8]);
+      shF[3] = 2.0f;
+      shF[5] = objects[i]->checkCollision(objects[i], ray, &tempObject, shI, shF);
       
-      if (shF[8] < TOLERANCE) continue;
+      if (shF[5] < TOLERANCE) continue;
       
-      if (object == NULL || shF[8] < time) {
-         time = shF[8];
+      if (object == NULL || shF[5] < time) {
+         time = shF[5];
+         //object = (tempObject == NULL ? objects[i] : tempObject);;
          object = tempObject;
       }
    }
 }
 
-void Collision::detectRayCollision2(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, int omitInd, bool unit) {
+//void Collision::detectRayCollision2(glm::vec3 start, glm::vec3 ray, SceneObject** objects, int objSize, int omitInd, bool unit) {
+void Collision::detectRayCollision2(glm::vec3 ray, SceneObject** objects, int objSize, int omitInd, bool unit, int *shI, float *shF) {
    float tempT;
    glm::vec3 rayTransform;
-   glm::vec4 startTransform;
-   startTransform = glm::vec4(start, 1.0f);
+   //glm::vec4 startTransform;
+   //startTransform = glm::vec4(start, 1.0f);
    SceneObject *tempObject;
    Triangle *objs;
    //printf("???\n");
@@ -93,11 +99,15 @@ void Collision::detectRayCollision2(glm::vec3 start, glm::vec3 ray, SceneObject*
    //for (int i = 0; i < objSize; i++) {
    //   if (!objects[i]) printf("FUCKKKK %d\n", i);
    //}
+   //printf("hello3? %f %f %f\n", shF[6], shF[7], shF[8]);
    for (int i = 0; i < objSize; i++) {
+      //printf("ind %d\n", i);
       if (i == omitInd) continue;
       
+      //if (objects[i]->transformed) printf("ASDFASDF\n");
       if (objects[i]->transformed) {
-         tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject);
+         printf("ASDFASDF\n");
+         //tempT = objects[i]->checkCollision(objects[i], glm::vec3(objects[i]->transform * startTransform), glm::mat3(objects[i]->transform) * ray, 2.0f, &tempObject, shI, shF);
       } else {
       /*printf("here\n");
       printf("%f, %f, %f\n", start.x, start.y, start.z);
@@ -116,15 +126,25 @@ void Collision::detectRayCollision2(glm::vec3 start, glm::vec3 ray, SceneObject*
          //printf("PLEASE HERE\n");
          //printf("WE COLL %f %f %f\n", objects[0]->boundingBox.minPt.x, objects[0]->boundingBox.minPt.y, objects[0]->boundingBox.minPt.z);
          //printf("WE COLL %f %f %f\n", objects[0]->boundingBox.maxPt.x, objects[0]->boundingBox.maxPt.y, objects[0]->boundingBox.maxPt.z);
-         tempT = objects[i]->checkCollision(objects[i], start, ray, 2.0f, &tempObject);
+         //if (shF == NULL) {
+         //   printf("HULLO\n");
+         //}
+         //printf("making sure\n");
+         //printf("HULLLOOOO\n");
+         shF[3] = 2.0f;
+         tempT = objects[i]->checkCollision(objects[i], ray, &tempObject, shI, shF);
          //printf("k\n");
       }
       
-      if (tempT < TOLERANCE) continue;
+      if (tempT < TOLERANCE) {
+         //printf("ind %d\n", i);
+         continue;
+      }
       
       if (object == NULL || tempT < time) {
          time = tempT;
          object = tempObject;
+         //printf("piginCol: %f\n", object->pigment[0]);
       }
    }
 }

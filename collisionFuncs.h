@@ -18,15 +18,26 @@
 #include "Sphere.h"
 #include "BoundingBox.h"
 
-CUDA_CALLABLE float checkOctTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-CUDA_CALLABLE float checkOctTreeCollision2(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-CUDA_CALLABLE float checkTriCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-CUDA_CALLABLE float checkPlaneCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
-CUDA_CALLABLE float checkBiTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-CUDA_CALLABLE float checkBoxCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
-CUDA_CALLABLE float checkGWCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
-CUDA_CALLABLE float checkConeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
-CUDA_CALLABLE float checkQuadTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
-CUDA_CALLABLE float checkSphereCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkOctTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+//CUDA_CALLABLE float checkOctTreeCollision2(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+//CUDA_CALLABLE float checkTriCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+//CUDA_CALLABLE float checkPlaneCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkBiTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
+//CUDA_CALLABLE float checkBoxCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkGWCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkConeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkQuadTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+//CUDA_CALLABLE float checkSphereCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object);
+
+CUDA_CALLABLE float checkOctTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF);
+CUDA_CALLABLE float checkOctTreeCollision2(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF);
+CUDA_CALLABLE float checkTriCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF);
+CUDA_CALLABLE float checkPlaneCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
+CUDA_CALLABLE float checkBiTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF);
+CUDA_CALLABLE float checkBoxCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
+CUDA_CALLABLE float checkGWCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
+CUDA_CALLABLE float checkConeCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
+CUDA_CALLABLE float checkQuadTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
+CUDA_CALLABLE float checkSphereCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF);
 
 #endif

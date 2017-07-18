@@ -27,6 +27,8 @@ void PhotonMapper::buildGlobalMap() {
    int count = 0;
    Photon *p;
    Light *light;
+   float shF[9];
+   int shI[3];
    glm::vec3 ray, intersectPt, normal, reflectRay, tempIntensity, tempIPt;
    float n1 = AIR_REFRACT_INDEX, n2, randTracker;
    RayTracer* raytrace = new RayTracer(&lights, &objects);
@@ -35,10 +37,12 @@ void PhotonMapper::buildGlobalMap() {
    //printf("RT TYPE2 %d\n", raytrace->objects[0]->type);
    Collision* col;
    SceneObject* obj;
-      //cout << lights.size() << endl;
+      cout << lights.size() << endl;
    for (uint l = 0; l < lights.size(); l++) {
       light = lights[l];
+      //printf("uhhhhh222 %f %f %f\n", light->getPosition().x, light->getPosition().y, light->getPosition().z);
       for (int i = 0; i < GLOBALPHOTONS; i++) {
+         //printf("a\n");
          if (i == 0) cout << "0%" << endl;
          else if (i == int(GLOBALPHOTONS*.25)) cout << "25%" << endl;
          else if (i == int(GLOBALPHOTONS*.5)) cout << "50%" << endl;
@@ -55,58 +59,95 @@ void PhotonMapper::buildGlobalMap() {
          ray = glm::normalize(ray);
          //printf("PM TYPE2 %d\n", objects[0]->type);
          //printf("RT TYPE2 %d\n", raytrace->objects[0]->type);
-         col = raytrace->trace(light->getPosition(), ray, -1);
-         
+         //printf("1\n");
+         //printf("uhhhhh111 %f %f %f\n", light->getPosition().x, light->getPosition().y, light->getPosition().z);
+         col = raytrace->trace(light->getPosition(), ray, -1, shI, shF);
+         //printf("hello2? %f %f %f\n", shF[6], shF[7], shF[8]);
+         //printf("cmonbruh1\n");
+         //printf("pig: %f", col->object->pigment[0]);//, obj->pigment[1], obj->pigment[2]);
+         //printf("done\n");
+         //printf("2\n");
+         //printf("b\n");
          if (col->time >= TOLERANCE) {
-            
+            //printf("blah\n");
             obj = col->object;
             //cout << col->objectIndex << endl;
             intersectPt = light->getPosition() + (col->time * ray);
             
             //Direct Photons
-            p = new Photon(intersectPt, ray, light->getColor() / (float)(GLOBALPHOTONS + CAUSTICPHOTONS), 0);            
+            //printf("blahh\n");
+            p = new Photon(intersectPt, ray, light->getColor() / (float)(GLOBALPHOTONS + CAUSTICPHOTONS), 0); 
+            //printf("seriously??\n");
+            if (obj == NULL) {
+               //printf("yahh...\n");
+            } else {
+               //printf("fuck\n");
+               //obj->pigment = glm::vec4(0.0, 0.0, 0.0, 0.0);
+               //printf("hello\n");
+               //if (obj->pigment[0] == NULL) printf("wut\n");
+               //printf("pig: %f", obj->pigment[0]);//, obj->pigment[1], obj->pigment[2]);
+               //printf("dif: %f\n", obj->diffuse);
+               //printf("int: %f\n", p->intensity[0], p->intensity[1], p->intensity[2]);
+            }
+            if (p == NULL) {
+               //printf("que?\n");
+            }
             p->intensity[0] *= obj->pigment[0] * obj->diffuse;
+            //printf("??1\n");
             p->intensity[1] *= obj->pigment[1] * obj->diffuse;
+            //printf("??2\n");
             p->intensity[2] *= obj->pigment[2] * obj->diffuse;
+            //printf("???\n");
             globalPhotons.push_back(p);
-            
+            //printf("blahhh\n");
             tempIntensity = p->intensity;
             n2 = obj->indexRefraction;
             //index = col->objectIndex;
             
             //Shadow Photons
             tempIPt = intersectPt;
+            //printf("blahhhh\n");
             if (obj->type == 0) {
                while (col->time >= TOLERANCE) {
                   delete col;
-                  col = raytrace->trace(tempIPt, ray, -1);
+                  //printf("3\n");
+                  col = raytrace->trace(tempIPt, ray, -1, shI, shF);
+                  //printf("4\n");
                   if (col->time >= TOLERANCE) {
                      tempIPt = tempIPt + (col->time * ray);
                      p = new Photon(tempIPt, ray, light->getColor() / (float)(GLOBALPHOTONS + CAUSTICPHOTONS), 2);
+                     //printf("cmonbruh2\n");
                      p->intensity[0] *= col->object->pigment[0] * col->object->ambient;
                      p->intensity[1] *= col->object->pigment[1] * col->object->ambient;
                      p->intensity[2] *= col->object->pigment[2] * col->object->ambient;
+                     //printf("done\n");
                      globalPhotons.push_back(p);
                   }
                }
             }
             depth = 0;
+            //printf("uh1\n");
             //Reflected Photons
-            while ((randTracker = (float)(rand()) / (float)(RAND_MAX)) < obj->photonReflectance + obj->photonRefractance) {               
+            while ((randTracker = (float)(rand()) / (float)(RAND_MAX)) < obj->photonReflectance + obj->photonRefractance) {
+               //printf("uh2\n");               
                if (randTracker < obj->photonReflectance) { //Reflect
                   normal = obj->getNormal(obj, intersectPt, 2.0f);
                   ray = raytrace->findReflect(ray, normal, obj);
                   delete col;
-                  col = raytrace->trace(intersectPt, ray, -1);
+                  //printf("5\n");
+                  col = raytrace->trace(intersectPt, ray, -1, shI, shF);
+                  //printf("6\n");
                   
                   if (col->time >= TOLERANCE) {
                      obj = col->object;
                      intersectPt = intersectPt + (col->time * ray);
                      
                      p = new Photon(intersectPt, ray, tempIntensity, 1);
+                     //printf("cmonbruh3\n");
                      p->intensity[0] *= obj->pigment[0] * obj->diffuse;
                      p->intensity[1] *= obj->pigment[1] * obj->diffuse;
                      p->intensity[2] *= obj->pigment[2] * obj->diffuse;
+                     //printf("done\n");
                      globalPhotons.push_back(p);
                      
                      tempIntensity = p->intensity;
@@ -121,7 +162,9 @@ void PhotonMapper::buildGlobalMap() {
                   normal = obj->getNormal(obj, intersectPt, 2.0f);
                   ray = raytrace->findRefract(ray, normal, obj, n1, &n2, &randFloat, &randFloat);
                   delete col;
-                  col = raytrace->trace(intersectPt, ray, -1);
+                  //printf("7\n");
+                  col = raytrace->trace(intersectPt, ray, -1, shI, shF);
+                  //printf("8\n");
                   //intersectPt = intersectPt + (col->time * ray);
                   /*obj = objects[col->objectIndex];
                   normal = obj->getNormal(obj, intersectPt, 2.0f);
@@ -133,9 +176,11 @@ void PhotonMapper::buildGlobalMap() {
                      intersectPt = intersectPt + (col->time * ray);
                      
                      p = new Photon(intersectPt, ray, tempIntensity, 1);
+                     //printf("cmonbruh4\n");
                      p->intensity[0] *= obj->pigment[0] * obj->diffuse;
                      p->intensity[1] *= obj->pigment[1] * obj->diffuse;
                      p->intensity[2] *= obj->pigment[2] * obj->diffuse;
+                     //printf("done\n");
                      //i--;
                      
                      tempIntensity = p->intensity;
@@ -154,24 +199,30 @@ void PhotonMapper::buildGlobalMap() {
                   }
                   depth++;
                } else {
+                  //printf("uh3\n");
                   break;
                }
+               //printf("uh4\n");
             }
          } else {
             //std::cout << "MISS" << std::endl;
             //std::cout << ray << std::endl;
             count++;
          }
+         //printf("c\n");
          delete col;
+         //printf("d\n");
       }
    }
-   cout << "count:" << count << endl;
+   //cout << "count:" << count << endl;
    delete raytrace;
 }
 
 void PhotonMapper::buildCausticMap() {
    Photon *p;
    Light *light;
+   float shF[9];
+   int shI[3];
    glm::vec3 ray, intersectPt, reflectRay, tempIntensity, pos, lpos, normal;
    float n1 = AIR_REFRACT_INDEX, n2, randTracker;
    int missCount = 0;//, depth = 0;//, index;
@@ -212,7 +263,8 @@ void PhotonMapper::buildCausticMap() {
                ray[1] = minY + (((float)(rand()) / (float)(RAND_MAX)) * (maxY - minY));
                ray[2] = minZ + (((float)(rand()) / (float)(RAND_MAX)) * (maxZ - minZ));
                ray = glm::normalize(ray);
-               col = raytrace->trace(lpos, ray, -1);
+               
+               col = raytrace->trace(lpos, ray, -1, shI, shF);
 
                if (col->time >= TOLERANCE && fabs(col->object->refraction - 1.0f) < TOLERANCE) {
                   intersectPt = lpos + (col->time * ray);
@@ -227,7 +279,7 @@ void PhotonMapper::buildCausticMap() {
                      normal = tempobj->getNormal(tempobj, intersectPt, 2.0f);
                      ray = raytrace->findRefract(ray, normal, tempobj, n1, &n2, &randFloat, &randFloat);
                      delete col;
-                     col = raytrace->trace(intersectPt, ray, -1);
+                     col = raytrace->trace(intersectPt, ray, -1, shI, shF);
                      //if (col->objectIndex != m) cout << "fucking wut " << n1 << " " << n2 << endl;
                      /*intersectPt = intersectPt + (col->time * ray);
                      tempobj = objects[col->objectIndex];

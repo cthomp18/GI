@@ -353,8 +353,11 @@ __global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP ) void GI
    //printf("ROW %d\n", row);
 //if (currentImgInd < 400000) {
    //printf("hello?\n");
-    
-   collision = raytracer->trace(cPos, ray, sharedFloats + threadSpotF, sharedInts + threadSpotI);
+   sharedFloats[threadSpotF+6] = cPos.x;
+   sharedFloats[threadSpotF+7] = cPos.y;
+   sharedFloats[threadSpotF+8] = cPos.z;
+   collision = raytracer->trace(ray, sharedInts + threadSpotI, sharedFloats + threadSpotF);
+   //collision = raytracer->trace(cPos, ray, sharedInts + threadSpotI, sharedFloats + threadSpotF);
     
    //printf("whats up?\n");
          //printf("Making sure ;)\n");
@@ -366,7 +369,7 @@ __global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP ) void GI
    }
    if (collision->time > TOLERANCE) {
       //printf("in here?\n");
-      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, threadNum, 0, sharedFloats + threadSpotF, sharedInts + threadSpotI); //Cam must start in air
+      pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, threadNum, 0, sharedInts + threadSpotI, sharedFloats + threadSpotF); //Cam must start in air
       //if (collision->object) {
          //printf("yo wasuu\n");
          //printf("%d\n", collision->object->type);

@@ -265,7 +265,9 @@ int main(int argc, char* argv[]) {
       if (!objects[i]) printf("FUCK %d\n", i);
    }
    KDTreeNode* kd = new KDTreeNode();
+   //printf("uhhhhh444 %f %f %f\n", lights[0]->getPosition().x, lights[0]->getPosition().y, lights[0]->getPosition().z);
    PhotonMapper* pm = new PhotonMapper(lights, objects);
+   //printf("uhhhhh333 %f %f %f\n", pm->lights[0]->getPosition().x, pm->lights[0]->getPosition().y, pm->lights[0]->getPosition().z);
    cout << "Building Global Photon Map... " << endl;
    pm->buildGlobalMap();
    cout << "Building Caustic Photon Map(s)... " << endl;

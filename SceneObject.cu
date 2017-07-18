@@ -57,6 +57,8 @@ SceneObject* SceneObject::getObj() {
 }
 
 void SceneObject::applyTransforms() {
+   if (!transformed) return;
+
    scale();
    rotate();
    translate();
@@ -123,7 +125,7 @@ void SceneObject::scale() {
    glm::mat4 scaleMat = glm::mat4(1.0f);
    for (int i = 0; i < 3; i++) scaleMat[i][i] = scaleVector[i];
    transform = scaleMat * transform;
-   transformed = true;
+   //transformed = true;
 }
 
 void SceneObject::rotate() {
@@ -159,14 +161,14 @@ void SceneObject::rotate() {
       }
       transform = rotMat * transform;
    }
-   transformed = true;
+   //transformed = true;
 }
 
 void SceneObject::translate() {
    glm::mat4 transMat = glm::mat4(1.0f);
    for (int i = 0; i < 3; i++) transMat[3][i] = translateVector[i];
    transform = transMat * transform;
-   transformed = true;
+   //transformed = true;
 }
 
 void SceneObject::constructBB() {

@@ -27,8 +27,10 @@ class RayTracer {
       CUDA_CALLABLE RayTracer();
       CUDA_CALLABLE ~RayTracer();
       
-      CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit);
-      CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, float *shF, int *shI);
+      //CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit);
+      CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, bool unit, int *shI, float *shF);
+      //CUDA_CALLABLE Collision* trace(glm::vec3 start, glm::vec3 ray, int *shI, float *shF);
+      CUDA_CALLABLE Collision* trace(glm::vec3 ray, int *shI, float *shF);
       CUDA_CALLABLE glm::vec3 findReflect(glm::vec3 ray, glm::vec3 normal, SceneObject* obj);
       CUDA_CALLABLE glm::vec3 findRefract(glm::vec3 ray, glm::vec3 normal, SceneObject* obj, float n1, float* n2, float* reflectScale, float* dropoff);
       
@@ -45,7 +47,7 @@ class RayTracer {
       KDTreeNode* root;
       KDTreeNode* rootC1;
       
-      CUDA_CALLABLE glm::vec3 calcRadiance(glm::vec3 start, volatile glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, float *shF, int *shI);
+      CUDA_CALLABLE glm::vec3 calcRadiance(glm::vec3 start, volatile glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, int *shI, float *shF);
    private:
       
 };

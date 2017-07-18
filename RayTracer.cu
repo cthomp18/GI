@@ -59,7 +59,8 @@ RayTracer::RayTracer() {
 }
 RayTracer::~RayTracer() { }
 
-Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
+//Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
+Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit, int *shI, float *shF) {
    Collision* c = new Collision();
    /*printf("OBJ SIZE: %d\n", objSize);
    printf("TTYPE   %d\n", objects[0]->type);
@@ -69,22 +70,30 @@ Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
    /*printf("Here :)\n");
    printf("COLL %f %f %f\n", objects[0]->boundingBox.minPt.x, objects[0]->boundingBox.minPt.y, objects[0]->boundingBox.minPt.z);
    printf("COLL %f %f %f\n", objects[0]->boundingBox.maxPt.x, objects[0]->boundingBox.maxPt.y, objects[0]->boundingBox.maxPt.z);*/
-   
-   c->detectRayCollision2(start, ray, objects, objSize, -1, unit);
+   shF[6] = start.x;
+   shF[7] = start.y;
+   shF[8] = start.z;
+   //printf("uhhhhh %f %f %f\n", start.x, start.y, start.z);
+   //printf("hello? %f %f %f\n", shF[6], shF[7], shF[8]);
+   c->detectRayCollision2(ray, objects, objSize, -1, unit, shI, shF);
    return c;
 }
 
-Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, float *shF, int *shI) {
+Collision* RayTracer::trace(glm::vec3 ray, int *shI, float *shF) {
+//Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, int *shI, float *shF) {
 
    //I01: Omit Index
 
    Collision* c = new Collision();
    
-   c->detectRayCollision(start, ray, objects, objSize, shF, shI);
+   shI[2] = objSize;
+   
+   //c->detectRayCollision(start, ray, objects, shI, shF);
+   c->detectRayCollision(ray, objects, shI, shF);
    return c;
 }
 
-glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, float *shF, int *shI) {
+glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, int *shI, float *shF) {
    /*float e = 2.71828;
    float alpha = 0.918;
    float beta = 1.953;*/
@@ -232,6 +241,10 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       //if (numGPhotons > 0) root->locatePhotons(iPt, threadSpot, locateHeap, sampleDistSqrd, &newRadSqrd, numGPhotons, sh);
       //printf("sheeeet\n");
       heapSize = shI[2];
+      //printf("HS: %d\n", heapSize);
+      //if (heapSize) {
+      //   printf("PTN INT: %f %f %f\n", locateHeap[0]->intensity.x, locateHeap[0]->intensity.y, locateHeap[0]->intensity.z);
+      //}
       //for (int i = 0; i < heapSize; i++) {
       for (int i = 0; i < heapSize; i++) {
          //BRDF
@@ -268,9 +281,13 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
          //Do Refraction
          reflectRay = findRefract(dir, normal, obj, n1, &n2, &reflectScale, &tempDO);
          if (fabs(reflectScale - 1.0f) >= TOLERANCE) { //Total internal reflection carry-over check
-            col = trace(iPt, reflectRay, shF , shI);
+            shF[6] = iPt.x;
+            shF[7] = iPt.y;
+            shF[8] = iPt.z;
+            col = trace(reflectRay, shI, shF);
+            //col = trace(iPt, reflectRay, shI, shF);
             if (col->time >TOLERANCE) {
-               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, threadNum, depth - 1, shF, shI);
+               refractClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * (1.0f - reflectScale), n2, tempDO, threadNum, depth - 1, shI, shF);
             }
             delete(col);
          }
@@ -280,9 +297,13 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
    if ((obj->reflection > TOLERANCE || fabs(obj->refraction - 1.0) < TOLERANCE) && depth > 0) {
       //float randFloat;
       reflectRay = findReflect(dir, normal, obj);
-      col = trace(iPt, reflectRay, shF, shI);
+      shF[6] = iPt.x;
+      shF[7] = iPt.y;
+      shF[8] = iPt.z;
+      col = trace(reflectRay, shI, shF);
+      //col = trace(iPt, reflectRay, shI, shF);
       if (col->time >= TOLERANCE) {
-         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, threadNum, depth - 1, shF, shI);
+         reflectClr = calcRadiance(iPt, iPt + reflectRay * col->time, col->object, unit, scale * reflectScale, n1, dropoff, threadNum, depth - 1, shI, shF);
       }
       delete(col);
    }
