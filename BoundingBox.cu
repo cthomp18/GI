@@ -22,6 +22,32 @@ BoundingBox::BoundingBox(glm::vec3 cornerPt1, glm::vec3 cornerPt2) {
 BoundingBox::BoundingBox() {}
 BoundingBox::~BoundingBox() {}
 
+float BoundingBox::checkCollision(glm::vec3 ray, float time, int *shI, float *shF) {
+   float tgmin = FLT_MIN, tgmax = FLT_MAX, t1, t2, temp, t = -1.0f;
+   glm::vec3 start(shF[6], shF[7], shF[8]);
+   for (int i = 0; i < 3; i++) {
+      temp = start[i];
+      
+      if (fabs(ray[i]) < TOLERANCE) { // Ray along 2D Plane checks
+         if (temp > maxPt[i] || temp < minPt[i]) return -1.0f;
+      }
+      
+      t1 = (minPt[i] - temp) / ray[i];
+      t2 = (maxPt[i] - temp) / ray[i];
+      if (t2 < t1) {
+         temp = t2;
+         t2 = t1;
+         t1 = temp;
+      }
+      if (t1 > tgmin) tgmin = t1;
+      if (t2 < tgmax) tgmax = t2;
+   }
+   
+   if (tgmin > tgmax) return -1.0f;
+   if (tgmin < TOLERANCE) return tgmax;
+   return tgmin;
+}
+
 float BoundingBox::checkCollision(glm::vec3 start, glm::vec3 ray, float time) {
    //std::cout << "Box Collision" << std::endl;
    float tgmin = FLT_MIN, tgmax = FLT_MAX, t1, t2, temp, t = -1.0f;

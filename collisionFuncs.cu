@@ -1,12 +1,62 @@
 #include "collisionFuncs.h"
 
-//float checkOctTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
 float checkOctTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF) {
-/*printf("%f %f %f\n", start.x, start.y, start.z);
-printf("%f %f %f\n", ray.x, ray.y, ray.z);
-printf("otree collision\n");*/
-//printf("PARAM MEM: %p\n", obj);
-//return -1.0f;
+   glm::vec3 start(shF[6], shF[7], shF[8]);
+   float t, tempT;
+   SceneObject* tempObj;
+   t = tempT = -1.0f;
+   OctTreeNode *thisObj = reinterpret_cast<OctTreeNode*>(obj);
+   SceneObject **octants = thisObj->octants;
+   //int *indeces = thisObj->indeces;
+   
+   if (thisObj->boundingBox.checkCollision(ray, 0.0f, shI, shF) < TOLERANCE) { 
+      return -1.0f; 
+   }
+   
+   //if (octants[0]) {
+   //   t = octants[0]->checkCollision(octants[0], ray, &tempObj, shI, shF);
+   //}
+   //*object = tempObj;
+   
+   //int i;// = 0;
+   
+   // SAME AS ABOVE, BUT FOR THE OTHER 7 OCTANTS
+   
+   for (int i = 0; i < 8; i++) {
+      if (octants[i]) {
+         if (t >= 0.001) {
+            tempT = octants[i]->boundingBox.checkCollision(ray, 0.0f, shI, shF);
+            if (tempT >= TOLERANCE && tempT < t) {
+               tempT = octants[i]->checkCollision(octants[i], ray, &tempObj, shI, shF);
+               if (tempT >= TOLERANCE && tempT < t) {
+                  t = tempT;
+                  *object = tempObj;
+               }
+            }
+         } else {
+            t = octants[i]->checkCollision(octants[i], ray, &tempObj, shI, shF);
+            *object = tempObj;
+         }
+      }
+   }
+   //printf("whats happening\n");
+   if (t < TOLERANCE) {
+      *object = NULL;
+   }
+   
+   //shF[6] = start.x;
+   //shF[7] = start.y;
+   //shF[8] = start.z;
+   
+   return t;
+}
+
+/*float checkOctTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+   //printf("%f %f %f\n", start.x, start.y, start.z);
+   //printf("%f %f %f\n", ray.x, ray.y, ray.z);
+   //printf("otree collision\n");
+   //printf("PARAM MEM: %p\n", obj);
+   //return -1.0f;
    //printf("pls\n");
    glm::vec3 start(shF[6], shF[7], shF[8]);
    glm::vec4 startTransform;
@@ -22,28 +72,25 @@ printf("otree collision\n");*/
    //if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
    startTransform = glm::vec4(start, 1.0f);
    
-   
-   /*printf("CURRENT MEM: %p\n", thisObj);
-   int pf = printf("Type? %d\n", thisObj->type);
-   printf("%d\n", pf);
-   printf("blah? %d\n", thisObj->blahblah);
-   printf("amb? %f\n", thisObj->ambient);
-   printf("is it here?\n");*/
-   
+   //printf("CURRENT MEM: %p\n", thisObj);
+   //int pf = printf("Type? %d\n", thisObj->type);
+   //printf("%d\n", pf);
+   //printf("blah? %d\n", thisObj->blahblah);
+   //printf("amb? %f\n", thisObj->ambient);
+   //printf("is it here?\n");
    
    if (thisObj->boundingBox.checkCollision(start, ray, 0.0f) < TOLERANCE) { 
-      /*printf("%f %f %f\n", thisObj->boundingBox.minPt.x, thisObj->boundingBox.minPt.y, thisObj->boundingBox.minPt.z);
-      printf("%f %f %f\n", thisObj->boundingBox.maxPt.x, thisObj->boundingBox.maxPt.y, thisObj->boundingBox.maxPt.z);
-      printf("bb not hit\n"); */
+      //printf("%f %f %f\n", thisObj->boundingBox.minPt.x, thisObj->boundingBox.minPt.y, thisObj->boundingBox.minPt.z);
+      //printf("%f %f %f\n", thisObj->boundingBox.maxPt.x, thisObj->boundingBox.maxPt.y, thisObj->boundingBox.maxPt.z);
+      //printf("bb not hit\n");
       return -1.0f; 
    }
-   /*printf("nope\n");
-   if (octants[0] == NULL) {
-      printf("roll up in the club\n");
-   } else {
-      printf("yoyoyo\n");
-   }*/
-   
+   //printf("nope\n");
+   //if (octants[0] == NULL) {
+   //   printf("roll up in the club\n");
+   //} else {
+   //   printf("yoyoyo\n");
+   //}
    
    if (octants[0]) {
       //printf("weird\n");
@@ -52,66 +99,61 @@ printf("otree collision\n");*/
          //t = octants[0]->checkCollision(octants[0], glm::vec3(octants[0]->transform * startTransform), glm::mat3(thisObj->octants[0]->transform) * ray, time, &tempObj, shI, shF);
       } else {
          
-         /*printf("ok...\n");
+         //printf("ok...\n");
          
-         pf = printf("Type octant? %d\n", octants[0]->type);
-         printf("%d\n", pf);
-         printf("BLAH octant? %d\n", octants[0]->blahblah);
-         printf("AMBi octant? %f\n", octants[0]->ambient);
+         //pf = printf("Type octant? %d\n", octants[0]->type);
+         //printf("%d\n", pf);
+         //printf("BLAH octant? %d\n", octants[0]->blahblah);
+         //printf("AMBi octant? %f\n", octants[0]->ambient);
          
-         
-         octants[0]->type = 8;
-         octants[0]->blahblah = 1;
-         octants[0]->ambient = 4.0f;
+         //octants[0]->type = 8;
+         //octants[0]->blahblah = 1;
+         //octants[0]->ambient = 4.0f;
 
+         //printf("OCTANT MEM: %p\n", octants[0]);
+         //printf("MORE OCTANT MEM: %p\n", thisObj + 1);
+         //printf("THIS COLL MEM: %p\n", thisObj->checkCollision);
+         //printf("OCTANT COLL MEM: %p\n", octants[0]->checkCollision);
+         //printf("OCT COLL MEM: %p\n", &(checkOctTreeCollision));
+         //printf("TRI COLL MEM: %p\n", &(checkTriCollision));
          
-         printf("OCTANT MEM: %p\n", octants[0]);
-         printf("MORE OCTANT MEM: %p\n", thisObj + 1);
-         printf("THIS COLL MEM: %p\n", thisObj->checkCollision);
-         printf("OCTANT COLL MEM: %p\n", octants[0]->checkCollision);
-         printf("OCT COLL MEM: %p\n", &(checkOctTreeCollision));
-         printf("TRI COLL MEM: %p\n", &(checkTriCollision));
-         
-         
-         for (int i = 0; i < 8; i++) {
-            printf("INDEX %d: %d\n", i, indeces[i]);
-         }
-         
+         //for (int i = 0; i < 8; i++) {
+         //   printf("INDEX %d: %d\n", i, indeces[i]);
+         //}
          
          //SETTING COLLISION FUNC PTR TO EQUIVALENT FUNCTION
          
          //octants[0]->checkCollision = &(checkOctTreeCollision2);
          
-         
-         printf("OCTANT COLL MEM: %p\n", octants[0]->checkCollision);
-         printf("RANDOM\n");
-         printf("FILLER\n");
-         printf("STUFF\n");
-         printf("TO\n");
-         printf("SEE\n");
-         printf("IF\n");
-         printf("ITS\n");
-         printf("BAD\n");
-         printf("PARAM MEM AGAIN: %p\n", obj);
+         //printf("OCTANT COLL MEM: %p\n", octants[0]->checkCollision);
+         //printf("RANDOM\n");
+         //printf("FILLER\n");
+         //printf("STUFF\n");
+         //printf("TO\n");
+         //printf("SEE\n");
+         //printf("IF\n");
+         //printf("ITS\n");
+         //printf("BAD\n");
+         //printf("PARAM MEM AGAIN: %p\n", obj);
          
          
          // CALLING SECOND HERE
          // AFTER THIS IT WILL CRASH
          
          //octants[0] = (SceneObject*)0xb085e09a8;
-         printf("NEW TYPE: %d\n", octants[0]->type);*/
+         //printf("NEW TYPE: %d\n", octants[0]->type);
          t = octants[0]->checkCollision(octants[0], ray, &tempObj, shI, shF);
       }
    }
    *object = tempObj;
-   /*printf("t: %f\n", t);
-   printf("Type? %d\n", thisObj->type);
-   if (octants[1]) {
-      printf("anything, really\n");
-   } else {
-      printf("pls\n");
-   }
-   printf("looking for something\n");*/
+   //printf("t: %f\n", t);
+   //printf("Type? %d\n", thisObj->type);
+   //if (octants[1]) {
+   //   printf("anything, really\n");
+   //} else {
+   //   printf("pls\n");
+   //}
+   //printf("looking for something\n");
    
    int i = 0;
    
@@ -137,10 +179,10 @@ printf("otree collision\n");*/
                   tempT = octants[i]->checkCollision(octants[i], ray, &tempObj, shI, shF);
                   //printf("TTEMP : %f\n", tempT);
                   
-                  /*printf("k\n");
-                  if (octants[i]->type != 8) {
-                     printf("triangle ending\n");
-                  }*/
+                  //printf("k\n");
+                  //if (octants[i]->type != 8) {
+                  //   printf("triangle ending\n");
+                  //}
                }
                if (tempT >= TOLERANCE && tempT < t) {
                   t = tempT;
@@ -164,129 +206,62 @@ printf("otree collision\n");*/
    }
    //printf("END T : %f\n", t);
    return t;
-}
+}*/
 
-//float checkOctTreeCollision2(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
-float checkOctTreeCollision2(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF) {
-//printf("%f %f %f\n", start.x, start.y, start.z);
-//printf("%f %f %f\n", ray.x, ray.y, ray.z);
-printf("otree collision 2\n");
-printf("PARAM MEM: %p\n", obj);
-//return -1.0f;
-   //printf("pls\n");
-   glm::vec3 start(shF[6], shF[7], shF[8]);
-   glm::vec4 startTransform;
-   float t, tempT;
-   //int i;
-   SceneObject* tempObj;
-   t = tempT = -1.0f;
-   OctTreeNode *thisObj = reinterpret_cast<OctTreeNode*>(obj);
-   //printf("Wanted to make sure\n");
-   SceneObject **octants = thisObj->octants;
-   int *indeces = thisObj->indeces;
-   //if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
-   startTransform = glm::vec4(start, 1.0f);
-   //if (this == NULL) printf("Seriously what the fuck\n");
-   printf("CURRENT MEM: %p\n", thisObj);
-   int pf = printf("Type? %d\n", thisObj->type);
-   printf("%d\n", pf);
-   printf("blah? %d\n", thisObj->blahblah);
-   printf("amb? %f\n", thisObj->ambient);
-   printf("is it here?\n");
-   if (thisObj->boundingBox.checkCollision(start, ray, 0.0f) < TOLERANCE) { printf("bb not hit\n"); return -1.0f; }
-   printf("nope\n");
-   if (octants[0] == NULL) {
-      printf("roll up in the club\n");
-   } else {
-      printf("yoyoyo\n");//printf("like i got a fat...\n");
-   }
-   if (octants[0]) {
-   if (octants[0]->transformed) {
-      //t = octants[0]->checkCollision(octants[0], glm::vec3(octants[0]->transform * startTransform), glm::mat3(thisObj->octants[0]->transform) * ray, time, &tempObj, shI, shF);
-   } else {
-      pf = printf("Type octant? %d\n", octants[0]->type);
-      printf("%d\n", pf);
-      printf("BLAH octant? %d\n", octants[0]->blahblah);
-      printf("AMBi octant? %f\n", octants[0]->ambient);
-      
-      
-      octants[0]->type = 8;
-      octants[0]->blahblah = 1;
-      octants[0]->ambient = 4.0f;
-
-      printf("OCTANT MEM: %p\n", octants[0]);
-      printf("MORE OCTANT MEM: %p\n", thisObj + 1);
-      printf("THIS COLL MEM: %p\n", thisObj->checkCollision);
-      printf("OCTANT COLL MEM: %p\n", octants[0]->checkCollision);
-      printf("OCT COLL MEM: %p\n", &(checkOctTreeCollision));
-      printf("TRI COLL MEM: %p\n", &(checkTriCollision));
-      for (int i = 0; i < 8; i++) {
-         printf("INDEX %d: %d\n", i, indeces[i]);
-      }
-      
-      t = octants[0]->checkCollision(octants[0], ray, &tempObj, shI, shF);
-   }
-   }
-   *object = tempObj;
-   printf("t: %f\n", t);
-   printf("Type? %d\n", thisObj->type);
-   if (octants[1]) {
-      printf("anything, really\n");
-   } else {
-      printf("pls\n");
-   }
-   printf("looking for something\n");
-   
-   int i = 0;
-   for (i = 1; i < 8; i++) {
-      printf("please\n");
-      if (octants[i]) {
-      printf("yo\n");
-         if (t >= 0.001) {
-            printf("hi\n");
-            tempT = octants[i]->boundingBox.checkCollision(start, ray, 0.0f);
-            if (tempT >= TOLERANCE && tempT < t) {
-               if (octants[i]->transformed) {
-                  //tempT = octants[i]->checkCollision(octants[i], glm::vec3(octants[i]->transform * startTransform), glm::mat3(octants[i]->transform) * ray, time, &tempObj, shI, shF);
-               } else {
-                  printf("yo dawg\n");
-                  if (octants[i]->type != 8) {
-                     printf("triangle starting\n");
-                  }
-                  tempT = octants[i]->checkCollision(octants[i], ray, &tempObj, shI, shF);
-                  printf("k\n");
-                  if (octants[i]->type != 8) {
-                     printf("triangle ending\n");
-                  }
-               }
-               if (tempT >= TOLERANCE && tempT < t) {
-                  t = tempT;
-                  *object = tempObj;
-               }
-            }
-         } else {
-            //t = octants[i]->checkCollision(octants[i], glm::vec3(octants[i]->transform * startTransform), glm::mat3(octants[i]->transform) * ray, time, &tempObj, shI, shF);
-            *object = tempObj;
-         }
-      } //else break();
-      printf("sup fam\n");
-   }
-   printf("whats happening\n");
-   if (t < TOLERANCE) {
-      *object = NULL;
-   }
-   
-   return t;
-}
-
-//float checkTriCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
+//See more detailed function below
 float checkTriCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF) {
+   //start
+   //F6-F8: start vector
+   //
+   //mid
+   //F5: time
+   //F6: beta
+   //F7: gamma
+   //F8: determinant of original A matrix
+
+   volatile glm::vec3 start(shF[6], shF[7], shF[8]);
+   glm::mat3 A;
+   volatile Triangle *thisObj = reinterpret_cast<volatile Triangle*>(obj);
+   *object = obj;
+   
+   A = glm::mat3(thisObj->a.x - thisObj->b.x, thisObj->a.x - thisObj->c.x, ray.x,
+                 thisObj->a.y - thisObj->b.y, thisObj->a.y - thisObj->c.y, ray.y,
+                 thisObj->a.z - thisObj->b.z, thisObj->a.z - thisObj->c.z, ray.z);
+   shF[8] = glm::determinant(A);
+   
+   A[0][2] = thisObj->a.x - start.x; A[1][2] = thisObj->a.y - start.y; A[2][2] = thisObj->a.z - start.z;
+   shF[5] = glm::determinant(A) / shF[8];
+   A[0][2] = ray.x; A[1][2] = ray.y; A[2][2] = ray.z;
+   if (shF[5] > TOLERANCE) {
+      A[0][0] = thisObj->a.x - start.x; A[1][0] = thisObj->a.y - start.y; A[2][0] = thisObj->a.z - start.z;
+      shF[7] = glm::determinant(A) / shF[8];
+      A[0][0] = thisObj->a.x - thisObj->b.x; A[1][0] = thisObj->a.y - thisObj->b.y; A[2][0] = thisObj->a.z - thisObj->b.z;
+      if (shF[7] >= 0.0f && shF[7] <= 1.0f) {
+         A[0][1] = thisObj->a.x - start.x; A[1][1] = thisObj->a.y - start.y; A[2][1] = thisObj->a.z - start.z;
+         shF[6] = glm::determinant(A) / shF[8];
+         if (shF[6] >= 0.0f && shF[6] + shF[7] <= 1.0f) {
+            shF[6] = start.x;
+            shF[7] = start.y;
+            shF[8] = start.z;
+            
+            return shF[5];
+         }
+      }
+   }
+   
+   shF[6] = start.x;
+   shF[7] = start.y;
+   shF[8] = start.z;
+               
+   return -1.0f;
+}
+
+/*float checkTriCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
    //printf("Triangle Collision\n");
-   glm::vec3 start(shF[6], shF[7], shF[8]);
    glm::mat3 A, Ai;
    double detA, t, beta, gamma;
    Triangle *thisObj = reinterpret_cast<Triangle*>(obj);
-   
+   *object = obj;
    glm::vec3 a = thisObj->a;
    glm::vec3 b = thisObj->b;
    glm::vec3 c = thisObj->c;
@@ -294,61 +269,65 @@ float checkTriCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, i
    A = glm::mat3(a.x - b.x, a.x - c.x, ray.x,
                  a.y - b.y, a.y - c.y, ray.y,
                  a.z - b.z, a.z - c.z, ray.z);
+
    detA = glm::determinant(A);
-   //std::cout << "making sure lol" << std::endl;
-   //std::cout << detA << std::endl;
-   //if (std::fabs(detA) > 0.0f) {
-      //std::cout << "hi?" << std::endl;
+   
+   Ai = A;
+   Ai[0][2] = thisObj->a.x - start.x; Ai[1][2] = thisObj->a.y - start.y; Ai[2][2] = thisObj->a.z - start.z;
+   t = glm::determinant(Ai) / detA;
+   if (t > TOLERANCE) {
       Ai = A;
-      Ai[0][2] = a.x - start.x; Ai[1][2] = a.y - start.y; Ai[2][2] = a.z - start.z;
-      t = glm::determinant(Ai) / detA;
-      if (t > TOLERANCE) {
-         //std::cout << "hiya" << std::endl;
+      Ai[0][0] = thisObj->a.x - start.x; Ai[1][0] = thisObj->a.y - start.y; Ai[2][0] = thisObj->a.z - start.z;
+      gamma = glm::determinant(Ai) / detA;
+      if (gamma >= 0.0f && gamma <= 1.0f) {
          Ai = A;
-         Ai[0][0] = a.x - start.x; Ai[1][0] = a.y - start.y; Ai[2][0] = a.z - start.z;
-         gamma = glm::determinant(Ai) / detA;
-         if (gamma >= 0.0f && gamma <= 1.0f) {
-            //std::cout << "hello" << std::endl;
-            Ai = A;
-            Ai[0][1] = a.x - start.x; Ai[1][1] = a.y - start.y; Ai[2][1] = a.z - start.z;
-            beta = glm::determinant(Ai) / detA;
-            //std::cout << "Beta: " << beta << " Gamma: " << gamma << std::endl;
-            if (beta >= 0.0f && beta + gamma <= 1.0f) {
-               //std::cout << t << std::endl;
-               //printf("obj type: %d\n", obj->type);
-               *object = obj;
-               return t;
-            }
+         Ai[0][1] = thisObj->a.x - start.x; Ai[1][1] = thisObj->a.y - start.y; Ai[2][1] = thisObj->a.z - start.z;
+         beta = glm::determinant(Ai) / detA;
+         if (beta >= 0.0f && beta + gamma <= 1.0f) {
+            *object = obj;            
+            return t;
          }
       }
-   //}
-   //if (time < 3.5) obj->checkCollision(obj, start, ray, time + 1, object);
+   }
+   
    return -1.0f;
-}
-//__attribute__ ((noinline))
-//float checkPlaneCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
+}*/
+
+//See more detailed function below
 float checkPlaneCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF) {
-   //float t = -1.0f;
+   //F5: time
+   //F6-F8: start vector
+   
+   *object = obj;
    shF[5] = -1.0f;
    volatile Plane *thisObj = reinterpret_cast<volatile Plane*>(obj);
-   //glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
-   //shF[4] = glm::dot(ray, thisObj->normal);
-   shF[4] = ray.x * thisObj->normal.x + ray.y * thisObj->normal.y + ray.z * thisObj->normal.z;//glm::dot(ray, thisObj->normal);
-   //if (glm::dot(ray, thisObj->normal) != 0.0f) {
+   volatile float dotProd = ray.x * thisObj->normal.x + ray.y * thisObj->normal.y + ray.z * thisObj->normal.z;
+
    volatile glm::vec3 newpt;
    newpt.x = thisObj->planePt.x - shF[6];
    newpt.y = thisObj->planePt.y - shF[7];
    newpt.z = thisObj->planePt.z - shF[8];
    
-   if (shF[4] != 0.0f) {
-      //t = glm::dot(thisObj->planePt - start, thisObj->normal) / glm::dot(ray, thisObj->normal);
-      shF[5] = (newpt.x * thisObj->normal.x + newpt.y * thisObj->normal.y + newpt.z * thisObj->normal.z) / shF[4];//glm::dot(newpt, thisObj->normal);
-      //shF[5] = shF[5] / shF[4];
+   if (dotProd != 0.0f) {
+      shF[5] = (newpt.x * thisObj->normal.x + newpt.y * thisObj->normal.y + newpt.z * thisObj->normal.z) / dotProd;
+   }
+   
+   return shF[5];
+}
+
+/*float checkPlaneCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
+   float t = -1.0f, dotProd;
+   Plane *thisObj = reinterpret_cast<Plane*>(obj);
+
+   dotProd = glm::dot(ray, thisObj->normal);
+   
+   if (dotProd != 0.0f) {
+      t = glm::dot(thisObj->planePt - start, thisObj->normal) / glm::dot(ray, thisObj->normal);
    }
    
    *object = obj;
-   return shF[5];// / shF[4];
-}
+   return t;
+}*/
 
 //float checkBiTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object) {
 float checkBiTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF) {

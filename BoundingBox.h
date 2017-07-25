@@ -25,6 +25,7 @@ class BoundingBox {
       glm::vec3 middle;
       
       CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time);
+      CUDA_CALLABLE float checkCollision(glm::vec3 ray, float time, int *shI, float *shF);
       
    private:
    
