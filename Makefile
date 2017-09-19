@@ -22,8 +22,8 @@ CPPFLAGS=-g --compiler-options "-Wall \
 NVFLAGS3= -O2 -ccbin g++  -m64 --ptxas-options=-v -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 NVFLAGS4= -O2 -ccbin g++ -m64 -maxrregcount=32 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 NVFLAGS2= -O2 -ccbin g++ -m64 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
-NVFLAGS5= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
-NVFLAGS= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_52,code=sm_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30 -gencode arch=compute_35,code=sm_35 -gencode arch=compute_37,code=sm_37 -gencode arch=compute_50,code=sm_50 -gencode arch=compute_52,code=sm_52 -gencode arch=compute_52,code=compute_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
+NVFLAGS_52= -O2 -ccbin g++ -m64 -Xptxas="-v" -gencode arch=compute_52,code=sm_52 -Xcudafe "--diag_suppress=called_function_redeclared_inline"
 CC=nvcc
 
 CPP_SRCS := $(wildcard *.cpp)
@@ -35,11 +35,22 @@ INCLUDES := -I/usr/local/cuda-8.0/samples/common/inc
 
 all: trace
 
+cuda_52: trace_52
+
 structs: otherstructs trace
 	rm main.o RayTracer.o tracer.o Collision.o
 
 otherstructs:
 	rm main.o RayTracer.o tracer.o Collision.o
+
+trace_52: $(CPP_OBJECTS_52) $(CU_OBJECTS_52) structs.h
+	$(CC) $(CPPFLAGS) $(NVFLAGS_52) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -rdc=true $(CPP_OBJECTS_52) $(CU_OBJECTS_52) -o trace
+	
+$(CPP_OBJECTS_52): %.o : %.cpp
+	$(CC) $(CPPFLAGS) $(NVFLAGS_52) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
+	
+$(CU_OBJECTS_52): %.o : %.cu
+	$(CC) $(CPPFLAGS) $(NVFLAGS_52) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
 
 trace: $(CPP_OBJECTS) $(CU_OBJECTS) structs.h
 	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -rdc=true $(CPP_OBJECTS) $(CU_OBJECTS) -o trace
@@ -49,7 +60,6 @@ $(CPP_OBJECTS): %.o : %.cpp
 	
 $(CU_OBJECTS): %.o : %.cu
 	$(CC) $(CPPFLAGS) $(NVFLAGS) $(INCLUDES) -lcuda -lcudart -D GLM_FORCE_RADIANS -w -lGL -dc $< -o $@
-
 
 clean:
 	rm -rf *o trace
