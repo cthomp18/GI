@@ -305,50 +305,13 @@ int main(int argc, char* argv[]) {
    
    RayTraceOnDevice(imgwidth, imgheight, pixels, objects, camera, root, rootC1, &startTime);
    
-   
-   
-   /*for (int i = 0; i < imgwidth; i++) {
-      //if (i < 80) {
-      //cout << "i: " << i << endl;
-      Collision* col;
-      glm::vec3 ray, tempColor;
-      bool unit = false;
-      for (int j = 0; j < imgheight; j++) {
-         //if (j == 50) {
-         currentImgInd = i * imgheight + j;
-         ray = pixels[currentImgInd].pt;// - cPos;
-         //ray[0] *= (float)imgwidth / (float)imgheight;
-         ray = glm::normalize(ray);
-         //pixels[i][j].clr = calcRadiance(intersectPt, pixels[i][j].pt, ray, normal, col, root, rootC1, 2, 1.0, false);
-         unit = false;
-         if (i == imgwidth / 2 && j == imgheight / 2) unit = true;
-         col = raytrace->trace(cPos, ray, unit);
-         
-         if (col->time > TOLERANCE) {
-            pixels[currentImgInd].clr = raytrace->calcRadiance(cPos, cPos + ray * col->time, col->object, unit, 1.0f, 1.33f, 0.95f, 1); //Cam must start in air
-            //tempColor = col->object->getNormal(col->object, cPos + ray * col->time, 2.0f);
-            //pixels[currentImgInd].clr.x = tempColor.x * 0.5f + 0.5f;
-            //pixels[currentImgInd].clr.y = tempColor.y * 0.5f + 0.5f;
-            //pixels[currentImgInd].clr.z = tempColor.z * 0.5f + 0.5f;
-         }
-         else {
-            pixels[currentImgInd].clr.x = pixels[currentImgInd].clr.y = pixels[currentImgInd].clr.z = 1.0f;
-         }
-         //cout << "PIXCOL: " << pixels[i][j].clr.x << " " << pixels[i][j].clr.y << " " << pixels[i][j].clr.z << endl;
-         //}
-      }
-      //}
-   }*/
    time(&endTime);
    cout << endTime - startTime << " seconds\n";
-   //cout << planes[0].TLpt.x() << " " << planes[0].TLpt.y() << " " << planes[0].TLpt.z() << endl;
-   //cout << planes[0].BRpt.x() << " " << planes[0].BRpt.y() << " " << planes[0].BRpt.z() << endl;
-   //int currentImgInd;
+
    // set a square to be the color above
    for (int i=0; i < imgwidth; i++) {
       for (int j=0; j < imgheight; j++) {
          currentImgInd = i * imgheight + j;
-         //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
          pixels[currentImgInd].clr.x = std::min(double(pixels[currentImgInd].clr.x), 1.0);
          pixels[currentImgInd].clr.y = std::min(double(pixels[currentImgInd].clr.y), 1.0);
          pixels[currentImgInd].clr.z = std::min(double(pixels[currentImgInd].clr.z), 1.0);
@@ -361,15 +324,9 @@ int main(int argc, char* argv[]) {
    
    cout << "yo" << endl;
    cout << objects.size() << endl;
-   //cout << ((OctTreeNode*)objects[0])->treeLength() << endl;
    for (uint i = 0; i < objects.size(); i++) {
-      //cout << "so uh" << endl;
-      //cout << i << endl;
-      //if (objects[i]->type == 7) delete objects[i];
       cout << objects[i]->type << endl;
       delete objects[i];
-      //cout << objects[i]->type << endl;
-      //cout << "can you delete this?" << endl;
    }
    cout << "here right" << endl;
    
@@ -404,31 +361,4 @@ int main(int argc, char* argv[]) {
    img->WriteTga(const_cast<char*>(reinterpret_cast<const char*>("awesome.tga")), true);
    
    if (img) delete(img);
-   
-   // true to scale to max color, false to clamp to 1.0
-   /*
-   int i;
-   Triangle t(glm::vec3(1.0,1.0,1.0), glm::vec3(1.0,1.0,1.0), glm::vec3(1.0,1.0,1.0));
-   OctTreeNode ot;
-   ot.type = 5;
-   Triangle ts[2];
-   cout << "Int size: " << sizeof(i) << endl;
-   cout << "SO size: " << sizeof(SceneObject) << endl;
-   cout << "Triangle size: " << sizeof(Triangle) << endl;
-   //cout << "Triangle instance size: " << sizeof(t) << endl;
-   cout << "Box size: " << sizeof(Box) << endl;
-   cout << "OctTreeNode size: " << sizeof(OctTreeNode) << endl;
-   
-   memcpy(ts, &t, sizeof(t));
-   memcpy(ts + 1, &ot, sizeof(ot));
-   
-   cout << "First Obj Type: " << ts[0].type << endl;
-   cout << "Second Obj Type: " << ts[1].type << endl;
-   OctTreeNode *ot2 = (OctTreeNode*)(ts + 1);
-   cout << "OT2 type: " << ot2->type << endl;
-   */
-   /*cout << "OBJ SIZE: " << objects.size() << endl;
-   for (int i = 0; i < objects.size(); i++) {
-      cout << objects[i]->type << endl;
-   }*/
 }

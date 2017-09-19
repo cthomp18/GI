@@ -46,147 +46,34 @@ __global__ void toOctTree(Triangle *objectArray, int size, int gridDimension) {
                    (threadIdx.y * (gridDimension * TILEWIDTH)) + threadIdx.x;//blockIdx.x;//*TILEWIDTH + threadIdx.x;
    int i;
 
-   /*if (threadInd == 0) {
-      printf("sup homie\n");
-      tempO = new OctTreeNode((OctTreeNode*)(&(objectArray[0])));
-      printf("suh\n");
-      memcpy(objectArray, tempO, sizeof(OctTreeNode));
-      printf(":)\n");
-      delete(tempO);
-   }*/
-   //printf("%d\n", threadInd);
-   //printf("xd\n");
-   //if (threadInd == 0) {
-      //printf("ARR LOC: %p\n", objectArray);}
-      //printf(":(\n");
-      //printf("SIZE ONODE: %d\n", sizeof(OctTreeNode));
-      //printf("SIZE TOTS: %d\n", sizeof(OctTreeNode) * size);
    if (threadInd == 0) { printf(":() %d\n", size); 
       printf("%f %f %f\n", objectArray->boundingBox.minPt.x, objectArray->boundingBox.minPt.y, objectArray->boundingBox.minPt.z);
       printf("%f %f %f\n", objectArray->boundingBox.maxPt.x, objectArray->boundingBox.maxPt.y, objectArray->boundingBox.maxPt.z);
    }
    if (threadInd == size - 1) { printf("UH SUH DUDE %d\n", size); }
-   //__syncthreads();
+
    if (threadInd < size && threadInd >= 0) {
-      /*if (threadInd == size - 1) {
-         printf("Thread Index: %d\n", threadInd);
-         printf("Block? %d\n", blockIdx.x);
-      }*/
-      //printf("suh\n");
       if (objectArray[threadInd].type == 8) {
          tempO = reinterpret_cast<OctTreeNode*>(objectArray + threadInd);
-         /*for (i = 0; i < 8; i++) {
-            tempO->octants[i] = NULL;
-         }*/
+         
          tempO->checkCollision = &(checkOctTreeCollision);
          tempO->getNormal = &(getOctTreeNormal);
-         //if (threadInd == 0) {
-         //printf("B)\n");
-         //tempO = (OctTreeNode*)(objectArray + threadInd);
-         //printf("xd\n");
-         //printf("fam\n");
+         
          for (i = 0; i < 8; i++) {
-            if (threadInd < 16) {
-               //printf("Index: %d\n", tempO->indeces[i]);
-            }
             if (tempO->indeces[i] != -1) {
-               //printf("fuq\n");
-               /*if (tempO->octants[i] == NULL) {
-                  printf("Cool: %d\n", i);
-               }*/
-               
                tempO->octants[i] = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[i]);
-               /*if (threadInd == 0) {printf("INDEX: %d\n", tempO->indeces[i]);
-               printf("SO CAST: %p\n", reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[i]));
-               printf("REG: %p\n", objectArray + tempO->indeces[i]);}*/
-               /*if (tempO->octants[i] == NULL) {
-                  printf("Not Cool: %d\n", i);
-               }*/
-               
             } else {
                tempO->octants[i] = NULL;
             }
          }
-         if (threadInd == 1) {
-            //printf("Index: %d\n", tempO->indeces[i]);
-            /*Index: 1
-Index: 27182
-Index: 54363
-Index: 81544
-Index: 108725
-Index: 135906
-Index: 163087
-Index: 190268
-*/
-/*Index: 2
-Index: 3399
-Index: 6797
-Index: 10194
-Index: 13592
-Index: 16989
-Index: 20387
-Index: 23784
-*/
-            //s.y = 1.0;
-            //printf("%f %f %f\n", s.x, s.y, s.z);
-//printf("%f %f %f\n", t.x, t.y, t.z);
-            //tempO->checkCollision(s, t, 0.0f, (SceneObject**)&tempT);
-         }
-         //printf("diddly\n");
-         //memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
-         //printf("ding\n");
-         //for (i = 0; i < 8; i++) tempO->octants[i] = NULL;
-         //delete tempO;
-         //printf("dong\n");
-         //}
       } else {
-         //printf("Type: %d\n", objectArray[threadInd].type);
-         /*printf("%d\n", threadInd);
-         printf("%d\n", objectArray);
-         printf("%d\n", sizeof(Triangle));
-         printf("%d\n", sizeof(OctTreeNode));
-         printf("%d\n", &(objectArray[threadInd]));*/
-         //tempT = reinterpret_cast<Triangle*>(objectArray + threadInd);
          tempT = objectArray + threadInd;
          tempT->checkCollision = &(checkTriCollision);
          tempT->getNormal = &(getTriNormal);
-         //memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
-         //memcpy(&(objectArray[threadInd]), tempT, sizeof(Triangle));
-         //delete tempT;
       }
-      //printf("damn\n");
-   } else {
-      //printf("WHAT\n");
-      //printf("%d\n", threadInd);
-      //printf("%d\n", size);
-      //printf("COOL\n");
-   }
-   //printf("DAWG\n");
-   //__syncthreads();
-   //printf("%d\n", threadInd);
-   //printf("WHAT\n", threadInd);
-   if (threadInd == 1) {
-      //printf("THE Fasdfadsf\n");
-      //printf("OCTANT: %d\n", (&(objectArray[1]))->type);
-      //printf("OCTANT: %d\n", ((OctTreeNode*)(&(objectArray[0])))->octants[0]->type);
-      //tempO = (OctTreeNode*)(&(objectArray[0]));
-      
-      for (i = 0; i < 8; i++) {
-         /*if (tempO->octants[i]) {
-            printf("good %d\n", tempO->indeces[i]);
-         } else {
-            printf("bad %d\n", tempO->indeces[i]);
-         }*/
-      }
-         //SceneObject **so;
-         //tempO->checkCollision(s, t, 0.0f, so);
-   }
-   //}
-   //memcpy(&(objectArray[threadInd]), tempO, sizeof(OctTreeNode));
-   //printf("THE FUCK\n");
-   //__syncthreads();
+   } 
+   
    __syncthreads();
-   //printf("FUCK\n");
 }
 
 __global__ void toQuadTree(Triangle *objectArray, int size, int gridDimension) {
@@ -231,12 +118,6 @@ __global__ void toKDTree(Photon *kdArray, int size, int gridDimension) {
                    (threadIdx.y * (gridDimension * TILEWIDTH)) + threadIdx.x;//blockIdx.x;//*TILEWIDTH + threadIdx.x;
    int i;
 
-   if (threadInd == 0) { printf(":() %d\n", size); 
-      //printf("%f %f %f\n", objectArray->boundingBox.minPt.x, objectArray->boundingBox.minPt.y, objectArray->boundingBox.minPt.z);
-      //printf("%f %f %f\n", objectArray->boundingBox.maxPt.x, objectArray->boundingBox.maxPt.y, objectArray->boundingBox.maxPt.z);
-   }
-   if (threadInd == size - 1) { printf("UH SUH DUDE %d\n", size); }
-   
    if (threadInd < size && threadInd >= 0) {
       tempKD = reinterpret_cast<KDTreeNode*>(kdArray + (threadInd * 2));
       //tempO->checkCollision = &(checkOctTreeCollision);
@@ -255,12 +136,7 @@ __global__ void toKDTree(Photon *kdArray, int size, int gridDimension) {
       } else {
          tempKD->right = NULL;
       }
-   } else {
-      /*printf("WHAT\n");
-      printf("%d\n", threadInd);
-      printf("%d\n", size);*/
    }
-
    __syncthreads();
 }
 
@@ -283,105 +159,27 @@ __global__ __launch_bounds__( MAX_THREADS_PER_BLOCK, MIN_BLOCKS_PER_MP ) void GI
    int threadSpotF = threadNum * 9;
    int threadSpotI = threadNum * 3;
    
-   //if (row == 0 && col == 0) printf("cool\n");
-   //if (row == 639 && col == 639) printf("cooler\n");
-   //if (row > 616) {// && col < 240) {
-   //int c = 0;
-   //printf("yo\n");
-   /*printf("REG MIN %f %f %f\n", objArr[0]->boundingBox.minPt.x, objArr[0]->boundingBox.minPt.y, objArr[0]->boundingBox.minPt.z);
-   printf("REG MAX %f %f %f\n", objArr[0]->boundingBox.maxPt.x, objArr[0]->boundingBox.maxPt.y, objArr[0]->boundingBox.maxPt.z);
-   printf("RAY MIN %f %f %f\n", raytracer->objects[0]->boundingBox.minPt.x, raytracer->objects[0]->boundingBox.minPt.y, raytracer->objects[0]->boundingBox.minPt.z);
-   printf("RAY MAX %f %f %f\n", raytracer->objects[0]->boundingBox.maxPt.x, raytracer->objects[0]->boundingBox.maxPt.y, raytracer->objects[0]->boundingBox.maxPt.z);*/
    glm::vec3 cPos = camera->getPosition();
-   //glm::vec3 cPos = glm::vec3(0.0, 0.0, 0.0);
-   //RayTracer* raytrace = new RayTracer(objArr, 0, 0, 0, 0, 0);
-   //delete(raytrace);
-   
-   //printf("A NUMBER!\n");
-   //Collision* col = new Collision();
-   //delete(col);
-   //for (int i = 0; i < width / TILEWIDTH; i++) {
-   //i * imgheight + j;
-      //int threadIndex = row*width1 + (m*TILEWIDTH + threadIdx.x);
-      //Nds[threadIdx.y][threadIdx.x] = Nd[col + (m*TILEWIDTH + threadIdx.y)*width2];
-      //cout << "i: " << i << endl;
    Collision* collision;
    glm::vec3 ray, tempColor;
-      //for (int j = 0; j < height; j++) {
    
    ray = pixelsD[currentImgInd].pt;// - cPos;
    ray = glm::normalize(ray);
 
-   /*if (currentImgInd == 0) {
-      //printf("First Obj Type: %d\n", objArr[0]->type);
-      OctTreeNode* o = (OctTreeNode*)objArr[0];
-      
-      printf("Huh %d\n", o->type);
-      printf("ImgInd: %d\n", currentImgInd);
-      
-      for(int i = 0; i < 8; i++) {
-         if (o->octants[i] != NULL) {
-            printf("Oct Type: %d\n", o->octants[i]->type);
-         } else {
-            printf("Null Oct: %d\n", i);
-         }
-      }
-      printf("Tree size: %d\n", o->treeLength());
-   }*/
-//if (col > 482 && row < 175) {
-   //printf("Im running out of things to say: %p\n", raytracer->cudaStack);
-   //printf("Im running out of things to say: %p\n", raytracer->cudaStack + 1);
-   //printf("ROW %d\n", row);
-//if (currentImgInd < 400000) {
-   //printf("hello?\n");
    sharedFloats[threadSpotF+6] = cPos.x;
    sharedFloats[threadSpotF+7] = cPos.y;
    sharedFloats[threadSpotF+8] = cPos.z;
    collision = raytracer->trace(ray, sharedInts + threadSpotI, sharedFloats + threadSpotF);
-   //collision = raytracer->trace(cPos, ray, sharedInts + threadSpotI, sharedFloats + threadSpotF);
-    
-   //printf("whats up?\n");
-         //printf("Making sure ;)\n");
-         //printf("HI\n");
-   if (collision) {
-      //printf("UH SUH\n");
-   } else {
-      printf(" WUT \n");
-   }
+
    if (collision->time > TOLERANCE) {
-      //printf("in here?\n");
       pixelsD[currentImgInd].clr = raytracer->calcRadiance(cPos, cPos + ray * collision->time, collision->object, false, 1.0f, 1.33f, 0.95f, threadNum, 0, sharedInts + threadSpotI, sharedFloats + threadSpotF); //Cam must start in air
-      //if (collision->object) {
-         //printf("yo wasuu\n");
-         //printf("%d\n", collision->object->type);
-      //} else {
-         //printf("k\n");
-      //}
-      //tempColor = collision->object->getNormal(collision->object, cPos + ray * collision->time, 2.0f);
-      //printf(" WUT \n");
-      //pixelsD[currentImgInd].clr = (tempColor * 0.5f) + 0.5f;
-      //printf("Anything here?\n");
-      //pixelsD[currentImgInd].clr = glm::vec3(1.0f, 1.0f, 1.0f);
    }
    else {
-      //printf("should not be in here\n");
       pixelsD[currentImgInd].clr = glm::vec3(1.0f, 1.0f, 1.0f);
-      //printf("Making sure\n");
    }
-   //printf("WHAT\n");
-   //printf("ROW END %d\n", row);
    delete(collision);
-//}
-   //}
-         //cout << "PIXCOL: " << pixels[i][j].clr.r << " " << pixels[i][j].clr.g << " " << pixels[i][j].clr.b << endl;
-      //}
-   //}
+
    __syncthreads();
-   
-   
-   /*for (int i = 0; i < width * height; i++) {
-      pixelsD[i].clr.x = pixelsD[i].clr.y = pixelsD[i].clr.z = 1.0;
-   }*/
 }
 
 // Set the card up to run cuda
@@ -604,23 +402,8 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
       printf("P SIZE %lu\n", sizeof(Photon));
       printf("KD SIZE %lu\n", sizeof(KDTreeNode));
       
-      //if (threadNum == 0) {
-         //printf("TREE START\n");
-         //globalPhotons->printTree(globalPhotons);
-         //printf("TREE END\n");
-     // }   
       globalPhotons->toSerialArray(tempKDTree, &tempInd);
       
-      /*printf("TREE ARR START\n");
-      for (int i = 0; i < gSize * 2; i++) {
-         if (i % 2 == 0) {
-            printf("AXIS: %d\n", reinterpret_cast<KDTreeNode*>(tempKDTree + i)->axis);
-            printf("LEFT IND: %d, RIGHT IND: %d\n", reinterpret_cast<KDTreeNode*>(tempKDTree + i)->leftInd, reinterpret_cast<KDTreeNode*>(tempKDTree + i)->rightInd);
-         } else {
-            printf("Pt: %f %f %f\n", tempKDTree[i].pt.x, tempKDTree[i].pt.y, tempKDTree[i].pt.z);
-         }
-      }*/
-      //globalPhotons->printTree(globalPhotons);
       printf("TREE ARR END\n");
       
       printf("frack\n");
@@ -642,7 +425,6 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
       printf("GD: %d\n", gridDimension);
       dimGrid = dim3(gridDimension, gridDimension);//dim3((tempSize / TILEWIDTH) + 1, 1);
       dimBlock = dim3(TILEWIDTH,TILEWIDTH);//dim3(TILEWIDTH, 1);
-      //printf("kk\n");
       
       
       HANDLE_ERROR(cudaPeekAtLastError());
@@ -651,10 +433,6 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
       
       toKDTree<<<dimGrid, dimBlock>>>(globalsD, gSize, gridDimension);
       
-      //printf("TREE START\n");
-      //globalPhotons->printTree(globalPhotons);
-      //printf("TREE END\n");
-         
       HANDLE_ERROR(cudaPeekAtLastError());
       HANDLE_ERROR(cudaDeviceSynchronize());
    }
@@ -736,33 +514,8 @@ void RayTraceOnDevice(int width, int height, Pixel *pixels, std::vector<SceneObj
    time(startTime);
    //cudaFuncSetCacheConfig(GIPhotonMapKernel, cudaFuncCachePreferShared);
    //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
-   
-   
-   
-   
-   
-   
-   
-   //HERE OKAY
-   
-   
-   
-   
-   
-   
-   //GIPhotonMapKernel<<<dimGrid, dimBlock, TILEWIDTH * TILEWIDTH * 12 * sizeof(float)>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
+
    GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, sizesD, objects.size(), pixelsD, cameraD, width, height, raytracerD); //, globalsD, causticsD);
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
    
    //GIPhotonMapKernel<<<dimGrid, dimBlock>>>(objArrD, objects.size(), pixelsD, cameraD, width, height);
    HANDLE_ERROR(cudaPeekAtLastError());

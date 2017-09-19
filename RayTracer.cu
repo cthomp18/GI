@@ -63,19 +63,11 @@ RayTracer::~RayTracer() { }
 //Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit) {
 Collision* RayTracer::trace(glm::vec3 start, glm::vec3 ray, bool unit, int *shI, float *shF) {
    Collision* c = new Collision();
-   /*printf("OBJ SIZE: %d\n", objSize);
-   printf("TTYPE   %d\n", objects[0]->type);
-   for (int i = 0; i < objSize; i++) {
-      if (!objects[i]) printf("FUCKK %d\n", i);
-   }*/
-   /*printf("Here :)\n");
-   printf("COLL %f %f %f\n", objects[0]->boundingBox.minPt.x, objects[0]->boundingBox.minPt.y, objects[0]->boundingBox.minPt.z);
-   printf("COLL %f %f %f\n", objects[0]->boundingBox.maxPt.x, objects[0]->boundingBox.maxPt.y, objects[0]->boundingBox.maxPt.z);*/
+
    shF[6] = start.x;
    shF[7] = start.y;
    shF[8] = start.z;
-   //printf("uhhhhh %f %f %f\n", start.x, start.y, start.z);
-   //printf("hello? %f %f %f\n", shF[6], shF[7], shF[8]);
+
    c->detectRayCollision2(ray, objects, objSize, -1, unit, shI, shF);
    return c;
 }
@@ -89,7 +81,6 @@ Collision* RayTracer::trace(glm::vec3 ray, int *shI, float *shF) {
    
    shI[2] = objSize;
    
-   //c->detectRayCollision(start, ray, objects, shI, shF);
    c->detectRayCollision(ray, objects, shI, shF);
    return c;
 }
@@ -222,10 +213,9 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       Photon** locateHeap = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));
       //int heapSize = 0;
       //heapSize = 0;
-      //if (numCPhotons > 0) { printf("fucking wut\n"); rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition)); }
+      //if (numCPhotons > 0) rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition)); 
       //causts = heapSize;
       //volatile int causts = 0;//shI[2];
-      //printf("I'm guesssing here\n");
       
       //sh[threadSpot] = iPt.x;
       //sh[threadSpot+1] = iPt.y;
@@ -233,13 +223,13 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       shF[7] = INITIAL_SAMPLE_DIST_SQRD;
       shF[8] = INITIAL_SAMPLE_DIST_SQRD;
       shI[2] = 0;//heapSize;
-      asm volatile("membar.cta;");
+      //asm volatile("membar.cta;");
       volatile float * volatile matInv;
       if (1) matInv = (volatile float * volatile)glm::value_ptr(glm::mat3(1.0f));//getMatInv(iPt, obj, shF);
       //matInv = getMatInv(iPt, obj, shF);
       //if (numGPhotons > 0) root->locatePhotons(iPt, locateHeap, matInv, numGPhotons, shF + threadSpotF, shI + threadSpotI);// cudaStack + (threadNum * stackPartition));
       shI[0] = numGPhotons;
-      asm volatile("membar.cta;");
+      //asm volatile("membar.cta;");
       if (numGPhotons) root->locatePhotons(iPt, locateHeap, matInv, numGPhotons, shF, shI);// cudaStack + (threadNum * stackPartition));
       //printf("HEAPSIZE FAM: %d\n", heapSize);
       //sh[threadSpot] = 0.1f;
@@ -464,7 +454,7 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       locateHeap = (Photon**)malloc(CUTOFF_HEAP_SIZE * sizeof(Photon*));
       //int heapSize = 0;
       heapSize = 0;
-      //if (numCPhotons > 0) { printf("fucking wut\n"); rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition)); }
+      //if (numCPhotons > 0) rootC1->locatePhotons(1, iPt, locateHeap, &heapSize, 0.05, &newRadSqrd, matInv, numCPhotons, cudaStack + (threadNum * stackPartition));
       causts = heapSize;
       
       //printf("I'm guesssing here\n");
@@ -477,10 +467,8 @@ glm::vec3 RayTracer::calcRadiance(glm::vec3 start, glm::vec3 iPt, SceneObject* o
       shI[2] = 0;//heapSize;
       //if (numGPhotons > 0) root->locatePhotons(iPt, locateHeap, matInv, numGPhotons, shF + threadSpotF, shI + threadSpotI);// cudaStack + (threadNum * stackPartition));
       if (numGPhotons > 0) root->locatePhotons(iPt, locateHeap, mInv, numGPhotons, shF, shI);// cudaStack + (threadNum * stackPartition));
-      //printf("HEAPSIZE FAM: %d\n", heapSize);
       //sh[threadSpot] = 0.1f;
       //if (numGPhotons > 0) root->locatePhotons(iPt, threadSpot, locateHeap, sampleDistSqrd, &newRadSqrd, numGPhotons, sh);
-      //printf("sheeeet\n");
       heapSize = shI[2];
       //printf("HS: %d\n", heapSize);
       //if (heapSize) {

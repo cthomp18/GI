@@ -66,7 +66,6 @@ glm::vec3 getTriNormal(SceneObject *obj, glm::vec3 iPt, float *shF) {
    glm::vec3 cNor = thisObj->cNor;
    
    glm::vec3 normalConstructor = thisObj->normal;
-   //printf("sup dawg\n");
    if (thisObj->smooth) {
       float dotABP = glm::dot(b - a, iPt - a), dotACP = glm::dot(c - a, iPt - a);
       alpha = ((dotAC * dotABP) - (dotABC * dotACP)) * multiplier;
@@ -198,6 +197,5 @@ glm::vec3 getConeNormal(SceneObject *obj, glm::vec3 iPt, float *shF) {
 glm::vec3 getQuadTreeNormal(SceneObject *obj, glm::vec3 iPt, float *shF) {
    QuadTreeNode *thisObj = reinterpret_cast<QuadTreeNode*>(obj);
    
-   //std::cout << "Oh no! I fucked up!" << std::endl;
    return iPt;
 }
