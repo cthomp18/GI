@@ -152,14 +152,18 @@ void GerstnerWave::addTriangles(std::vector<SceneObject*> *objects, float step, 
    float depth = ub[2] - lb[2], width = ub[0] - lb[0];
    int matDepth = depth / step, matWidth = width / step;
    
+   int shI[3];
+   float shF[9];
+   
    glm::vec3 wavePts[matDepth][matWidth];
    glm::vec3 waveNorms[matDepth][matWidth];
   
+   shF[0] = 2.0f;
    //FILL MATS
    for (int i = 0; i < matDepth; i++) {
       for (int j = 0; j < matWidth; j++) {
          wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
-         waveNorms[i][j] = getNormal(this, wavePts[i][j], time);
+         waveNorms[i][j] = getNormal(this, wavePts[i][j], shF);
       }
    }
    
@@ -226,15 +230,19 @@ void GerstnerWave::toPovFileMesh(char* fileName, float step, float time) {
    glm::vec3 wavePts[matDepth][matWidth];
    glm::vec3 waveNorms[matDepth][matWidth];
    
+   int shI[3];
+   float shF[9];
+   
    ofstream meshFile;
    meshFile.open(fileName);
    //myfile << "Writing this to a file.\n";
   
    //FILL MAT
+   shF[0] = 2.0f;
    for (int i = 0; i < matDepth; i++) {
       for (int j = 0; j < matWidth; j++) {
          wavePts[i][j] = getPoint((j * step) + lb[0], (i * step) + lb[2], time);
-         waveNorms[i][j] = getNormal(this, wavePts[i][j], time);
+         waveNorms[i][j] = getNormal(this, wavePts[i][j], shF);
       }
    }
    

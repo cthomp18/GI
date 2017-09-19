@@ -1,26 +1,19 @@
 #include "collisionFuncs.h"
 
 float checkOctTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** object, int *shI, float *shF) {
+   //start
+   //F6-F8: start vector
+
    glm::vec3 start(shF[6], shF[7], shF[8]);
    float t, tempT;
    SceneObject* tempObj;
    t = tempT = -1.0f;
    OctTreeNode *thisObj = reinterpret_cast<OctTreeNode*>(obj);
    SceneObject **octants = thisObj->octants;
-   //int *indeces = thisObj->indeces;
    
    if (thisObj->boundingBox.checkCollision(ray, 0.0f, shI, shF) < TOLERANCE) { 
       return -1.0f; 
    }
-   
-   //if (octants[0]) {
-   //   t = octants[0]->checkCollision(octants[0], ray, &tempObj, shI, shF);
-   //}
-   //*object = tempObj;
-   
-   //int i;// = 0;
-   
-   // SAME AS ABOVE, BUT FOR THE OTHER 7 OCTANTS
    
    for (int i = 0; i < 8; i++) {
       if (octants[i]) {
@@ -39,14 +32,9 @@ float checkOctTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject** objec
          }
       }
    }
-   //printf("whats happening\n");
    if (t < TOLERANCE) {
       *object = NULL;
    }
-   
-   //shF[6] = start.x;
-   //shF[7] = start.y;
-   //shF[8] = start.z;
    
    return t;
 }
@@ -436,100 +424,45 @@ float checkBoxCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, i
 
 //float checkQuadTreeCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
 float checkQuadTreeCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF) {
-//printf("qtree COLLISION\n");
-glm::vec3 start(shF[6], shF[7], shF[8]);
-   glm::vec4 startTransform;
+   //start
+   //F6-F8: start vector
+   
    float t, tempT;
-   SceneObject *obj1, *obj2, *obj3, *obj4;
+   SceneObject *tempObj;
    t = tempT = -1.0f;
    QuadTreeNode *thisObj = reinterpret_cast<QuadTreeNode*>(obj);
-   SceneObject *q1 = thisObj->q1;
-   SceneObject *q2 = thisObj->q2;
-   SceneObject *q3 = thisObj->q3;
-   SceneObject *q4 = thisObj->q4;
-  // if (boundingBox == NULL) std::cout << "it's null!" << std::endl;
-   startTransform = glm::vec4(start, 1.0f);
-   if (thisObj->boundingBox.checkCollision(start, ray, 0.0f) < TOLERANCE) return -1.0f;
-   
+   SceneObject **quadrants = thisObj->quadrants;
 
-   if (q1->transformed) {
-      //t = q1->checkCollision(q1, glm::vec3(q1->transform * startTransform), glm::mat3(q1->transform) * ray, time, &obj1, shI, shF);
-   } else {
-      t = q1->checkCollision(q1, ray, &obj1, shI, shF);
+   if (thisObj->boundingBox.checkCollision(ray, 0.0f, shI, shF) < TOLERANCE) {
+      return -1.0f;
    }
-   *object = obj1;
-//printf("1\n");
-   if (q2) {
-      if (t >= TOLERANCE) {
-         tempT = q2->boundingBox.checkCollision(start, ray, 0.0f);
-         if (tempT >= TOLERANCE && tempT < t) {
-            if (q2->transformed) {
-               //tempT = q2->checkCollision(q2, glm::vec3(q2->transform * startTransform), glm::mat3(q2->transform) * ray, time, &obj2, shI, shF);
-            } else {
-               tempT = q2->checkCollision(q2, ray, &obj2, shI, shF);
-            }
+   
+   for (int i = 0; i < 4; i++) {
+      if (quadrants[i]) {
+         if (t >= TOLERANCE) {
+            tempT = quadrants[i]->boundingBox.checkCollision(ray, 0.0f, shI, shF);
             if (tempT >= TOLERANCE && tempT < t) {
-               t = tempT;
-               *object = obj2;
+               tempT = quadrants[i]->checkCollision(quadrants[i], ray, &tempObj, shI, shF);
+               if (tempT >= TOLERANCE && tempT < t) {
+                  t = tempT;
+                  *object = tempObj;
+               }
             }
+         } else {
+            t = quadrants[i]->checkCollision(quadrants[i], ray, &tempObj, shI, shF);
+            *object = tempObj;
          }
-      } else {
-         //t = q2->checkCollision(q2, glm::vec3(q2->transform * startTransform), glm::mat3(q2->transform) * ray, time, &obj2, shI, shF);
-         t = q2->checkCollision(q2, ray, &obj2, shI, shF);
-         *object = obj2;
-      }
-   }
-   //printf("2\n");
-   if (q3) {
-      if (t >= TOLERANCE) {
-         tempT = q3->boundingBox.checkCollision(start, ray, 0.0f);
-         if (tempT >= TOLERANCE && tempT < t) {
-            if (q3->transformed) {
-               //tempT = q3->checkCollision(q3, glm::vec3(q3->transform * startTransform), glm::mat3(q3->transform) * ray, time, &obj3, shI, shF);
-            } else {
-               tempT = q3->checkCollision(q3, ray, &obj3, shI, shF);
-            }
-            if (tempT >= TOLERANCE && tempT < t) {
-               t = tempT;
-               *object = obj3;
-            }
-         }
-      } else {
-         //t = q3->checkCollision(q3, glm::vec3(q3->transform * startTransform), glm::mat3(q3->transform) * ray, time, &obj3, shI, shF);
-         t = q3->checkCollision(q3, ray, &obj3, shI, shF);
-         *object = obj3;
-      }
-   }
-   //printf("3\n");
-   if (q4) {
-      if (t >= TOLERANCE) {
-         tempT = q4->boundingBox.checkCollision(start, ray, 0.0f);
-         if (tempT >= TOLERANCE && tempT < t) {
-            if (q4->transformed) {
-               //tempT = q4->checkCollision(q4, glm::vec3(q4->transform * startTransform), glm::mat3(q4->transform) * ray, time, &obj4, shI, shF);
-            } else {
-               tempT = q4->checkCollision(q4, ray, &obj4, shI, shF);
-            }
-            if (tempT >= TOLERANCE && tempT < t) {
-               t = tempT;
-               *object = obj4;
-            }
-         }
-      } else {
-         //t = q4->checkCollision(q4, glm::vec3(q4->transform * startTransform), glm::mat3(q4->transform) * ray, time, &obj4, shI, shF);
-         t = q4->checkCollision(q4, ray, &obj4, shI, shF);
-         *object = obj4;
       }
    }
    
    if (t < TOLERANCE) {
       *object = NULL;
    }
-   //printf("4\n");
+   
    return t;
 }
 
-//float checkSphereCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
+//See original below
 float checkSphereCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF) {
    //start
    //F6-F8: start vector
@@ -541,8 +474,7 @@ float checkSphereCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object
    //F8: C
    
    glm::vec3 start(shF[6], shF[7], shF[8]);
-   volatile float t0 = -1.0f, t1 = -1.0f;//, A, B, C;
-   //float innerRoot;
+   volatile float t0 = -1.0f, t1 = -1.0f;
    
    Sphere *thisObj = reinterpret_cast<Sphere*>(obj);
    volatile float radius = thisObj->radius;
@@ -550,23 +482,12 @@ float checkSphereCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object
    
    shF[6] = glm::dot(ray, ray);
    shF[7] = 2.0f * glm::dot(start - position, ray);
-   //B = 2.0f * ((shF[6] - position.x) * ray.x + (shF[7] - position.y) * ray.y + (shF[8] - position.z) * ray.z);
    shF[8] = glm::dot(start - position, start - position) - (radius * radius);
-   //C = ((shF[6] - position.x) * (shF[6] - position.x) + (shF[7] - position.y) * (shF[7] - position.y) + (shF[8] - position.z) * (shF[8] - position.z)) - (radius * radius);
-   //innerRoot = (B * B) - (4.0f * A * C);
    shF[5] = (shF[7] * shF[7]) - (4.0f * shF[6] * shF[8]);
    
-   //if (innerRoot >= 0.0f) {
-      //t0 = (-B - sqrt(innerRoot)) / (2.0f * A);
-      //t1 = (-B + sqrt(innerRoot)) / (2.0f * A);
    if (shF[5] >= 0.0f) {
       t0 = (-shF[7] - sqrt(shF[5])) / (2.0f * shF[6]);
       t1 = (-shF[7] + sqrt(shF[5])) / (2.0f * shF[6]);
-      /*if (t0 >= TOLERANCE && t0 < t1) {
-         t = t0;
-      } else if (t1 >= TOLERANCE) {
-         t = t1;
-      }*/
       if (t1 >= TOLERANCE && t1 < t0) {
          t0 = t1;
       }
@@ -579,6 +500,33 @@ float checkSphereCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object
    *object = obj;
    return t0;
 }
+
+/*float checkSphereCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
+   volatile float t, t0 = -1.0f, t1 = -1.0f, A, B, C;
+   
+   Sphere *thisObj = reinterpret_cast<Sphere*>(obj);
+   volatile float radius = thisObj->radius;
+   glm::vec3 position = thisObj->position;
+   float A, B, C;
+   
+   A = glm::dot(ray, ray);
+   B = 2.0f * glm::dot(start - position, ray);
+   C = glm::dot(start - position, start - position) - (radius * radius);
+   innerRoot = (B * B) - (4.0f * A * C);
+   
+   if (innerRoot >= 0.0f) {
+      t0 = (-B - sqrt(innerRoot)) / (2.0f * A);
+      t1 = (-B + sqrt(innerRoot)) / (2.0f * A);
+      if (t0 >= TOLERANCE && t0 < t1) {
+         t = t0;
+      } else if (t1 >= TOLERANCE) {
+         t = t1;
+      }
+   }
+   
+   *object = obj;
+   return t0;
+}*/
 
 //float checkGWCollision(SceneObject *obj, glm::vec3 start, glm::vec3 ray, float time, SceneObject **object) {
 float checkGWCollision(SceneObject *obj, glm::vec3 ray, SceneObject **object, int *shI, float *shF) {

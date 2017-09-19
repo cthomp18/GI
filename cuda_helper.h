@@ -17,8 +17,10 @@
 
 #ifdef __CUDACC__
 #define CUDA_CALLABLE __host__ __device__
+#define CUDA_NO_INLINE __noinline__
 #else
 #define CUDA_CALLABLE
+#define CUDA_NO_INLINE
 #endif
 
 #endif

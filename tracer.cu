@@ -194,14 +194,8 @@ __global__ void toQuadTree(Triangle *objectArray, int size, int gridDimension) {
    QuadTreeNode* tempO;
    
    int threadInd = (blockIdx.y * (gridDimension * TILEWIDTH) * TILEWIDTH) + (blockIdx.x * TILEWIDTH) +
-                   (threadIdx.y * (gridDimension * TILEWIDTH)) + threadIdx.x;//blockIdx.x;//*TILEWIDTH + threadIdx.x;
+                   (threadIdx.y * (gridDimension * TILEWIDTH)) + threadIdx.x;
    int i;
-
-   /*if (threadInd == 0) { printf(":() %d\n", size); 
-      printf("%f %f %f\n", objectArray->boundingBox.minPt.x, objectArray->boundingBox.minPt.y, objectArray->boundingBox.minPt.z);
-      printf("%f %f %f\n", objectArray->boundingBox.maxPt.x, objectArray->boundingBox.maxPt.y, objectArray->boundingBox.maxPt.z);
-   }*/
-   //if (threadInd == size - 1) { printf("UH SUH DUDE %d\n", size); }
    
    if (threadInd < size && threadInd >= 0) {
       if (objectArray[threadInd].type == 7) {
@@ -210,25 +204,12 @@ __global__ void toQuadTree(Triangle *objectArray, int size, int gridDimension) {
          tempO->checkCollision = &(checkQuadTreeCollision);
          tempO->getNormal = &(getQuadTreeNormal);
 
-         if (tempO->indeces[0] != -1) {
-            tempO->q1 = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[0]);
-         } else {
-            tempO->q1 = NULL;
-         }
-         if (tempO->indeces[1] != -1) {
-            tempO->q2 = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[1]);
-         } else {
-            tempO->q2 = NULL;
-         }
-         if (tempO->indeces[2] != -1) {
-            tempO->q3 = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[2]);
-         } else {
-            tempO->q3 = NULL;
-         }
-         if (tempO->indeces[3] != -1) {
-            tempO->q4 = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[3]);
-         } else {
-            tempO->q4 = NULL;
+         for (i = 0; i < 4; i++) {
+            if (tempO->indeces[i] != -1) {
+               tempO->quadrants[i] = reinterpret_cast<SceneObject*>(objectArray + tempO->indeces[i]);
+            } else {
+               tempO->quadrants[i] = NULL;
+            }
          }
       } else {
          tempT = objectArray + threadInd;

@@ -31,26 +31,15 @@ class QuadTreeNode : public SceneObject {
       QuadTreeNode();
       CUDA_CALLABLE virtual ~QuadTreeNode();
       
-      SceneObject *q1;
-      SceneObject *q2;
-      SceneObject *q3;
-      SceneObject *q4;
+      SceneObject *quadrants[4];
       int indeces[4];
-      //int sortAxis;
-      
-      //using SceneObject::checkCollision;
-      //using SceneObject::getNormal;
-      
-      //CUDA_CALLABLE float checkCollision(glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
-      //CUDA_CALLABLE glm::vec3 getNormal(glm::vec3 iPt);
       
       CUDA_CALLABLE void printObj();
       CUDA_CALLABLE int treeLength();
       CUDA_CALLABLE void toSerialArray(Triangle *objectArray, int *currentIndex);
       
    private:
-      //bool sorter(const SceneObject* obj1, const SceneObject* obj2);
-      CUDA_CALLABLE BoundingBox combineBB(BoundingBox* box1, BoundingBox* box2, BoundingBox* box3, BoundingBox* box4);
+      BoundingBox combineBB(std::vector<BoundingBox*> boxes);
 };
 
 #endif

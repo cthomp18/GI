@@ -46,7 +46,7 @@ class SceneObject {
       
       //float (*checkCollision) (SceneObject *thisObj, glm::vec3 start, glm::vec3 ray, float time, SceneObject** object);
       float (*checkCollision) (SceneObject *thisObj, glm::vec3 ray, SceneObject** object, int *shI, float *shF);
-      glm::vec3 (*getNormal) (SceneObject *thisObj, glm::vec3 iPt, float time);
+      glm::vec3 (*getNormal) (SceneObject *thisObj, glm::vec3 iPt, float *shF);
       
       BoundingBox boundingBox;
       //SceneObject* hitObj;

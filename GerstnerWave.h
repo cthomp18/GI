@@ -31,8 +31,8 @@ class GerstnerWave : public SceneObject {
       
       int waves;
       
-      CUDA_CALLABLE GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
-      CUDA_CALLABLE GerstnerWave();
+      GerstnerWave(float a, float w, float s, glm::vec3 d, glm::vec3 lowerleft, glm::vec3 upperright, float yPosition);
+      GerstnerWave();
       CUDA_CALLABLE virtual ~GerstnerWave();
       
       //using SceneObject::checkCollision;

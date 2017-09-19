@@ -131,7 +131,7 @@ void PhotonMapper::buildGlobalMap() {
             while ((randTracker = (float)(rand()) / (float)(RAND_MAX)) < obj->photonReflectance + obj->photonRefractance) {
                //printf("uh2\n");               
                if (randTracker < obj->photonReflectance) { //Reflect
-                  normal = obj->getNormal(obj, intersectPt, 2.0f);
+                  normal = obj->getNormal(obj, intersectPt, shF);
                   ray = raytrace->findReflect(ray, normal, obj);
                   delete col;
                   //printf("5\n");
@@ -159,7 +159,7 @@ void PhotonMapper::buildGlobalMap() {
                   depth++;
                } else if (randTracker < obj->photonRefractance) { //Refract
                   float randFloat;
-                  normal = obj->getNormal(obj, intersectPt, 2.0f);
+                  normal = obj->getNormal(obj, intersectPt, shF);
                   ray = raytrace->findRefract(ray, normal, obj, n1, &n2, &randFloat, &randFloat);
                   delete col;
                   //printf("7\n");
@@ -276,7 +276,7 @@ void PhotonMapper::buildCausticMap() {
                   tempobj = obj;
                   while ((randTracker = (float)(rand()) / (float)(RAND_MAX)) < tempobj->photonRefractance) {
                      float randFloat;
-                     normal = tempobj->getNormal(tempobj, intersectPt, 2.0f);
+                     normal = tempobj->getNormal(tempobj, intersectPt, shF);
                      ray = raytrace->findRefract(ray, normal, tempobj, n1, &n2, &randFloat, &randFloat);
                      delete col;
                      col = raytrace->trace(intersectPt, ray, -1, shI, shF);

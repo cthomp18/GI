@@ -20,7 +20,10 @@
 #include "Plane.h"
 #include "Cone.h"
 #include "Camera.h"
-#include "RayTracer.h"
+//#include "RayTracer.h"
+#include "RayTracer.cuh"
+//#include "KDTreeNode.h"
+#include "KDTreeNode.cuh"
 #include "structs.h"
 #include "types.h"
 #include "collisionFuncs.h"
@@ -30,8 +33,8 @@
 #include "glm/gtc/type_ptr.hpp" //value_ptr
 #include "glm/gtx/string_cast.hpp"
 
-#define TILEWIDTH 16
-#define MAX_THREADS_PER_BLOCK 256
+#define TILEWIDTH 32
+#define MAX_THREADS_PER_BLOCK 1024
 #define MIN_BLOCKS_PER_MP     2
 
 // HandleError written by Chris Lupo

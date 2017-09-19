@@ -15,7 +15,8 @@
 #include "SceneObject.h"
 #include "Light.h"
 #include "Sphere.h"
-#include "RayTracer.h"
+//#include "RayTracer.h"
+#include "RayTracer.cuh"
 
 class PhotonMapper {
    public:

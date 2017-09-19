@@ -23,6 +23,9 @@ BoundingBox::BoundingBox() {}
 BoundingBox::~BoundingBox() {}
 
 float BoundingBox::checkCollision(glm::vec3 ray, float time, int *shI, float *shF) {
+   //start
+   //F6-F8: start vector
+   
    float tgmin = FLT_MIN, tgmax = FLT_MAX, t1, t2, temp, t = -1.0f;
    glm::vec3 start(shF[6], shF[7], shF[8]);
    for (int i = 0; i < 3; i++) {

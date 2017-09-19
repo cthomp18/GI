@@ -17,7 +17,8 @@
 #include "Collision.h"
 #include "structs.h"
 #include "Photon.h"
-#include "KDTreeNode.cuh"
+#include "KDTreeNode.h"
+//#include "deviceFuncsFile.cuh"
 
 class RayTracer {
    public:
@@ -52,11 +53,11 @@ class RayTracer {
       //__device__ __noinline__ glm::vec3 calcRadiance(glm::vec3 start, volatile glm::vec3 iPt, SceneObject* obj, bool unit, float scale, float n1, float dropoff, int threadNum, int depth, int *shI, float *shF);
    private:
       //HELPERS FOR CR
-      CUDA_NO_INLINE CUDA_CALLABLE volatile float * volatile getMatInv(glm::vec3 iPt, SceneObject* obj, float *shF) __attribute__ ((noinline));
+      CUDA_NO_INLINE CUDA_CALLABLE volatile float * volatile getMatInv(glm::vec3 iPt, SceneObject* obj, float *shF);
       //__device__ __noinline__ volatile float * volatile getMatInv(glm::vec3 iPt, SceneObject* obj, float *shF);
-      CUDA_NO_INLINE CUDA_CALLABLE glm::vec3 accumulatePhotons(Photon **locateHeap, glm::vec3 iPt, SceneObject* obj, float* shF, int *shI) __attribute__ ((noinline));
+      CUDA_NO_INLINE CUDA_CALLABLE glm::vec3 accumulatePhotons(Photon **locateHeap, glm::vec3 iPt, SceneObject* obj, float* shF, int *shI);
       //__device__ __noinline__ glm::vec3 accumulatePhotons(Photon **locateHeap, glm::vec3 iPt, SceneObject* obj, float* shF, int *shI);
-      CUDA_NO_INLINE CUDA_CALLABLE __attribute__ ((noinline)) void __attribute__ ((noinline)) getNormal(SceneObject *obj, glm::vec3 iPt, float *shF) __attribute__ ((noinline));
+      CUDA_NO_INLINE CUDA_CALLABLE void getNormal(SceneObject *obj, glm::vec3 iPt, float *shF);
       //__device__ __noinline__ void getNormal(SceneObject *obj, glm::vec3 iPt, float *shF);
 };
 
